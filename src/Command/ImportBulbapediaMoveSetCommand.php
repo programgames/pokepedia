@@ -22,15 +22,13 @@ class ImportBulbapediaMoveSetCommand extends Command
     protected static $defaultName = 'app:bmoveset';
     protected static $defaultDescription = 'Import bulbapedia mooveset';
 
-    private HttpClientInterface $client;
     private EntityManagerInterface $entityManager;
     private BulbapediaMovesAPI $bulbapediaMovesAPI;
 
-    public function __construct(HttpClientInterface $client, EntityManagerInterface $entityManager, BulbapediaMovesAPI $bulbapediaMovesAPI)
+    public function __construct(EntityManagerInterface $entityManager, BulbapediaMovesAPI $bulbapediaMovesAPI)
     {
         parent::__construct(self::$defaultName);
 
-        $this->client = $client;
         $this->entityManager = $entityManager;
         $this->bulbapediaMovesAPI = $bulbapediaMovesAPI;
     }
@@ -38,46 +36,68 @@ class ImportBulbapediaMoveSetCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description');
+            ->addArgument('generation', InputArgument::REQUIRED, 'Generatoon')
+            ->addArgument('type', null, InputArgument::REQUIRED, 'Move type');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $gen = 5;
+        $gen = $input->getArgument('generation');
+        $type = $input->getArgument('type');
+
+
         $pokemons = $this->entityManager->getRepository(Pokemon::class)->findBy(
             [
                 'generation' => $gen,
             ]
         );
 
+        /** @var Pokemon $pokemon */
         foreach ($pokemons as $pokemon) {
-            $io->info(strtr('Importing %pokemon%  %type% moves , id  : %id%', [
-                '%pokemon%' => $pokemon->getEnglishName(),
-                '%id%' => $pokemon->getPokemonId(),
-                '%type%' => MoveSetHelper::TUTORING
-            ]));
-            $moveNames = $this->bulbapediaMovesAPI->getTutorMoves($pokemon, GenerationHelper::genNumberToLitteral($gen));
-            foreach ($moveNames as $moveName) {
-                $move = new Move();
-                $move->addPokemon($pokemon);
-                $move->setEnglishName($moveName[1]);
-                $games = [];
-                if (array_key_exists(9, $moveName) && $moveName[9] === 'yes') {
-                    $games['B/W'] = true;
-                }
-                if (array_key_exists(10, $moveName) && $moveName[10] === 'yes') {
-                    $games['B2/W2'] = true;
-                }
-                $move->setGames(json_encode($games));
-                $move->setLearningType(MoveSetHelper::TUTORING);
-                $move->setGeneration($gen);
-                $this->entityManager->persist($move);
+            $io->info(
+                strtr(
+                    'Importing %pokemon%  %type% moves , id  : %id%',
+                    [
+                        '%pokemon%' => $pokemon->getEnglishName(),
+                        '%id%' => $pokemon->getPokemonId(),
+                        '%type%' => MoveSetHelper::TUTORING
+                    ]
+                )
+            );
+
+            switch ($type) {
+                case MoveSetHelper::TUTORING:
+                    $this->importTutoringMoves($pokemon, $gen);
+                    break;
+                default:
+                    $io->error(sprintf('Type not found : %s', $type));
+                    break;
             }
-            $this->entityManager->flush();
         }
         return Command::SUCCESS;
+    }
+
+    private function importTutoringMoves(Pokemon $pokemon, int $gen)
+    {
+        $moveNames = $this->bulbapediaMovesAPI->getTutorMoves($pokemon, GenerationHelper::genNumberToLitteral($gen));
+        foreach ($moveNames as $moveName) {
+            $move = new Move();
+            $move->addPokemon($pokemon);
+            $move->setEnglishName($moveName[1]);
+            $games = [];
+            if (array_key_exists(9, $moveName) && $moveName[9] === 'yes') {
+                $games['B/W'] = true;
+            }
+            if (array_key_exists(10, $moveName) && $moveName[10] === 'yes') {
+                $games['B2/W2'] = true;
+            }
+            $move->setGames(json_encode($games));
+            $move->setLearningType(MoveSetHelper::TUTORING);
+            $move->setGeneration($gen);
+            $this->entityManager->persist($move);
+        }
+        $this->entityManager->flush();
     }
 }

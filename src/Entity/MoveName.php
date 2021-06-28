@@ -18,9 +18,9 @@ class MoveName
     private $id;
 
     /**
-     * @ORM\Column(type="integer", name="move_id")
+     * @ORM\Column(type="integer", name="move_identifier")
      */
-    private $moveId;
+    private $moveIdentifier;
 
     /**
      * @ORM\Column(type="integer", name="language_id")
@@ -37,14 +37,14 @@ class MoveName
         return $this->id;
     }
 
-    public function getMoveId(): ?int
+    public function getMoveIdentifier(): ?int
     {
-        return $this->moveId;
+        return $this->moveIdentifier;
     }
 
-    public function setMoveId(int $moveId): self
+    public function setMoveIdentifier(int $moveIdentifier): self
     {
-        $this->moveId = $moveId;
+        $this->moveIdentifier = $moveIdentifier;
 
         return $this;
     }

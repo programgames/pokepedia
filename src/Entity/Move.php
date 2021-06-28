@@ -44,6 +44,11 @@ class Move
      */
     private $games;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $form;
+
     public function __construct()
     {
         $this->pokemon = new ArrayCollection();
@@ -122,6 +127,18 @@ class Move
     public function setGames(?string $games): self
     {
         $this->games = $games;
+
+        return $this;
+    }
+
+    public function getForm(): ?string
+    {
+        return $this->form;
+    }
+
+    public function setForm(?string $form): self
+    {
+        $this->form = $form;
 
         return $this;
     }

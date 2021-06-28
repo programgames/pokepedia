@@ -76,7 +76,7 @@ class InstallCommand extends Command
                 }
 
                 $pokemon = new MoveName();
-                $pokemon->setMoveId($row[0]);
+                $pokemon->setMoveIdentifier($row[0]);
                 $pokemon->setLanguageId($row[1]);
                 $pokemon->setName($row[2]);
                 $this->entityManager->persist($pokemon);
