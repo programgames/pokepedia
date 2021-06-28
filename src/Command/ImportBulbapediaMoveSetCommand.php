@@ -54,9 +54,10 @@ class ImportBulbapediaMoveSetCommand extends Command
         );
 
         foreach ($pokemons as $pokemon) {
-            $io->info(strtr('Importing %pokemon%  , id  : %id%', [
+            $io->info(strtr('Importing %pokemon%  %type% moves , id  : %id%', [
                 '%pokemon%' => $pokemon->getEnglishName(),
-                '%id%' => $pokemon->getPokemonId()
+                '%id%' => $pokemon->getPokemonId(),
+                '%type%' => MoveSetHelper::TUTORING
             ]));
             $moveNames = $this->bulbapediaMovesAPI->getTutorMoves($pokemon, GenerationHelper::genNumberToLitteral($gen));
             foreach ($moveNames as $moveName) {
