@@ -43,4 +43,39 @@ class MoveSetManager
         }
         $this->entityManager->flush();
     }
+
+    public function importLevelingMoves(Pokemon $pokemon, int $gen)
+    {
+        $moveNames = $this->bulbapediaMovesAPI->getLevelMoves($pokemon, GenerationHelper::genNumberToLitteral($gen));
+        foreach ($moveNames as $moveName) {
+            $move = new Move();
+            $move->addPokemon($pokemon);
+
+            if($moveName['format'] === 'numeral') {
+                $move->setEnglishName($moveName[1]);
+                $games = [];
+                if (array_key_exists(9, $moveName['value']) && $moveName['value'][9] === 'yes') {
+                    $games['B/W'] = true;
+                }
+                if (array_key_exists(10, $moveName['value']) && $moveName['value'][10] === 'yes') {
+                    $games['B2/W2'] = true;
+                }
+                $move->setGames(json_encode($games));
+            } else {
+                $move->setEnglishName($moveName['value'][1]);
+                $games = [];
+                if (array_key_exists(9, $moveName['value']) && $moveName['value'][9] === 'yes') {
+                    $games['B/W'] = true;
+                }
+                if (array_key_exists(10, $moveName['value']) && $moveName['value'][10] === 'yes') {
+                    $games['B2/W2'] = true;
+                }
+                $move->setGames(json_encode($games));
+            }
+            $move->setLearningType(MoveSetHelper::TUTORING_TYPE);
+            $move->setGeneration($gen);
+            $this->entityManager->persist($move);
+        }
+        $this->entityManager->flush();
+    }
 }

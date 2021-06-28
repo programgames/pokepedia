@@ -46,10 +46,13 @@ class ImportBulbapediaMoveSetCommand extends Command
         $type = $input->getArgument('type');
 
 
+        if($gen === 'all') {
+            $pokemons = $this->entityManager->getRepository(Pokemon::class)->findAll();
+        } else
         $pokemons = $this->entityManager->getRepository(Pokemon::class)->findBy(
             [
                 'generation' => $gen,
-                'englishName' => 'Kyurem'
+                'pokemonIdentifier'=> 614
             ]
         );
 
@@ -57,10 +60,9 @@ class ImportBulbapediaMoveSetCommand extends Command
         foreach ($pokemons as $pokemon) {
             $io->info(
                 strtr(
-                    'Importing %pokemon%  %type% moves , id  : %id%',
+                    'Importing Pokemon %pokemon% moves for type %type%',
                     [
-                        '%pokemon%' => $pokemon->getEnglishName(),
-                        '%id%' => $pokemon->getPokemonIdentifier(),
+                        '%pokemon%' => $pokemon->getPokemonIdentifier(),
                         '%type%' => MoveSetHelper::TUTORING_TYPE
                     ]
                 )
@@ -72,6 +74,10 @@ class ImportBulbapediaMoveSetCommand extends Command
 
             if (in_array($type, ['all', MoveSetHelper::TUTORING_TYPE])) {
                 $this->moveSetManager->importTutoringMoves($pokemon, $gen);
+            }
+
+            if (in_array($type, ['all', MoveSetHelper::LEVELING_UP_TYPE])) {
+                $this->moveSetManager->importLevelingMoves($pokemon, $gen);
             }
         }
         return Command::SUCCESS;

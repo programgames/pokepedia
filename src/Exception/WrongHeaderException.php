@@ -4,7 +4,7 @@
 namespace App\Exception;
 
 
-class WrongHeaderException extends \RuntimeException
+class WrongHeaderException extends DataFormatException
 {
 
 }
