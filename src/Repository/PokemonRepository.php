@@ -19,6 +19,16 @@ class PokemonRepository extends ServiceEntityRepository
         parent::__construct($registry, Pokemon::class);
     }
 
+    public function findAllByIdentifier()
+    {
+        return $this->createQueryBuilder('p','p.pokemonIdentifier')
+            ->orderBy('p.pokemonIdentifier', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+
     // /**
     //  * @return Pokemon[] Returns an array of Pokemon objects
     //  */

@@ -17,31 +17,33 @@ class Pokemon
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $englishName;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $pokemonId;
+    private ?int $pokemonIdentifier;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $generation;
+    private ?int $generation;
 
     /**
      * @ORM\ManyToMany(targetEntity=Move::class, mappedBy="pokemon")
      */
-    private $moves;
+    private Collection $moves;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonName::class, mappedBy="pokemon", orphanRemoval=true)
+     */
+    private $names;
 
     public function __construct()
     {
         $this->moves = new ArrayCollection();
+        $this->names = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -49,26 +51,14 @@ class Pokemon
         return $this->id;
     }
 
-    public function getEnglishName(): ?string
+    public function getPokemonIdentifier(): ?int
     {
-        return $this->englishName;
+        return $this->pokemonIdentifier;
     }
 
-    public function setEnglishName(string $englishName): self
+    public function setPokemonIdentifier(int $pokemonIdentifier): self
     {
-        $this->englishName = $englishName;
-
-        return $this;
-    }
-
-    public function getPokemonId(): ?int
-    {
-        return $this->pokemonId;
-    }
-
-    public function setPokemonId(int $pokemonId): self
-    {
-        $this->pokemonId = $pokemonId;
+        $this->pokemonIdentifier = $pokemonIdentifier;
 
         return $this;
     }
@@ -107,6 +97,36 @@ class Pokemon
     {
         if ($this->moves->removeElement($move)) {
             $move->removePokemon($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonName[]
+     */
+    public function getNames(): Collection
+    {
+        return $this->names;
+    }
+
+    public function addName(PokemonName $name): self
+    {
+        if (!$this->names->contains($name)) {
+            $this->names[] = $name;
+            $name->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeName(PokemonName $name): self
+    {
+        if ($this->names->removeElement($name)) {
+            // set the owning side to null (unless already changed)
+            if ($name->getPokemon() === $this) {
+                $name->setPokemon(null);
+            }
         }
 
         return $this;

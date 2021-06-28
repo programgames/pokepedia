@@ -17,37 +17,37 @@ class Move
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\ManyToMany(targetEntity=Pokemon::class, inversedBy="moves")
      */
-    private $pokemon;
+    private Collection $pokemon;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $learningType;
+    private ?string $learningType;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $englishName;
+    private ?string $englishName;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $generation;
+    private ?int $generation;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $games;
+    private ?string $games;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $form;
+    private ?string $forms;
 
     public function __construct()
     {
@@ -131,14 +131,14 @@ class Move
         return $this;
     }
 
-    public function getForm(): ?string
+    public function getForms(): ?string
     {
-        return $this->form;
+        return $this->forms;
     }
 
-    public function setForm(?string $form): self
+    public function setForms(?string $forms): self
     {
-        $this->form = $form;
+        $this->forms = $forms;
 
         return $this;
     }
