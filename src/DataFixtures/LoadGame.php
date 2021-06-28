@@ -13,41 +13,17 @@ class LoadGame extends Fixture
     public function load(ObjectManager $manager)
     {
         $games = [
-            'green',
-            'blue',
-            'yellow',
-            'silver',
-            'gold',
-            'crystal',
-            'emerald',
-            'ruby',
-            'sapphire',
-            'firered',
-            'leafgreen',
-            'diamond',
-            'pearl',
-            'platinum',
-            'heartgold',
-            'soulsilver',
-            'black',
-            'white',
-            'black2',
-            'white2',
-            'x',
-            'y',
-            'omegaruby',
-            'alpha_sapphire',
-            'sun',
-            'moon',
-            'ultrasun',
-            'ultramoon',
-            'sword',
-            'shield',
+            'DP' => ['gen'=> 4, 'isFirst'=> true],
+            'PtHGSS ' => ['gen'=> 4, 'isFirst'=> false],
+            'BW' => ['gen'=> 5, 'isFirst'=> true],
+            'B2W2' => ['gen'=> 5, 'isFirst'=> false],
         ];
 
-        foreach ($games as $gameName) {
+        foreach ($games as $gameName => $data) {
             $game = new Game();
             $game->setName($gameName);
+            $game->setGen($data['gen']);
+            $game->setIsFirst($data['isFirst']);
 
             $manager->persist($game);
         }

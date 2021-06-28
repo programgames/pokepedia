@@ -42,16 +42,17 @@ class Move
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $games;
+    private ?string $forms;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToMany(targetEntity=GameMoveExtra::class, mappedBy="move", orphanRemoval=true)
      */
-    private ?string $forms;
+    private $gameExtras;
 
     public function __construct()
     {
         $this->pokemon = new ArrayCollection();
+        $this->gameExtras = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,17 +120,6 @@ class Move
         return $this;
     }
 
-    public function getGames(): ?string
-    {
-        return $this->games;
-    }
-
-    public function setGames(?string $games): self
-    {
-        $this->games = $games;
-
-        return $this;
-    }
 
     public function getForms(): ?string
     {
@@ -139,6 +129,36 @@ class Move
     public function setForms(?string $forms): self
     {
         $this->forms = $forms;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GameMoveExtra[]
+     */
+    public function getGameExtras(): Collection
+    {
+        return $this->gameExtras;
+    }
+
+    public function addGameExtra(GameMoveExtra $gameExtra): self
+    {
+        if (!$this->gameExtras->contains($gameExtra)) {
+            $this->gameExtras[] = $gameExtra;
+            $gameExtra->setMove($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGameExtra(GameMoveExtra $gameExtra): self
+    {
+        if ($this->gameExtras->removeElement($gameExtra)) {
+            // set the owning side to null (unless already changed)
+            if ($gameExtra->getMove() === $this) {
+                $gameExtra->setMove(null);
+            }
+        }
 
         return $this;
     }
