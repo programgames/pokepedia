@@ -51,8 +51,7 @@ class ImportBulbapediaMoveSetCommand extends Command
         } else
         $pokemons = $this->entityManager->getRepository(Pokemon::class)->findBy(
             [
-                'generation' => $gen,
-                'pokemonIdentifier'=> 614
+                'generation' => $gen
             ]
         );
 

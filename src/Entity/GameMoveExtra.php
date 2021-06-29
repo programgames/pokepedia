@@ -20,24 +20,24 @@ class GameMoveExtra
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $startAt;
+    private ?int $startAt;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $price;
+    private ?int $price;
 
     /**
      * @ORM\ManyToOne(targetEntity=Move::class, inversedBy="gameExtras")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $move;
+    private ?Move $move;
 
     /**
-     * @ORM\ManyToOne(targetEntity=game::class)
+     * @ORM\ManyToOne(targetEntity=Game::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $game;
+    private ?game $game;
 
     public function getId(): ?int
     {

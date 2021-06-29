@@ -27,18 +27,18 @@ class MoveSetManager
     public function importTutoringMoves(Pokemon $pokemon, int $gen)
     {
         $moveNames = $this->bulbapediaMovesAPI->getTutorMoves($pokemon, GenerationHelper::genNumberToLitteral($gen));
-        foreach ($moveNames as $moveName) {
+        foreach ($moveNames as $moveInformation) {
             $move = new Move();
             $move->addPokemon($pokemon);
-            $move->setEnglishName($moveName[1]);
+            $move->setEnglishName($moveInformation[1]);
             $games = [];
-            if (array_key_exists(9, $moveName) && $moveName[9] === 'yes') {
+            if (array_key_exists(9, $moveInformation) && $moveInformation[9] === 'yes') {
                 $games['B/W'] = true;
             }
-            if (array_key_exists(10, $moveName) && $moveName[10] === 'yes') {
+            if (array_key_exists(10, $moveInformation) && $moveInformation[10] === 'yes') {
                 $games['B2/W2'] = true;
             }
-            $move->setGames(json_encode($games));
+//            $move->setGames(json_encode($games));
             $move->setLearningType(MoveSetHelper::TUTORING_TYPE);
             $move->setGeneration($gen);
             $this->entityManager->persist($move);
@@ -54,15 +54,7 @@ class MoveSetManager
             $move->addPokemon($pokemon);
 
             if($moveInformation['format'] === 'numeral') {
-                $move->setEnglishName($moveInformation[1]);
-                $games = [];
-                if (array_key_exists(9, $moveInformation['value']) && $moveInformation['value'][9] === 'yes') {
-                    $games['B/W'] = true;
-                }
-                if (array_key_exists(10, $moveInformation['value']) && $moveInformation['value'][10] === 'yes') {
-                    $games['B2/W2'] = true;
-                }
-                $move->setGames(json_encode($games));
+                $move->setEnglishName($moveInformation['value'][2]);
             } else {
                 $move->setEnglishName($moveInformation['value'][3]);
                 $gameExtra1 = new GameMoveExtra();
