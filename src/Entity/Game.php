@@ -27,11 +27,6 @@ class Game
      */
     private $gen;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isFirst;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -57,18 +52,6 @@ class Game
     public function setGen(int $gen): self
     {
         $this->gen = $gen;
-
-        return $this;
-    }
-
-    public function getIsFirst(): ?bool
-    {
-        return $this->isFirst;
-    }
-
-    public function setIsFirst(bool $isFirst): self
-    {
-        $this->isFirst = $isFirst;
 
         return $this;
     }

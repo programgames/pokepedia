@@ -23,7 +23,6 @@ class LoadGame extends Fixture
             $game = new Game();
             $game->setName($gameName);
             $game->setGen($data['gen']);
-            $game->setIsFirst($data['isFirst']);
 
             $manager->persist($game);
         }

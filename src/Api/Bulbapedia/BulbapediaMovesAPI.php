@@ -155,11 +155,7 @@ class BulbapediaMovesAPI
 
     private function checkLevelingFormat(array $moves)
     {
-        if (!in_array($moves[0],
-            [
-                '====By [[Level|leveling up]]===='
-            ]
-        )) {
+        if ($moves[0] !== '====By [[Level|leveling up]]====') {
             throw  new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         };
 
@@ -170,11 +166,7 @@ class BulbapediaMovesAPI
 
     private function checkTutoringFormat(array $moves)
     {
-        if (!in_array($moves[0],
-            [
-                '====By [[Move Tutor|tutoring]]===='
-            ]
-        )) {
+        if ($moves[0] !== '====By [[Move Tutor|tutoring]]====') {
             throw  new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         };
 

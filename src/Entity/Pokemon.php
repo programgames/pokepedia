@@ -31,19 +31,25 @@ class Pokemon
     private ?int $generation;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Move::class, mappedBy="pokemon")
-     */
-    private Collection $moves;
-
-    /**
      * @ORM\OneToMany(targetEntity=PokemonName::class, mappedBy="pokemon", orphanRemoval=true)
      */
     private $names;
 
+    /**
+     * @ORM\OneToMany(targetEntity=TutoringMove::class, mappedBy="pokemon", orphanRemoval=true)
+     */
+    private $tutoringMoves;
+
+    /**
+     * @ORM\OneToMany(targetEntity=LevelingUpMove::class, mappedBy="pokemon", orphanRemoval=true)
+     */
+    private $levelingUpMoves;
+
     public function __construct()
     {
-        $this->moves = new ArrayCollection();
         $this->names = new ArrayCollection();
+        $this->tutoringMoves = new ArrayCollection();
+        $this->levelingUpMoves = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -76,33 +82,6 @@ class Pokemon
     }
 
     /**
-     * @return Collection|Move[]
-     */
-    public function getMoves(): Collection
-    {
-        return $this->moves;
-    }
-
-    public function addMove(Move $move): self
-    {
-        if (!$this->moves->contains($move)) {
-            $this->moves[] = $move;
-            $move->addPokemon($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMove(Move $move): self
-    {
-        if ($this->moves->removeElement($move)) {
-            $move->removePokemon($this);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|PokemonName[]
      */
     public function getNames(): Collection
@@ -122,10 +101,68 @@ class Pokemon
 
     public function removeName(PokemonName $name): self
     {
-        if ($this->names->removeElement($name)) {
+        // set the owning side to null (unless already changed)
+        if ($this->names->removeElement($name) && $name->getPokemon() === $this) {
+            $name->setPokemon(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TutoringMove[]
+     */
+    public function getTutoringMoves(): Collection
+    {
+        return $this->tutoringMoves;
+    }
+
+    public function addTutoringMove(TutoringMove $tutoringMove): self
+    {
+        if (!$this->tutoringMoves->contains($tutoringMove)) {
+            $this->tutoringMoves[] = $tutoringMove;
+            $tutoringMove->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTutoringMove(TutoringMove $tutoringMove): self
+    {
+        if ($this->tutoringMoves->removeElement($tutoringMove)) {
             // set the owning side to null (unless already changed)
-            if ($name->getPokemon() === $this) {
-                $name->setPokemon(null);
+            if ($tutoringMove->getPokemon() === $this) {
+                $tutoringMove->setPokemon(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LevelingUpMove[]
+     */
+    public function getLevelingUpMoves(): Collection
+    {
+        return $this->levelingUpMoves;
+    }
+
+    public function addLevelingUpMove(LevelingUpMove $levelingUpMove): self
+    {
+        if (!$this->levelingUpMoves->contains($levelingUpMove)) {
+            $this->levelingUpMoves[] = $levelingUpMove;
+            $levelingUpMove->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLevelingUpMove(LevelingUpMove $levelingUpMove): self
+    {
+        if ($this->levelingUpMoves->removeElement($levelingUpMove)) {
+            // set the owning side to null (unless already changed)
+            if ($levelingUpMove->getPokemon() === $this) {
+                $levelingUpMove->setPokemon(null);
             }
         }
 
