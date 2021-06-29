@@ -52,31 +52,40 @@ class ImportBulbapediaMoveSetCommand extends Command
         $pokemons = $this->entityManager->getRepository(Pokemon::class)->findBy(
             [
                 'generation' => $gen,
-                'pokemonIdentifier' => 614
             ]
         );
 
         /** @var Pokemon $pokemon */
         foreach ($pokemons as $pokemon) {
-            $io->info(
-                strtr(
-                    'Importing Pokemon %pokemon% moves for type %type%',
-                    [
-                        '%pokemon%' => $pokemon->getPokemonIdentifier(),
-                        '%type%' => MoveSetHelper::TUTORING_TYPE
-                    ]
-                )
-            );
+
             if (!in_array($type, ['all', MoveSetHelper::TUTORING_TYPE, MoveSetHelper::LEVELING_UP_TYPE])) {
                 $io->error('Unknown moveset type');
                 return Command::FAILURE;
             }
 
             if (in_array($type, ['all', MoveSetHelper::TUTORING_TYPE])) {
+                $io->info(
+                    strtr(
+                        'Importing Pokemon %pokemon% moves for type %type%',
+                        [
+                            '%pokemon%' => $pokemon->getPokemonIdentifier(),
+                            '%type%' => MoveSetHelper::TUTORING_TYPE
+                        ]
+                    )
+                );
                 $this->moveSetManager->importTutoringMoves($pokemon, $gen);
             }
 
             if (in_array($type, ['all', MoveSetHelper::LEVELING_UP_TYPE])) {
+                $io->info(
+                    strtr(
+                        'Importing Pokemon %pokemon% moves for type %type%',
+                        [
+                            '%pokemon%' => $pokemon->getPokemonIdentifier(),
+                            '%type%' => MoveSetHelper::LEVELING_UP_TYPE
+                        ]
+                    )
+                );
                 $this->moveSetManager->importLevelingMoves($pokemon, $gen);
             }
         }

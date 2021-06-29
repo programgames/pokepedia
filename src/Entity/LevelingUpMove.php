@@ -3,17 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\LevelingUpMoveRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=LevelingUpMoveRepository::class)
  * @ORM\Table(
- *    name="leveling_up_move",
- *    uniqueConstraints={
- *        @ORM\UniqueConstraint(name="uniq_move", columns={"move","pokemon_id","type","generation","form"})
- *    }
+ *    name="leveling_up_move"
  * )
  */
 class LevelingUpMove
@@ -70,10 +65,6 @@ class LevelingUpMove
      */
     private $form;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Game::class)
-     */
-    private $games;
 
     /**
      * @ORM\ManyToOne(targetEntity=Pokemon::class, inversedBy="levelingUpMoves")
@@ -86,10 +77,120 @@ class LevelingUpMove
      */
     private $generation;
 
-    public function __construct()
-    {
-        $this->games = new ArrayCollection();
-    }
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $crystal;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $fireRed;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $leafGreen;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $emerald;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $diamond;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $pearl;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $platinum;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $heartGold;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $soulSilver;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $black;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $white;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $black2;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $white2;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $x;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $y;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $omegaRuby;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $omegaSapphire;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $sun;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $moon;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $ultraMoon;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $ultraSun;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $sword;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $shield;
 
     public function getId(): ?int
     {
@@ -204,30 +305,6 @@ class LevelingUpMove
         return $this;
     }
 
-    /**
-     * @return Collection|Game[]
-     */
-    public function getGames(): Collection
-    {
-        return $this->games;
-    }
-
-    public function addGame(Game $game): self
-    {
-        if (!$this->games->contains($game)) {
-            $this->games[] = $game;
-        }
-
-        return $this;
-    }
-
-    public function removeGame(Game $game): self
-    {
-        $this->games->removeElement($game);
-
-        return $this;
-    }
-
     public function getPokemon(): ?Pokemon
     {
         return $this->pokemon;
@@ -248,6 +325,282 @@ class LevelingUpMove
     public function setGeneration(int $generation): self
     {
         $this->generation = $generation;
+
+        return $this;
+    }
+
+    public function getCrystal(): ?bool
+    {
+        return $this->crystal;
+    }
+
+    public function setCrystal(?bool $crystal): self
+    {
+        $this->crystal = $crystal;
+
+        return $this;
+    }
+
+    public function getFireRed(): ?bool
+    {
+        return $this->fireRed;
+    }
+
+    public function setFireRed(?bool $fireRed): self
+    {
+        $this->fireRed = $fireRed;
+
+        return $this;
+    }
+
+    public function getLeafGreen(): ?bool
+    {
+        return $this->leafGreen;
+    }
+
+    public function setLeafGreen(?bool $leafGreen): self
+    {
+        $this->leafGreen = $leafGreen;
+
+        return $this;
+    }
+
+    public function getEmerald(): ?bool
+    {
+        return $this->emerald;
+    }
+
+    public function setEmerald(?bool $emerald): self
+    {
+        $this->emerald = $emerald;
+
+        return $this;
+    }
+
+    public function getDiamond(): ?bool
+    {
+        return $this->diamond;
+    }
+
+    public function setDiamond(?bool $diamond): self
+    {
+        $this->diamond = $diamond;
+
+        return $this;
+    }
+
+    public function getPearl(): ?bool
+    {
+        return $this->pearl;
+    }
+
+    public function setPearl(?bool $pearl): self
+    {
+        $this->pearl = $pearl;
+
+        return $this;
+    }
+
+    public function getPlatinum(): ?bool
+    {
+        return $this->platinum;
+    }
+
+    public function setPlatinum(?bool $platinum): self
+    {
+        $this->platinum = $platinum;
+
+        return $this;
+    }
+
+    public function getHeartGold(): ?bool
+    {
+        return $this->heartGold;
+    }
+
+    public function setHeartGold(?bool $heartGold): self
+    {
+        $this->heartGold = $heartGold;
+
+        return $this;
+    }
+
+    public function getSoulSilver(): ?bool
+    {
+        return $this->soulSilver;
+    }
+
+    public function setSoulSilver(bool $soulSilver): self
+    {
+        $this->soulSilver = $soulSilver;
+
+        return $this;
+    }
+
+    public function getBlack(): ?bool
+    {
+        return $this->black;
+    }
+
+    public function setBlack(?bool $black): self
+    {
+        $this->black = $black;
+
+        return $this;
+    }
+
+    public function getWhite(): ?bool
+    {
+        return $this->white;
+    }
+
+    public function setWhite(?bool $white): self
+    {
+        $this->white = $white;
+
+        return $this;
+    }
+
+    public function getBlack2(): ?bool
+    {
+        return $this->black2;
+    }
+
+    public function setBlack2(?bool $black2): self
+    {
+        $this->black2 = $black2;
+
+        return $this;
+    }
+
+    public function getWhite2(): ?bool
+    {
+        return $this->white2;
+    }
+
+    public function setWhite2(?bool $white2): self
+    {
+        $this->white2 = $white2;
+
+        return $this;
+    }
+
+    public function getX(): ?bool
+    {
+        return $this->x;
+    }
+
+    public function setX(?bool $x): self
+    {
+        $this->x = $x;
+
+        return $this;
+    }
+
+    public function getY(): ?bool
+    {
+        return $this->y;
+    }
+
+    public function setY(?bool $y): self
+    {
+        $this->y = $y;
+
+        return $this;
+    }
+
+    public function getOmegaRuby(): ?bool
+    {
+        return $this->omegaRuby;
+    }
+
+    public function setOmegaRuby(?bool $omegaRuby): self
+    {
+        $this->omegaRuby = $omegaRuby;
+
+        return $this;
+    }
+
+    public function getOmegaSapphire(): ?bool
+    {
+        return $this->omegaSapphire;
+    }
+
+    public function setOmegaSapphire(?bool $omegaSapphire): self
+    {
+        $this->omegaSapphire = $omegaSapphire;
+
+        return $this;
+    }
+
+    public function getSun(): ?bool
+    {
+        return $this->sun;
+    }
+
+    public function setSun(?bool $sun): self
+    {
+        $this->sun = $sun;
+
+        return $this;
+    }
+
+    public function getMoon(): ?bool
+    {
+        return $this->moon;
+    }
+
+    public function setMoon(?bool $moon): self
+    {
+        $this->moon = $moon;
+
+        return $this;
+    }
+
+    public function getUltraMoon(): ?bool
+    {
+        return $this->ultraMoon;
+    }
+
+    public function setUltraMoon(?bool $ultraMoon): self
+    {
+        $this->ultraMoon = $ultraMoon;
+
+        return $this;
+    }
+
+    public function getUltraSun(): ?bool
+    {
+        return $this->ultraSun;
+    }
+
+    public function setUltraSun(?bool $ultraSun): self
+    {
+        $this->ultraSun = $ultraSun;
+
+        return $this;
+    }
+
+    public function getSword(): ?bool
+    {
+        return $this->sword;
+    }
+
+    public function setSword(?bool $sword): self
+    {
+        $this->sword = $sword;
+
+        return $this;
+    }
+
+    public function getShield(): ?bool
+    {
+        return $this->shield;
+    }
+
+    public function setShield(bool $shield): self
+    {
+        $this->shield = $shield;
 
         return $this;
     }

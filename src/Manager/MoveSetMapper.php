@@ -34,20 +34,9 @@ class MoveSetMapper
 
         $moveNames = $this->bulbapediaMovesAPI->getTutorMoves($pokemon, GenerationHelper::genNumberToLitteral($gen));
         foreach ($moveNames as $moveInformation) {
-            $move = new TutoringMove();
-            $move->setPokemon($pokemon);
-            $move->setEnglishName($moveInformation[1]);
-            $games = [];
-            if (array_key_exists(9, $moveInformation) && $moveInformation[9] === 'yes') {
-                $games['B/W'] = true;
+            if ($moveInformation['format'] === 'numeral') {
+
             }
-            if (array_key_exists(10, $moveInformation) && $moveInformation[10] === 'yes') {
-                $games['B2/W2'] = true;
-            }
-//            $move->setGames(json_encode($games));
-            $move->setLearningType(MoveSetHelper::TUTORING_TYPE);
-            $move->setGeneration($gen);
-            $this->entityManager->persist($move);
         }
         $this->entityManager->flush();
     }
@@ -75,6 +64,8 @@ class MoveSetMapper
                 $move->setType(MoveSetHelper::MOVE_TYPE_GLOBAL);
                 $this->entityManager->persist($move);
             } else {
+                //TODO gerer N/A
+
                 $move1 = new LevelingUpMove();
                 $move1->setPokemon($pokemon);
                 $move1->setGeneration($gen);
@@ -103,8 +94,6 @@ class MoveSetMapper
 
                 $this->entityManager->persist($move1);
                 $this->entityManager->persist($move2);
-
-
             }
 
         }
