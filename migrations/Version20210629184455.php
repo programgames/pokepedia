@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210629115447 extends AbstractMigration
+final class Version20210629184455 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,26 +20,27 @@ final class Version20210629115447 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP SEQUENCE move_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE move_name_alias_id_seq CASCADE');
-        $this->addSql('CREATE SEQUENCE game_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE leveling_up_move_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE move_alias_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE tutoring_move_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE game (id INT NOT NULL, name VARCHAR(255) NOT NULL, gen INT NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE TABLE leveling_up_move (id INT NOT NULL, pokemon_id INT NOT NULL, move VARCHAR(255) NOT NULL, level INT DEFAULT NULL, type VARCHAR(255) NOT NULL, attack_type VARCHAR(255) NOT NULL, category VARCHAR(255) NOT NULL, power INT DEFAULT NULL, accuracy INT DEFAULT NULL, power_points INT NOT NULL, form VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX uniq_game ON game (name)');
+        $this->addSql('CREATE TABLE leveling_up_move (id INT NOT NULL, pokemon_id INT NOT NULL, move VARCHAR(255) NOT NULL, level INT DEFAULT NULL, type VARCHAR(255) NOT NULL, attack_type VARCHAR(255) NOT NULL, category VARCHAR(255) NOT NULL, power INT DEFAULT NULL, accuracy INT DEFAULT NULL, power_points INT NOT NULL, form VARCHAR(255) DEFAULT NULL, generation INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_BEB08D0F2FE71C3E ON leveling_up_move (pokemon_id)');
+        $this->addSql('CREATE UNIQUE INDEX uniq_move ON leveling_up_move (move, pokemon_id, type, generation, form)');
         $this->addSql('CREATE TABLE leveling_up_move_game (leveling_up_move_id INT NOT NULL, game_id INT NOT NULL, PRIMARY KEY(leveling_up_move_id, game_id))');
         $this->addSql('CREATE INDEX IDX_5C75C5862851D739 ON leveling_up_move_game (leveling_up_move_id)');
         $this->addSql('CREATE INDEX IDX_5C75C586E48FD905 ON leveling_up_move_game (game_id)');
         $this->addSql('CREATE TABLE move_alias (id INT NOT NULL, move_name_id INT NOT NULL, name VARCHAR(255) NOT NULL, gen VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_2D6E743D83DA5A81 ON move_alias (move_name_id)');
+        $this->addSql('CREATE UNIQUE INDEX uniq_alias ON move_alias (name, move_name_id)');
         $this->addSql('CREATE TABLE move_name (id INT NOT NULL, move_identifier INT NOT NULL, language_id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX uniq_move_name ON move_name (move_identifier, language_id, name)');
         $this->addSql('CREATE TABLE pokemon (id INT NOT NULL, pokemon_identifier INT NOT NULL, generation INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX uniq_pokemon ON pokemon (pokemon_identifier)');
         $this->addSql('CREATE TABLE pokemon_name (id INT NOT NULL, pokemon_id INT NOT NULL, language_id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_628A00452FE71C3E ON pokemon_name (pokemon_id)');
-        $this->addSql('CREATE TABLE tutoring_move (id INT NOT NULL, pokemon_id INT NOT NULL, move VARCHAR(255) NOT NULL, type VARCHAR(255) NOT NULL, attack_type VARCHAR(255) NOT NULL, category VARCHAR(255) NOT NULL, power INT DEFAULT NULL, accuracy INT NOT NULL, power_points INT NOT NULL, form VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX uniq_pokemon_hame ON pokemon_name (language_id, name)');
+        $this->addSql('CREATE TABLE tutoring_move (id INT NOT NULL, pokemon_id INT NOT NULL, move VARCHAR(255) NOT NULL, type VARCHAR(255) NOT NULL, attack_type VARCHAR(255) NOT NULL, category VARCHAR(255) NOT NULL, power INT DEFAULT NULL, accuracy INT NOT NULL, power_points INT NOT NULL, form VARCHAR(255) DEFAULT NULL, generation INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_C77301F2FE71C3E ON tutoring_move (pokemon_id)');
+        $this->addSql('CREATE UNIQUE INDEX uniq_turoring_move ON tutoring_move (move, pokemon_id, type, generation, form)');
         $this->addSql('CREATE TABLE tutoring_move_game (tutoring_move_id INT NOT NULL, game_id INT NOT NULL, PRIMARY KEY(tutoring_move_id, game_id))');
         $this->addSql('CREATE INDEX IDX_919E88BC601CF31D ON tutoring_move_game (tutoring_move_id)');
         $this->addSql('CREATE INDEX IDX_919E88BCE48FD905 ON tutoring_move_game (game_id)');
@@ -65,12 +66,6 @@ final class Version20210629115447 extends AbstractMigration
         $this->addSql('ALTER TABLE pokemon_name DROP CONSTRAINT FK_628A00452FE71C3E');
         $this->addSql('ALTER TABLE tutoring_move DROP CONSTRAINT FK_C77301F2FE71C3E');
         $this->addSql('ALTER TABLE tutoring_move_game DROP CONSTRAINT FK_919E88BC601CF31D');
-        $this->addSql('DROP SEQUENCE game_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE leveling_up_move_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE move_alias_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE tutoring_move_id_seq CASCADE');
-        $this->addSql('CREATE SEQUENCE move_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE move_name_alias_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('DROP TABLE game');
         $this->addSql('DROP TABLE leveling_up_move');
         $this->addSql('DROP TABLE leveling_up_move_game');

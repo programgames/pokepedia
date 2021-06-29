@@ -7,6 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=GameRepository::class)
+ * @ORM\Table(
+ *    name="game",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="uniq_game", columns={"name"})
+ *    }
+ * )
  */
 class Game
 {

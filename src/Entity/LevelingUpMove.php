@@ -9,58 +9,64 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=LevelingUpMoveRepository::class)
+ * @ORM\Table(
+ *    name="leveling_up_move",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="uniq_move", columns={"move","pokemon_id","type","generation","form"})
+ *    }
+ * )
  */
 class LevelingUpMove
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="id")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, name="move")
      */
     private $move;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, name="level")
      */
     private $level;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, name="type")
      */
     private $type;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, name="attack_type")
      */
     private $attackType;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, name="category")
      */
     private $category;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, name="power")
      */
     private $power;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, name="accuracy")
      */
     private $accuracy;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="power_points")
      */
     private $powerPoints;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true, name="form")
      */
     private $form;
 
@@ -71,9 +77,14 @@ class LevelingUpMove
 
     /**
      * @ORM\ManyToOne(targetEntity=Pokemon::class, inversedBy="levelingUpMoves")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, name="pokemon_id")
      */
     private $pokemon;
+
+    /**
+     * @ORM\Column(type="integer", name="generation")
+     */
+    private $generation;
 
     public function __construct()
     {
@@ -225,6 +236,18 @@ class LevelingUpMove
     public function setPokemon(?Pokemon $pokemon): self
     {
         $this->pokemon = $pokemon;
+
+        return $this;
+    }
+
+    public function getGeneration(): ?int
+    {
+        return $this->generation;
+    }
+
+    public function setGeneration(int $generation): self
+    {
+        $this->generation = $generation;
 
         return $this;
     }

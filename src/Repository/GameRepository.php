@@ -20,15 +20,11 @@ class GameRepository extends ServiceEntityRepository
     }
 
 
-    public function findByGenAndOrder($gen,$order): ?Game
+    public function findAllAssociative(): array
     {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.gen = :gen')
-            ->andWhere('g.isFirst = :isFirst')
-            ->setParameter('gen', $gen)
-            ->setParameter('isFirst', $order)
+        return $this->createQueryBuilder('g', 'g.name')
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult()
         ;
     }
 

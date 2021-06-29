@@ -8,7 +8,10 @@ use App\Entity\Pokemon;
 use App\Entity\PokemonName;
 use App\Exception\EmptyMoveSetException;
 use App\Exception\WrongHeaderException;
+use App\Formatter\MoveFormatter;
+use App\Generation\GenerationHelper;
 use App\MoveSet\MoveSetHelper;
+use App\Sanitize\MoveSatanizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -19,10 +22,14 @@ class BulbapediaMovesAPI
 {
     private EntityManagerInterface $entityManager;
     private FilesystemAdapter $cache;
+    private MoveSatanizer $moveSatanizer;
+    private MoveFormatter $moveFormatter;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager,MoveSatanizer $moveSatanizer, MoveFormatter $moveFormatter)
     {
         $this->entityManager = $entityManager;
+        $this->moveSatanizer  = $moveSatanizer;
+        $this->moveFormatter  = $moveFormatter;
         $this->cache = new FilesystemAdapter();
     }
 
@@ -33,11 +40,9 @@ class BulbapediaMovesAPI
         });
 
         $this->checkTutoringFormat($moves);
-
         $moveNames = [];
 
         foreach ($moves as $move) {
-            $move = str_replace(array('{', '}'), '', $move);
             if (!preg_match('/tutor\d/', $move, $matches)) {
                 continue;
             }
@@ -51,49 +56,24 @@ class BulbapediaMovesAPI
         return $moveNames;
     }
 
-    public function getLevelMoves(Pokemon $pokemon, string $generation)
+    public function getLevelMoves(Pokemon $pokemon, int $generation)
     {
         $moves = $this->cache->get(sprintf('wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::LEVELING_UP_TYPE), function (ItemInterface $item) use ($pokemon, $generation) {
 
             return $this->getMovesByPokemonGenerationAndType($pokemon, $generation, MoveSetHelper::BULBAPEDIA_LEVELING_UP_TYPE_LABEL);
         });
 
-        $moveNames = [];
+        $moves = $this->moveSatanizer->checkAndSanitizeLevelingMoves($moves);
+        $moves = $this->moveFormatter->formatLevelingLearnlist($moves,$generation);
 
-        $this->checkLevelingFormat($moves);
-
-        foreach ($moves as $move) {
-            $move = str_replace(array('{', '}'), '', $move);
-
-            if (preg_match('/level\dnull/', $move, $matches)) {
-                throw new EmptyMoveSetException(sprintf('Empty moveset for pokemon %s in gen %s', $pokemon->getPokemonIdentifier(), $generation));
-            }
-
-            if (preg_match('/level\d+.*/', $move, $matches)) {
-                $moveNames[] = [
-                    'format' => 'numeral',
-                    'value' => explode('|', $move),
-                    'gen' => $generation
-                ];
-            }
-            if (preg_match('/level[XVI]+.*/', $move, $matches)) {
-                $moveNames[] = [
-                    'format' => 'roman',
-                    'value' => explode('|', $move),
-                    'gen' => $generation
-                ];
-            }
-
-        }
-
-        if (empty($moveNames)) {
+        if (empty($moves)) {
             throw new EmptyMoveSetException(sprintf('Empty moveset for pokemon %s in gen %s', $pokemon->getPokemonIdentifier(), $generation));
         }
 
-        return $moveNames;
+        return $moves;
     }
 
-    private function getMoveSections(Pokemon $pokemon, string $generation)
+    private function getMoveSections(Pokemon $pokemon, int $generation)
     {
         $pokemonName = $this->entityManager->getRepository(PokemonName::class)
             ->findOneBy(
@@ -107,7 +87,7 @@ class BulbapediaMovesAPI
         $sectionsUrl = strtr('https://bulbapedia.bulbagarden.net/w/api.php?action=parse&format=json&page=%pokemon%_(Pok%C3%A9mon)/Generation_%generation%_learnset&prop=sections&errorformat=wikitext&disabletoc=1',
             [
                 '%pokemon%' => $pokemonName->getName(),
-                '%generation%' => $generation,
+                '%generation%' => GenerationHelper::genNumberToLitteral($generation),
             ]);
 
         $browser = new HttpBrowser(HttpClient::create());
@@ -123,7 +103,7 @@ class BulbapediaMovesAPI
         return $formattedSections;
     }
 
-    private function getMovesByPokemonGenerationAndType(Pokemon $pokemon, string $generation, string $moveType): array
+    private function getMovesByPokemonGenerationAndType(Pokemon $pokemon, int $generation, string $moveType): array
     {
         $pokemonName = $this->entityManager->getRepository(PokemonName::class)
             ->findOneBy(
@@ -139,7 +119,7 @@ class BulbapediaMovesAPI
             [
                 '%pokemon%' => $pokemonName->getName(),
 //                '%pokemon%' => 'Kyurem',
-                '%generation%' => $generation,
+                '%generation%' => GenerationHelper::genNumberToLitteral($generation),
                 '%section%' => $sections[$moveType]
             ]);
 
@@ -153,19 +133,10 @@ class BulbapediaMovesAPI
         return preg_split('/$\R?^/m', $wikitext);
     }
 
-    private function checkLevelingFormat(array $moves)
-    {
-        if ($moves[0] !== '====By [[Level|leveling up]]====') {
-            throw  new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
-        };
-
-        if (!preg_match('/{{learnlist\/levelh.*}}/', $moves[1], $matches)) {
-            throw  new WrongHeaderException(sprintf('Invalid header: %s', $moves[1]));
-        }
-    }
-
     private function checkTutoringFormat(array $moves)
     {
+        $movesSize = count($moves);
+
         if ($moves[0] !== '====By [[Move Tutor|tutoring]]====') {
             throw  new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         };

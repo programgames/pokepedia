@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Pokemon;
-use App\Manager\MoveSetManager;
+use App\Manager\MoveSetMapper;
 use App\MoveSet\MoveSetHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -20,9 +20,9 @@ class ImportBulbapediaMoveSetCommand extends Command
 
     private EntityManagerInterface $entityManager;
     private BulbapediaMovesAPI $bulbapediaMovesAPI;
-    private MoveSetManager $moveSetManager;
+    private MoveSetMapper $moveSetManager;
 
-    public function __construct(EntityManagerInterface $entityManager, BulbapediaMovesAPI $bulbapediaMovesAPI, MoveSetManager $moveSetManager)
+    public function __construct(EntityManagerInterface $entityManager, BulbapediaMovesAPI $bulbapediaMovesAPI, MoveSetMapper $moveSetManager)
     {
         parent::__construct();
 
@@ -51,7 +51,8 @@ class ImportBulbapediaMoveSetCommand extends Command
         } else
         $pokemons = $this->entityManager->getRepository(Pokemon::class)->findBy(
             [
-                'generation' => $gen
+                'generation' => $gen,
+                'pokemonIdentifier' => 614
             ]
         );
 

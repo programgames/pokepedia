@@ -9,24 +9,30 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=PokemonRepository::class)
+ * @ORM\Table(
+ *    name="pokemon",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="uniq_pokemon", columns={"pokemon_identifier"})
+ *    }
+ * )
  */
 class Pokemon
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="id")
      */
     private ?int $id;
 
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="pokemon_identifier")
      */
     private ?int $pokemonIdentifier;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="generation")
      */
     private ?int $generation;
 

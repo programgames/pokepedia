@@ -7,6 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=MoveAliasRepository::class)
+ * @ORM\Table(
+ *    name="move_alias",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="uniq_alias", columns={"name","move_name_id"})
+ *    }
+ * )
  */
 class MoveAlias
 {
@@ -29,7 +35,7 @@ class MoveAlias
 
     /**
      * @ORM\ManyToOne(targetEntity=MoveName::class, inversedBy="moveAliases")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, name="move_name_id")
      */
     private ?MoveName $moveName;
 

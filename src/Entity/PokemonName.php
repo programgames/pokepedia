@@ -4,11 +4,15 @@ namespace App\Entity;
 
 use App\Repository\PokemonNameRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\Table;
-use Doctrine\ORM\Mapping\UniqueConstraint;
+
 /**
  * @ORM\Entity(repositoryClass=PokemonNameRepository::class)
- * @Table(name="pokemon_name")
+ * @ORM\Table(
+ *    name="pokemon_name",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="uniq_pokemon_hame", columns={"language_id", "name"})
+ *    }
+ * )
  */
 class PokemonName
 {

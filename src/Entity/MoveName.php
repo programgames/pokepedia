@@ -9,6 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=MoveNameRepository::class)
+ * @ORM\Table(
+ *    name="move_name",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="uniq_move_name", columns={"move_identifier","language_id","name"})
+ *    }
+ * )
  */
 class MoveName
 {
