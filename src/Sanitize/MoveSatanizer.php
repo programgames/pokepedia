@@ -36,10 +36,15 @@ class MoveSatanizer
 
     public function checkAndSanitizeLevelingMoves(array $moves)
     {
+        $movesByForms = [];
+
         $movesSize = count($moves);
         if ($moves[0] !== '====By [[Level|leveling up]]====') {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         };
+        if (!preg_match('/=====.*=====}}/', $moves[1], $matches)) {
+            return $this->handleFormMoves($moves);
+        }
 
         if (!preg_match('/{{learnlist\/levelh.*}}/', $moves[1], $matches)) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[1]));
@@ -58,6 +63,14 @@ class MoveSatanizer
             throw new WrongHeaderException(sprintf('Invalid footer: %s', $moves[1]));
         }
 
+        $movesByForm['noform'] = $moves;
+
         return $moves;
+    }
+
+    private function handleFormMoves(array $moves): array
+    {
+        $movesByForms = [];
+
     }
 }
