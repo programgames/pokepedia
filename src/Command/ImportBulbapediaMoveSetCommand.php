@@ -52,7 +52,7 @@ class ImportBulbapediaMoveSetCommand extends Command
         $pokemons = $this->entityManager->getRepository(Pokemon::class)->findBy(
             [
                 'generation' => $gen,
-                'pokemonIdentifier' => [646]
+//                'pokemonIdentifier' => 134
             ]
         );
 

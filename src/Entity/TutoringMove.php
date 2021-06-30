@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\TutoringMoveRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,17 +36,17 @@ class TutoringMove
     private $attackType;
 
     /**
-     * @ORM\Column(type="string", length=255, name="category")
+     * @ORM\Column(type="string", length=255, name="category", nullable=true)
      */
     private $category;
 
     /**
-     * @ORM\Column(type="integer", nullable=true, name="power")
+     * @ORM\Column(type="integer", nullable=true, name="power", nullable=true)
      */
     private $power;
 
     /**
-     * @ORM\Column(type="integer", name="accuracy")
+     * @ORM\Column(type="integer", name="accuracy", nullable=true)
      */
     private $accuracy;
 
@@ -72,6 +70,36 @@ class TutoringMove
      * @ORM\Column(type="integer", name="generation")
      */
     private $generation;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $red;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $blue;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $green;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $yellow;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $silver;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $gold;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -114,7 +142,7 @@ class TutoringMove
     private $heartGold;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $soulSilver;
 
@@ -147,6 +175,73 @@ class TutoringMove
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $y;
+
+    public function getRed()
+    {
+        return $this->red;
+    }
+
+    public function setRed($red)
+    {
+        $this->red = $red;
+        return $this;
+    }
+
+    public function getBlue()
+    {
+        return $this->blue;
+    }
+
+    public function setBlue($blue)
+    {
+        $this->blue = $blue;
+        return $this;
+    }
+
+    public function getGreen()
+    {
+        return $this->green;
+    }
+
+    public function setGreen($green)
+    {
+        $this->green = $green;
+        return $this;
+    }
+
+    public function getYellow()
+    {
+        return $this->yellow;
+    }
+
+    public function setYellow($yellow)
+    {
+        $this->yellow = $yellow;
+        return $this;
+    }
+
+    public function getSilver()
+    {
+        return $this->silver;
+    }
+
+    public function setSilver($silver)
+    {
+        $this->silver = $silver;
+        return $this;
+    }
+
+
+    public function getGold()
+    {
+        return $this->gold;
+    }
+
+    public function setGold($gold)
+    {
+        $this->gold = $gold;
+        return $this;
+    }
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -184,7 +279,7 @@ class TutoringMove
     private $sword;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $shield;
 
@@ -258,7 +353,7 @@ class TutoringMove
         return $this->accuracy;
     }
 
-    public function setAccuracy(int $accuracy): self
+    public function setAccuracy(?int $accuracy): self
     {
         $this->accuracy = $accuracy;
 

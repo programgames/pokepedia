@@ -3,6 +3,7 @@
 namespace App\Sanitize;
 
 use App\Exception\WrongFooterException;
+use App\Exception\WrongHeaderException;
 use App\Exception\WrongLearnListFormat;
 use App\Formatter\MoveFormatter;
 use App\Formatter\StringHelper;
@@ -16,70 +17,49 @@ class MoveSatanizer
         $this->moveFormatter = $moveFormatter;
     }
 
-    public function checkAndSanitizeTutoringMoves(array $moves)
+    public function checkAndSanitizeMoves(array $moves, int $generation, string $type)
     {
-        $movesSize = count($moves);
-        if ($moves[0] !== '====By [[Move Tutor|tutoring]]====') {
-            throw new WrongFooterException(sprintf('Invalid header: %s', $moves[0]));
-        };
+        $formattedMoves = [];
 
-        if (!preg_match('/learnlist\/tutorh.*/', $moves[1], $matches)) {
-            throw new WrongFooterException(sprintf('Invalid header: %s', $moves[1]));
+        $movesSize = count($moves);
+        if (!preg_match(sprintf('/learnlist.*/', $type), $moves[$movesSize-1], $matches)) {
+           array_pop($moves);
+           $movesSize--;
+        }
+
+        if (!in_array($moves[0], [
+                '====By [[Level|leveling up]]====',
+                '====By [[level|leveling up]]====',
+                '====By [[Move Tutor|tutoring]]====']
+        )) {
+            throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
+        };
+        if (preg_match('/=====.*=====/', $moves[1], $matches)) {
+            return $this->handleFormMoves($moves, $generation, $type);
+        }
+
+        if (!preg_match(sprintf('/learnlist\/%sh.*/', $type), $moves[1], $matches)) {
+            throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[1]));
         }
 
         for ($i = 2; $i < $movesSize - 1; $i++) {
-            $moves[$i] = StringHelper::clearBraces( $moves[$i]);
-
-            if (!preg_match('/learnlist\/tutorl\d+.*/', $moves[$i], $matches)
-                && !preg_match('/learnlist\/tutor\dnull/', $moves[$i], $matches)
-            ) {
+            if (!preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i], $matches)
+                && !preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i], $matches)
+                && !preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i], $matches)) {
                 throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[$i]));
             }
+            $formattedMoves[$i] = $this->moveFormatter->formatLearnlist($moves[$i], $generation, $type);
         }
-        if (!preg_match('/learnlist\/tutorf.*/', $moves[$i], $matches)) {
+        if (!preg_match(sprintf('/learnlist\/%sf.*/', $type), $moves[$i], $matches)) {
             throw new WrongFooterException(sprintf('Invalid footer: %s', $moves[1]));
         }
 
-        return $moves;
+        $movesByForm['noform'] = $formattedMoves;
+
+        return $movesByForm;
     }
 
-    public function checkAndSanitizeLevelingMoves(array $moves, int $generation)
-    {
-        $movesByForms = [];
-
-        $movesSize = count($moves);
-        if ($moves[0] !== '====By [[Level|leveling up]]====') {
-            throw new WrongFooterException(sprintf('Invalid header: %s', $moves[0]));
-        };
-        if (!preg_match('/=====.*=====/', $moves[1], $matches)) {
-            return $this->handleFormMoves($moves);
-        }
-
-        if (!preg_match('/learnlist\/levelh.*/', $moves[1], $matches)) {
-            throw new WrongFooterException(sprintf('Invalid header: %s', $moves[1]));
-        }
-
-        for ($i = 2; $i < $movesSize - 1; $i++) {
-            $moves[$i] = StringHelper::clearBraces( $moves[$i]);
-
-            if (!preg_match('/learnlist\/level\d+.*/', $moves[$i], $matches)
-                && !preg_match('/learnlist\/level\dnull/', $moves[$i], $matches)
-                && !preg_match('/learnlist\/level[XVI]+.*/', $moves[$i], $matches)) {
-                throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[$i]));
-            }
-            //TODO a verifier
-            $this->moveFormatter->formatLevelingLearnlist($moves[$i], $generation);
-        }
-        if (!preg_match('/learnlist\/levelf.*/', $moves[$i], $matches)) {
-            throw new WrongFooterException(sprintf('Invalid footer: %s', $moves[1]));
-        }
-
-        $movesByForm['noform'] = $moves;
-
-        return $moves;
-    }
-
-    private function handleFormMoves(array $moves): array
+    private function handleFormMoves(array $moves, int $generation, string $type): array
     {
         $movesByForms = [];
         $size = count($moves);
@@ -91,22 +71,22 @@ class MoveSatanizer
                 continue;
             }
 
-            if (!$form && !preg_match('/=====.*=====/', $moves[$i], $matches)) {
+            if (!$form && preg_match('/=====.*=====/', $moves[$i], $matches)) {
                 $form = str_replace('=', '', $moves[$i]);
-                if (!preg_match('/learnlist\/levelh.*/', $moves[$i + 1], $matches)) {
-                    throw new WrongFooterException(sprintf('Invalid header: %s', $moves[1]));
+                if (!preg_match(sprintf('/learnlist\/%sh.*/', $type), $moves[$i + 1], $matches)) {
+                    throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[1]));
                 }
                 $i++;
                 continue;
             }
-            if ($form && (preg_match('/learnlist\/level\d+.*/', $moves[$i], $matches)
-                    || preg_match('/learnlist\/level\dnull/', $moves[$i], $matches)
-                    || preg_match('/learnlist\/level[XVI]+.*/', $moves[$i], $matches))) {
-                $movesByForms[$form][] = $moves[$i];
-            } elseif (preg_match('/learnlist\/levelf.*/', $moves[$i], $matches)) {
+            if ($form && (preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i], $matches)
+                    || preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i], $matches)
+                    || preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i], $matches))) {
+                $movesByForms[$form][] = $this->moveFormatter->formatLearnlist($moves[$i], $generation, $type);
+            } elseif (preg_match(sprintf('/learnlist\/%sf.*/', $type), $moves[$i], $matches)) {
                 $form = null;
             } else {
-                throw new WrongFooterException(sprintf('Invalid footer: %s', $moves[1]));
+                throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[1]));
             }
         }
         return $movesByForms;
