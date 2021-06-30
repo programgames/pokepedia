@@ -6,51 +6,49 @@ use App\Exception\EmptyMoveSetException;
 
 class MoveFormatter
 {
-    public function formatTutoringLearnlist(array $moves, int $generation)
+    public function formatTutoringLearnlist(string $move, int $generation)
     {
-        foreach ($moves as $move) {
 
-            if (preg_match('/tutor\dnull/', $move, $matches)) {
-                throw new EmptyMoveSetException(sprintf('Empty moveset'));
-            }
-
-            if (preg_match('/tutor\d+.*/', $move, $matches)) {
-                $formattedMoves[] = [
-                    'format' => 'numeral',
-                    'value' => explode('|', $move),
-                    'gen' => $generation
-                ];
-            }
+        if (preg_match('/tutor\dnull/', $move, $matches)) {
+            $return = [
+                'format' => 'empty',
+                'value' => null,
+                'gen' => $generation
+            ];
         }
 
-        return $formattedMoves;
+        if (preg_match('/tutor\d+.*/', $move, $matches)) {
+            $return = [
+                'format' => 'numeral',
+                'value' => explode('|', $move),
+                'gen' => $generation
+            ];
+        }
     }
 
-    public function formatLevelingLearnlist(array $moves, int $generation)
+    public function formatLevelingLearnlist(string $move, int $generation)
     {
-        foreach ($moves as $move) {
-
-            if (preg_match('/level\dnull/', $move, $matches)) {
-                throw new EmptyMoveSetException(sprintf('Empty moveset'));
-            }
-
-            if (preg_match('/level\d+.*/', $move, $matches)) {
-                $formattedMoves[] = [
-                    'format' => 'numeral',
-                    'value' => explode('|', $move),
-                    'gen' => $generation
-                ];
-            }
-            if (preg_match('/level[XVI]+.*/', $move, $matches)) {
-                $formattedMoves[] = [
-                    'format' => 'roman',
-                    'value' => explode('|', $move),
-                    'gen' => $generation
-                ];
-            }
-
+        if (preg_match('/level\dnull/', $move, $matches)) {
+            $return = [
+                'format' => 'empty',
+                'value' => null,
+                'gen' => $generation
+            ];
         }
 
-        return $formattedMoves;
+        if (preg_match('/level\d+.*/', $move, $matches)) {
+            return [
+                'format' => 'numeral',
+                'value' => explode('|', $move),
+                'gen' => $generation
+            ];
+        }
+        if (preg_match('/level[XVI]+.*/', $move, $matches)) {
+            return [
+                'format' => 'roman',
+                'value' => explode('|', $move),
+                'gen' => $generation
+            ];
+        }
     }
 }
