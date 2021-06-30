@@ -9,13 +9,12 @@ use App\Entity\Game;
 use App\Entity\LevelingUpMove;
 use App\Entity\Pokemon;
 use App\Exception\UnknownMapping;
-use App\Exception\WrongLevelFormat;
 use App\Generation\GenerationHelper;
+use App\Helper\MoveSetHelper;
 use App\Helper\NumberHelper;
-use App\MoveSet\MoveSetHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
-class MoveSetMapper
+class MoveSetManager
 {
     private EntityManagerInterface $entityManager;
     private BulbapediaMovesAPI $bulbapediaMovesAPI;
@@ -100,7 +99,7 @@ class MoveSetMapper
                     $moveEntity2->setBlack2(true);
                     $moveEntity2->setWhite2(true);
                     $this->entityManager->persist($moveEntity2);
-                } else if ($move['format'] === 'numeral' && $gen === 1) {
+                } else if ($move['format'] === 'numeral' && ($gen === 1 || $gen  === 2)) {
                     $moveEntity1 = new LevelingUpMove();
                     $moveEntity1->setPokemon($pokemon);
                     $moveEntity1->setGeneration($gen);
@@ -114,7 +113,7 @@ class MoveSetMapper
                     $moveEntity1->setForm($form === "noform" ? null : $form);
                     $this->entityManager->persist($moveEntity1);
 
-                } else if ($move['format'] === 'roman' && $gen === 1) {
+                } else if ($move['format'] === 'roman' && ($gen === 1 || $gen === 2)) {
 
                     $moveEntity1 = new LevelingUpMove();
                     $moveEntity1->setPokemon($pokemon);
@@ -126,9 +125,15 @@ class MoveSetMapper
                     $moveEntity1->setAccuracy(NumberHelper::formatNumber($move['value'][6]));
                     $moveEntity1->setPowerPoints(NumberHelper::formatNumber($move['value'][7]));
                     $moveEntity1->setType(MoveSetHelper::MOVE_TYPE_SPECIFIC);
-                    $moveEntity1->setRed(true);
-                    $moveEntity1->setBlue(true);
-                    $moveEntity1->setGreen(true);
+                    if($gen ===  1) {
+                        $moveEntity1->setRed(true);
+                        $moveEntity1->setBlue(true);
+                        $moveEntity1->setGreen(true);
+                    }  elseif ($gen === 2) {
+                        $moveEntity1->setGold(true);
+                        $moveEntity1->setSilver(true);
+                    }
+
                     $moveEntity1->setForm($form === "noform" ? null : $form);
                     $this->entityManager->persist($moveEntity1);
 
@@ -142,7 +147,11 @@ class MoveSetMapper
                     $moveEntity2->setAccuracy(NumberHelper::formatNumber($move['value'][6]));
                     $moveEntity2->setPowerPoints(NumberHelper::formatNumber($move['value'][7]));
                     $moveEntity2->setType(MoveSetHelper::MOVE_TYPE_SPECIFIC);
-                    $moveEntity2->setYellow(true);
+                    if($gen === 1) {
+                        $moveEntity2->setYellow(true);
+                    } elseif ($gen === 2) {
+                        $moveEntity2->setCrystal(true);
+                    }
                     $moveEntity2->setForm($form === "noform" ? null : $form);
                     $this->entityManager->persist($moveEntity2);
 

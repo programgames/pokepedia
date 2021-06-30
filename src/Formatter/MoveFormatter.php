@@ -9,7 +9,7 @@ class MoveFormatter
 {
     public function formatLearnlist(string $move, int $generation, string $type)
     {
-        if (preg_match(sprintf('/%s\dnull/',$type), $move, $matches)) {
+        if (preg_match(sprintf('/%s\dnull/',$type), $move)) {
             $return = [
                 'format' => 'empty',
                 'value' => null,
@@ -17,14 +17,14 @@ class MoveFormatter
             ];
         }
 
-        if (preg_match(sprintf('/%s\d+.*/',$type), $move, $matches)) {
+        if (preg_match(sprintf('/%s\d+.*/',$type), $move)) {
             return [
                 'format' => 'numeral',
                 'value' => explode('|', $move),
                 'gen' => $generation
             ];
         }
-        if (preg_match(sprintf('/%s[XVI]+.*/',$type), $move, $matches)) {
+        if (preg_match(sprintf('/%s[XVI]+.*/',$type), $move)) {
             return [
                 'format' => 'roman',
                 'value' => explode('|', $move),

@@ -6,7 +6,6 @@ use App\Exception\WrongFooterException;
 use App\Exception\WrongHeaderException;
 use App\Exception\WrongLearnListFormat;
 use App\Formatter\MoveFormatter;
-use App\Formatter\StringHelper;
 
 class MoveSatanizer
 {
@@ -22,7 +21,7 @@ class MoveSatanizer
         $formattedMoves = [];
 
         $movesSize = count($moves);
-        if (!preg_match(sprintf('/learnlist.*/', $type), $moves[$movesSize-1], $matches)) {
+        if (!preg_match(sprintf('/learnlist.*/', $type), $moves[$movesSize-1])) {
            array_pop($moves);
            $movesSize--;
         }
@@ -34,23 +33,23 @@ class MoveSatanizer
         )) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         };
-        if (preg_match('/=====.*=====/', $moves[1], $matches)) {
+        if (preg_match('/=====.*=====/', $moves[1])) {
             return $this->handleFormMoves($moves, $generation, $type);
         }
 
-        if (!preg_match(sprintf('/learnlist\/%sh.*/', $type), $moves[1], $matches)) {
+        if (!preg_match(sprintf('/learnlist\/%sh.*/', $type), $moves[1])) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[1]));
         }
 
         for ($i = 2; $i < $movesSize - 1; $i++) {
-            if (!preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i], $matches)
-                && !preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i], $matches)
-                && !preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i], $matches)) {
+            if (!preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i])
+                && !preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])
+                && !preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i])) {
                 throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[$i]));
             }
             $formattedMoves[$i] = $this->moveFormatter->formatLearnlist($moves[$i], $generation, $type);
         }
-        if (!preg_match(sprintf('/learnlist\/%sf.*/', $type), $moves[$i], $matches)) {
+        if (!preg_match(sprintf('/learnlist\/%sf.*/', $type), $moves[$i])) {
             throw new WrongFooterException(sprintf('Invalid footer: %s', $moves[1]));
         }
 
@@ -71,19 +70,19 @@ class MoveSatanizer
                 continue;
             }
 
-            if (!$form && preg_match('/=====.*=====/', $moves[$i], $matches)) {
+            if (!$form && preg_match('/=====.*=====/', $moves[$i])) {
                 $form = str_replace('=', '', $moves[$i]);
-                if (!preg_match(sprintf('/learnlist\/%sh.*/', $type), $moves[$i + 1], $matches)) {
+                if (!preg_match(sprintf('/learnlist\/%sh.*/', $type), $moves[$i + 1])) {
                     throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[1]));
                 }
                 $i++;
                 continue;
             }
-            if ($form && (preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i], $matches)
-                    || preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i], $matches)
-                    || preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i], $matches))) {
+            if ($form && (preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i])
+                    || preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])
+                    || preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i]))) {
                 $movesByForms[$form][] = $this->moveFormatter->formatLearnlist($moves[$i], $generation, $type);
-            } elseif (preg_match(sprintf('/learnlist\/%sf.*/', $type), $moves[$i], $matches)) {
+            } elseif (preg_match(sprintf('/learnlist\/%sf.*/', $type), $moves[$i])) {
                 $form = null;
             } else {
                 throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[1]));

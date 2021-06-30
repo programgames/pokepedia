@@ -17,7 +17,7 @@ class LoadPokemon extends Fixture
             if($pokemondId >= 1 && $pokemondId <= 151) {
                 $generation = 1;
             } elseif ($pokemondId > 151 && $pokemondId <= 251) {
-                $generation = 1;
+                $generation = 2;
             } elseif ($pokemondId > 252 && $pokemondId <= 386) {
                 $generation = 3;
             } elseif ($pokemondId > 386 && $pokemondId <= 493) {

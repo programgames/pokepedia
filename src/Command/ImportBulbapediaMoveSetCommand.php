@@ -4,8 +4,8 @@ namespace App\Command;
 
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Pokemon;
-use App\Manager\MoveSetMapper;
-use App\MoveSet\MoveSetHelper;
+use App\Helper\MoveSetHelper;
+use App\Manager\MoveSetManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,9 +20,9 @@ class ImportBulbapediaMoveSetCommand extends Command
 
     private EntityManagerInterface $entityManager;
     private BulbapediaMovesAPI $bulbapediaMovesAPI;
-    private MoveSetMapper $moveSetManager;
+    private MoveSetManager $moveSetManager;
 
-    public function __construct(EntityManagerInterface $entityManager, BulbapediaMovesAPI $bulbapediaMovesAPI, MoveSetMapper $moveSetManager)
+    public function __construct(EntityManagerInterface $entityManager, BulbapediaMovesAPI $bulbapediaMovesAPI, MoveSetManager $moveSetManager)
     {
         parent::__construct();
 
@@ -58,7 +58,6 @@ class ImportBulbapediaMoveSetCommand extends Command
 
         /** @var Pokemon $pokemon */
         foreach ($pokemons as $pokemon) {
-
             if (!in_array($type, ['all', MoveSetHelper::TUTORING_TYPE, MoveSetHelper::LEVELING_UP_TYPE])) {
                 $io->error('Unknown moveset type');
                 return Command::FAILURE;

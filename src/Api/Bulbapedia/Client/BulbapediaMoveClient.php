@@ -1,13 +1,11 @@
 <?php
 
-
-namespace App\Api\Client;
-
+namespace App\Api\Bulbapedia\Client;
 
 use App\Entity\Pokemon;
 use App\Entity\PokemonName;
-use App\Formatter\StringHelper;
 use App\Generation\GenerationHelper;
+use App\Helper\StringHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient;

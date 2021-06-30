@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\MoveSet;
+namespace App\Helper;
 
 
 class MoveSetHelper

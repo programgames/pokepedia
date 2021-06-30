@@ -4,9 +4,9 @@
 namespace App\Api\Bulbapedia;
 
 
-use App\Api\Client\BulbapediaMoveClient;
+use App\Api\Bulbapedia\Client\BulbapediaMoveClient;
 use App\Entity\Pokemon;
-use App\MoveSet\MoveSetHelper;
+use App\Helper\MoveSetHelper;
 use App\Sanitize\MoveSatanizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;

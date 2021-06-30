@@ -13,6 +13,9 @@ class NumberHelper
         }
         elseif ($number === 'N/A') {
             return null;
+        }
+        elseif (preg_match('/\d\*/',$number)) {
+            return (int)$number;
         } else {
             throw new \RuntimeException('Invalid number : ' . $number);
         }
