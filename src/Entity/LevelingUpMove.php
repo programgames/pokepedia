@@ -288,6 +288,31 @@ class LevelingUpMove
      */
     private $shield;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $constest;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $appeal;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $jam;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $ruby;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $sapphire;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -697,6 +722,66 @@ class LevelingUpMove
     public function setShield(bool $shield): self
     {
         $this->shield = $shield;
+
+        return $this;
+    }
+
+    public function getConstest(): ?string
+    {
+        return $this->constest;
+    }
+
+    public function setConstest(?string $constest): self
+    {
+        $this->constest = $constest;
+
+        return $this;
+    }
+
+    public function getAppeal(): ?int
+    {
+        return $this->appeal;
+    }
+
+    public function setAppeal(?int $appeal): self
+    {
+        $this->appeal = $appeal;
+
+        return $this;
+    }
+
+    public function getJam(): ?int
+    {
+        return $this->jam;
+    }
+
+    public function setJam(?int $jam): self
+    {
+        $this->jam = $jam;
+
+        return $this;
+    }
+
+    public function getRuby(): ?bool
+    {
+        return $this->ruby;
+    }
+
+    public function setRuby(?bool $ruby): self
+    {
+        $this->ruby = $ruby;
+
+        return $this;
+    }
+
+    public function getSapphire(): ?bool
+    {
+        return $this->sapphire;
+    }
+
+    public function setSapphire(?bool $sapphire): self
+    {
+        $this->sapphire = $sapphire;
 
         return $this;
     }

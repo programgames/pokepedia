@@ -5,6 +5,7 @@ namespace App\Helper;
 class NumberHelper
 {
     public static function formatNumber(string $number){
+        $number = trim($number);
         if(is_numeric($number)){
             return$number;
         }

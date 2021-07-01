@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -35,7 +36,8 @@ class ImportBulbapediaMoveSetCommand extends Command
     {
         $this
             ->addArgument('generation', InputArgument::REQUIRED, 'Generation')
-            ->addArgument('type', null, InputArgument::REQUIRED, 'Move type');
+            ->addArgument('type', null, InputArgument::REQUIRED, 'Move type')
+            ->addOption('startAt', null, InputOption::VALUE_OPTIONAL, 'Start at pokemon id');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -58,6 +60,10 @@ class ImportBulbapediaMoveSetCommand extends Command
 
         /** @var Pokemon $pokemon */
         foreach ($pokemons as $pokemon) {
+
+            if($input->getOption('startAt') && $pokemon->getPokemonIdentifier() < $input->getOption('startAt')) {
+                continue;
+            }
             if (!in_array($type, ['all', MoveSetHelper::TUTORING_TYPE, MoveSetHelper::LEVELING_UP_TYPE])) {
                 $io->error('Unknown moveset type');
                 return Command::FAILURE;

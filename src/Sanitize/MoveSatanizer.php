@@ -66,7 +66,7 @@ class MoveSatanizer
         array_shift($moves);
 
         for ($i = 0; $i < $size; $i++) {
-            if (empty($moves[$i])) {
+            if (empty($moves[$i]) || $moves[$i] === ' ') {
                 continue;
             }
 
