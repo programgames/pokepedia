@@ -216,6 +216,67 @@ class MoveSetManager
                     $moveEntity2->setForm($form === "noform" ? null : $form);
                     $this->entityManager->persist($moveEntity2);
 
+                } elseif ($move['format'] === 'numeral' && $gen === 4) {
+
+                    $moveEntity1 = new LevelingUpMove();
+                    $moveEntity1->setPokemon($pokemon);
+                    $moveEntity1->setGeneration($gen);
+                    $moveEntity1->setLevel(NumberHelper::formatNumber($move['value'][1]));
+                    $moveEntity1->setMove($move['value'][2]);
+                    $moveEntity1->setAttackType($move['value'][3]);
+                    $moveEntity1->setCategory($move['value'][4]);
+                    $moveEntity1->setPower(NumberHelper::formatNumber($move['value'][5]));
+                    $moveEntity1->setAccuracy(NumberHelper::formatNumber($move['value'][6]));
+                    $moveEntity1->setPowerPoints(NumberHelper::formatNumber($move['value'][7]));
+                    $moveEntity1->setConstest($move['value'][8]);
+                    $moveEntity1->setAppeal($move['value'][9]);
+                    $moveEntity1->setType(MoveSetHelper::MOVE_TYPE_GLOBAL);
+                    $moveEntity1->setForm($form === "noform" ? null : $form);
+                    $this->entityManager->persist($moveEntity1);
+                } else if ($move['format'] === 'roman' && ($gen === 4)) {
+
+                    $moveEntity1 = new LevelingUpMove();
+                    $moveEntity1->setPokemon($pokemon);
+                    $moveEntity1->setGeneration($gen);
+                    $moveEntity1->setLevel(NumberHelper::formatNumber($move['value'][1]));
+                    $moveEntity1->setMove($move['value'][3]);
+                    $moveEntity1->setAttackType($move['value'][4]);
+                    $moveEntity1->setCategory($move['value'][5]);
+                    $moveEntity1->setPower(NumberHelper::formatNumber($move['value'][6]));
+                    $moveEntity1->setAccuracy(NumberHelper::formatNumber($move['value'][7]));
+                    $moveEntity1->setPowerPoints(NumberHelper::formatNumber($move['value'][8]));
+                    $moveEntity1->setConstest($move['value'][9]);
+                    $moveEntity1->setAppeal($move['value'][10]);
+                    $moveEntity1->setType(MoveSetHelper::MOVE_TYPE_SPECIFIC);
+                    if($gen ===  3) {
+                        $moveEntity1->setRuby(true);
+                        $moveEntity1->setSapphire(true);
+                        $moveEntity1->setEmerald(true);
+                    }
+
+                    $moveEntity1->setForm($form === "noform" ? null : $form);
+                    $this->entityManager->persist($moveEntity1);
+
+                    $moveEntity2 = new LevelingUpMove();
+                    $moveEntity2->setPokemon($pokemon);
+                    $moveEntity2->setGeneration($gen);
+                    $moveEntity2->setLevel(NumberHelper::formatNumber($move['value'][2]));
+                    $moveEntity2->setMove($move['value'][3]);
+                    $moveEntity2->setAttackType($move['value'][4]);
+                    $moveEntity2->setCategory($move['value'][5]);
+                    $moveEntity2->setPower(NumberHelper::formatNumber($move['value'][6]));
+                    $moveEntity2->setAccuracy(NumberHelper::formatNumber($move['value'][7]));
+                    $moveEntity2->setPowerPoints(NumberHelper::formatNumber($move['value'][8]));
+                    $moveEntity2->setConstest($move['value'][9]);
+                    $moveEntity2->setAppeal($move['value'][10]);
+                    $moveEntity2->setType(MoveSetHelper::MOVE_TYPE_SPECIFIC);
+                    if($gen === 3) {
+                        $moveEntity2->setFireRed(true);
+                        $moveEntity2->setLeafGreen(true);
+                    }
+                    $moveEntity2->setForm($form === "noform" ? null : $form);
+                    $this->entityManager->persist($moveEntity2);
+
                 } else {
                     throw new UnknownMapping(sprintf('Unknown mapping , format : %s / gen : %s', $move['format'], $gen));
                 }
