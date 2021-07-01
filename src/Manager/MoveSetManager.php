@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Manager;
-
 
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Game;
@@ -50,6 +48,8 @@ class MoveSetManager
         $moveInformations = $this->bulbapediaMovesAPI->getLevelMoves($pokemon, $gen);
         foreach ($moveInformations as $form => $movesByForm) {
             foreach ($movesByForm as $move) {
+                (new \App\Mapper\MoveMapper())->mapMoves($pokemon);
+
                 if ($move['format'] === 'numeral' && $gen === 5) {
 
                     $moveEntity1 = new LevelingUpMove();
