@@ -1,8 +1,7 @@
 moves:
   tutoring:
-    gen:
       1:
-        numeral:
+        specific:
           - level
           - move
           - attackType
