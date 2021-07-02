@@ -4,7 +4,9 @@ namespace App;
 
 class MoveMapper
 {
-    function mapMoves($pokemon)
+    function mapMoves($pokemon, $move, $form)
     {
+        if ($move['type'] == 'tutoring') {
+        }
     }
 }

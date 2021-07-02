@@ -1,0 +1,11 @@
+moves:
+  tutoring:
+    gen:
+      1:
+        numeral:
+          - level
+          - move
+          - attackType
+          - power
+          - accuracy
+          - powerPoints
