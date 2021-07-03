@@ -37,8 +37,7 @@ class MapperCommand extends Command
     {
         $config = Yaml::parseFile($this->parameterBag->get('kernel.project_dir') . '/config/movemapping.yml');
 
-
-        $filename = $this->parameterBag->get('kernel.project_dir') . '/src/' . 'MoveMapper.php';
+        $filename = $this->parameterBag->get('kernel.project_dir') . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'MoveMapper.php';
         file_put_contents($filename, $this->moveSetMapperBuilder->getMapperCode($config));
 
          return Command::SUCCESS;

@@ -4,6 +4,9 @@
 namespace App\Helper;
 
 
+use App\Entity\LevelingUpMove;
+use App\Entity\TutoringMove;
+
 class MoveSetHelper
 {
     /* console argument */
@@ -21,4 +24,15 @@ class MoveSetHelper
     /* used to parse type of learnlist in learnlist/tutorf for example */
     public const BULBAPEDIA_TUTOR_WIKI_TYPE = 'tutor';
     public const BULBAPEDIA_LEVEL_WIKI_TYPE = 'level';
+
+    /* use for config */
+    public static function getClassByType(string $type): string
+    {
+        $mapping = [
+            'tutoring' => TutoringMove::class,
+            'leveling_up' => LevelingUpMove::class
+        ];
+
+        return $mapping[$type];
+    }
 }
