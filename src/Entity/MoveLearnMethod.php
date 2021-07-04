@@ -2,19 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\GameRepository;
+use App\Repository\MoveLearnMethodRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=GameRepository::class)
- * @ORM\Table(
- *    name="game",
- *    uniqueConstraints={
- *        @ORM\UniqueConstraint(name="uniq_game", columns={"name"})
- *    }
- * )
+ * @ORM\Entity(repositoryClass=MoveLearnMethodRepository::class)
  */
-class Game
+class MoveLearnMethod
 {
     /**
      * @ORM\Id
@@ -27,11 +21,6 @@ class Game
      * @ORM\Column(type="string", length=255)
      */
     private $name;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $gen;
 
     public function getId(): ?int
     {
@@ -46,18 +35,6 @@ class Game
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getGen(): ?int
-    {
-        return $this->gen;
-    }
-
-    public function setGen(int $gen): self
-    {
-        $this->gen = $gen;
 
         return $this;
     }

@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\MoveAlias;
+use App\Entity\MoveLearnMethod;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method MoveAlias|null find($id, $lockMode = null, $lockVersion = null)
- * @method MoveAlias|null findOneBy(array $criteria, array $orderBy = null)
- * @method MoveAlias[]    findAll()
- * @method MoveAlias[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method MoveLearnMethod|null find($id, $lockMode = null, $lockVersion = null)
+ * @method MoveLearnMethod|null findOneBy(array $criteria, array $orderBy = null)
+ * @method MoveLearnMethod[]    findAll()
+ * @method MoveLearnMethod[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MoveAliasRepository extends ServiceEntityRepository
+class MoveLearnMethodRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, MoveAlias::class);
+        parent::__construct($registry, MoveLearnMethod::class);
     }
 
     // /**
-    //  * @return MoveAlias[] Returns an array of MoveAlias objects
+    //  * @return MoveLearnMethod[] Returns an array of MoveLearnMethod objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class MoveAliasRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?MoveAlias
+    public function findOneBySomeField($value): ?MoveLearnMethod
     {
         return $this->createQueryBuilder('m')
             ->andWhere('m.exampleField = :val')
