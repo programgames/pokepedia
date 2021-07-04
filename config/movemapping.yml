@@ -1,10 +1,29 @@
 moves:
-  tutoring:
-      1:
-        specific:
-          - level
-          - move
-          - attackType
-          - power
-          - accuracy
-          - powerPoints
+  leveling_up:
+    1:
+      specific:
+        - complex:
+            games:
+              - red
+              - blue
+              - green
+            fields:
+              - integer: level
+        - complex:
+            games:
+              - yellow
+            fields:
+              - integer: level
+        - string: move
+        - string: attackType
+        - integer: power
+        - integer: accuracy
+        - integer: powerPoints
+    2:
+      global:
+        - integer: level
+        - string: caca
+        - string: attackType
+        - integer: power
+        - integer: accuracy
+        - integer: powerPoints
