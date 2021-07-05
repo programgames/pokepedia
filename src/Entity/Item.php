@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\MoveRepository;
+use App\Repository\ItemRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=MoveRepository::class)
+ * @ORM\Entity(repositoryClass=ItemRepository::class)
  */
-class Move
+class Item
 {
     /**
      * @ORM\Id
@@ -25,18 +25,18 @@ class Move
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=MoveName::class, mappedBy="move")
+     * @ORM\OneToMany(targetEntity=ItemName::class, mappedBy="item")
      */
-    private $moveNames;
+    private $itemNames;
 
     /**
-     * @ORM\OneToMany(targetEntity=Machine::class, mappedBy="move")
+     * @ORM\OneToMany(targetEntity=Machine::class, mappedBy="item")
      */
     private $machines;
 
     public function __construct()
     {
-        $this->moveNames = new ArrayCollection();
+        $this->itemNames = new ArrayCollection();
         $this->machines = new ArrayCollection();
     }
 
@@ -58,29 +58,29 @@ class Move
     }
 
     /**
-     * @return Collection|MoveName[]
+     * @return Collection|ItemName[]
      */
-    public function getMoveNames(): Collection
+    public function getItemNames(): Collection
     {
-        return $this->moveNames;
+        return $this->itemNames;
     }
 
-    public function addMoveName(MoveName $moveName): self
+    public function addItemName(ItemName $itemName): self
     {
-        if (!$this->moveNames->contains($moveName)) {
-            $this->moveNames[] = $moveName;
-            $moveName->setMove($this);
+        if (!$this->itemNames->contains($itemName)) {
+            $this->itemNames[] = $itemName;
+            $itemName->setItem($this);
         }
 
         return $this;
     }
 
-    public function removeMoveName(MoveName $moveName): self
+    public function removeItemName(ItemName $itemName): self
     {
-        if ($this->moveNames->removeElement($moveName)) {
+        if ($this->itemNames->removeElement($itemName)) {
             // set the owning side to null (unless already changed)
-            if ($moveName->getMove() === $this) {
-                $moveName->setMove(null);
+            if ($itemName->getItem() === $this) {
+                $itemName->setItem(null);
             }
         }
 
@@ -99,7 +99,7 @@ class Move
     {
         if (!$this->machines->contains($machine)) {
             $this->machines[] = $machine;
-            $machine->setMove($this);
+            $machine->setItem($this);
         }
 
         return $this;
@@ -109,8 +109,8 @@ class Move
     {
         if ($this->machines->removeElement($machine)) {
             // set the owning side to null (unless already changed)
-            if ($machine->getMove() === $this) {
-                $machine->setMove(null);
+            if ($machine->getItem() === $this) {
+                $machine->setItem(null);
             }
         }
 

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210705115608 extends AbstractMigration
+final class Version20210705192016 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,19 +20,18 @@ final class Version20210705115608 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SEQUENCE egg_group_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE evolution_chain_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE generation_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE move_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE move_learn_method_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE move_name_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE pokemon_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE pokemon_specy_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE version_group_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE move_entity_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE egg_group (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE evolution_chain (id INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE generation (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE item (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE item_name (id INT NOT NULL, item_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, language INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_96133AFD126F525E ON item_name (item_id)');
+        $this->addSql('CREATE TABLE machine (id INT NOT NULL, move_id INT DEFAULT NULL, item_id INT DEFAULT NULL, machine_number INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_1505DF846DC541A8 ON machine (move_id)');
+        $this->addSql('CREATE INDEX IDX_1505DF84126F525E ON machine (item_id)');
         $this->addSql('CREATE TABLE move (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE move_entity (id INT NOT NULL, level INT DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE move_learn_method (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE move_name (id INT NOT NULL, move_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, language INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_504B42B26DC541A8 ON move_name (move_id)');
@@ -45,6 +44,9 @@ final class Version20210705115608 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_4243C8E9B76DC94C ON pokemon_specy_egg_group (egg_group_id)');
         $this->addSql('CREATE TABLE version_group (id INT NOT NULL, generation_id INT NOT NULL, name VARCHAR(255) NOT NULL, version_group_order INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_6A1C90C0553A6EC4 ON version_group (generation_id)');
+        $this->addSql('ALTER TABLE item_name ADD CONSTRAINT FK_96133AFD126F525E FOREIGN KEY (item_id) REFERENCES item (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE machine ADD CONSTRAINT FK_1505DF846DC541A8 FOREIGN KEY (move_id) REFERENCES move (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE machine ADD CONSTRAINT FK_1505DF84126F525E FOREIGN KEY (item_id) REFERENCES item (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE move_name ADD CONSTRAINT FK_504B42B26DC541A8 FOREIGN KEY (move_id) REFERENCES move (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE pokemon ADD CONSTRAINT FK_62DC90F3256D30DF FOREIGN KEY (pokemon_specy_id) REFERENCES pokemon_specy (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE pokemon_specy ADD CONSTRAINT FK_D5938CFDE417AC09 FOREIGN KEY (evolution_chain_id) REFERENCES evolution_chain (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -60,22 +62,21 @@ final class Version20210705115608 extends AbstractMigration
         $this->addSql('ALTER TABLE pokemon_specy_egg_group DROP CONSTRAINT FK_4243C8E9B76DC94C');
         $this->addSql('ALTER TABLE pokemon_specy DROP CONSTRAINT FK_D5938CFDE417AC09');
         $this->addSql('ALTER TABLE version_group DROP CONSTRAINT FK_6A1C90C0553A6EC4');
+        $this->addSql('ALTER TABLE item_name DROP CONSTRAINT FK_96133AFD126F525E');
+        $this->addSql('ALTER TABLE machine DROP CONSTRAINT FK_1505DF84126F525E');
+        $this->addSql('ALTER TABLE machine DROP CONSTRAINT FK_1505DF846DC541A8');
         $this->addSql('ALTER TABLE move_name DROP CONSTRAINT FK_504B42B26DC541A8');
         $this->addSql('ALTER TABLE pokemon DROP CONSTRAINT FK_62DC90F3256D30DF');
         $this->addSql('ALTER TABLE pokemon_specy_egg_group DROP CONSTRAINT FK_4243C8E9256D30DF');
-        $this->addSql('DROP SEQUENCE egg_group_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE evolution_chain_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE generation_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE move_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE move_learn_method_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE move_name_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE pokemon_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE pokemon_specy_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE version_group_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE move_entity_id_seq CASCADE');
         $this->addSql('DROP TABLE egg_group');
         $this->addSql('DROP TABLE evolution_chain');
         $this->addSql('DROP TABLE generation');
+        $this->addSql('DROP TABLE item');
+        $this->addSql('DROP TABLE item_name');
+        $this->addSql('DROP TABLE machine');
         $this->addSql('DROP TABLE move');
+        $this->addSql('DROP TABLE move_entity');
         $this->addSql('DROP TABLE move_learn_method');
         $this->addSql('DROP TABLE move_name');
         $this->addSql('DROP TABLE pokemon');
