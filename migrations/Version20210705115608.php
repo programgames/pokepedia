@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210705062152 extends AbstractMigration
+final class Version20210705115608 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,8 +20,15 @@ final class Version20210705062152 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE SEQUENCE egg_group_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE evolution_chain_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE generation_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE move_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE move_learn_method_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE move_name_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE pokemon_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE pokemon_specy_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE version_group_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE egg_group (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE evolution_chain (id INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE generation (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
@@ -56,8 +63,15 @@ final class Version20210705062152 extends AbstractMigration
         $this->addSql('ALTER TABLE move_name DROP CONSTRAINT FK_504B42B26DC541A8');
         $this->addSql('ALTER TABLE pokemon DROP CONSTRAINT FK_62DC90F3256D30DF');
         $this->addSql('ALTER TABLE pokemon_specy_egg_group DROP CONSTRAINT FK_4243C8E9256D30DF');
+        $this->addSql('DROP SEQUENCE egg_group_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE evolution_chain_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE generation_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE move_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE move_learn_method_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE move_name_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE pokemon_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE pokemon_specy_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE version_group_id_seq CASCADE');
         $this->addSql('DROP TABLE egg_group');
         $this->addSql('DROP TABLE evolution_chain');
         $this->addSql('DROP TABLE generation');

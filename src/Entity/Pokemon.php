@@ -28,7 +28,7 @@ class Pokemon
     private $pokemonOrder;
 
     /**
-     * @ORM\ManyToOne(targetEntity=PokemonSpecy::class, inversedBy="pokemon")
+     * @ORM\ManyToOne(targetEntity=PokemonSpecy::class, inversedBy="pokemons")
      * @ORM\JoinColumn(nullable=false)
      */
     private $pokemonSpecy;
