@@ -7,7 +7,7 @@ namespace App\DataFixtures;
 use App\Api\PokeAPI\GenerationApi;
 use App\Api\PokeAPI\ItemApi;
 use App\Api\PokeAPI\ItemNameApi;
-use App\Api\PokeAPI\MachineApi;
+use App\Api\PokeAPI\PokemonMoveApi;
 use App\Api\PokeAPI\MoveApi;
 use App\Api\PokeAPI\MoveNameApi;
 use App\Api\PokeAPI\VersionGroupApi;

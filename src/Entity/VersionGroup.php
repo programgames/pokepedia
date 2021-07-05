@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\VersionGroupRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,6 +34,22 @@ class VersionGroup
      * @ORM\JoinColumn(nullable=false)
      */
     private $generation;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Machine::class, mappedBy="versionGroup", orphanRemoval=true)
+     */
+    private $machines;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonMove::class, mappedBy="versionGroup", orphanRemoval=true)
+     */
+    private $pokemonMoves;
+
+    public function __construct()
+    {
+        $this->machines = new ArrayCollection();
+        $this->pokemonMoves = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -70,6 +88,66 @@ class VersionGroup
     public function setGeneration(?Generation $generation): self
     {
         $this->generation = $generation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Machine[]
+     */
+    public function getMachines(): Collection
+    {
+        return $this->machines;
+    }
+
+    public function addMachine(Machine $machine): self
+    {
+        if (!$this->machines->contains($machine)) {
+            $this->machines[] = $machine;
+            $machine->setVersionGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMachine(Machine $machine): self
+    {
+        if ($this->machines->removeElement($machine)) {
+            // set the owning side to null (unless already changed)
+            if ($machine->getVersionGroup() === $this) {
+                $machine->setVersionGroup(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonMove[]
+     */
+    public function getPokemonMoves(): Collection
+    {
+        return $this->pokemonMoves;
+    }
+
+    public function addPokemonMove(PokemonMove $pokemonMove): self
+    {
+        if (!$this->pokemonMoves->contains($pokemonMove)) {
+            $this->pokemonMoves[] = $pokemonMove;
+            $pokemonMove->setVersionGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonMove(PokemonMove $pokemonMove): self
+    {
+        if ($this->pokemonMoves->removeElement($pokemonMove)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonMove->getVersionGroup() === $this) {
+                $pokemonMove->setVersionGroup(null);
+            }
+        }
 
         return $this;
     }

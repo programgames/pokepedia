@@ -32,6 +32,12 @@ class Machine
      */
     private $item;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=VersionGroup::class, inversedBy="machines")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $versionGroup;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +75,18 @@ class Machine
     public function setItem(?Item $item): self
     {
         $this->item = $item;
+
+        return $this;
+    }
+
+    public function getVersionGroup(): ?VersionGroup
+    {
+        return $this->versionGroup;
+    }
+
+    public function setVersionGroup(?VersionGroup $versionGroup): self
+    {
+        $this->versionGroup = $versionGroup;
 
         return $this;
     }

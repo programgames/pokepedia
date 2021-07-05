@@ -34,10 +34,16 @@ class Move
      */
     private $machines;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonMove::class, mappedBy="move", orphanRemoval=true)
+     */
+    private $pokemonMoves;
+
     public function __construct()
     {
         $this->moveNames = new ArrayCollection();
         $this->machines = new ArrayCollection();
+        $this->pokemonMoves = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,6 +117,36 @@ class Move
             // set the owning side to null (unless already changed)
             if ($machine->getMove() === $this) {
                 $machine->setMove(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonMove[]
+     */
+    public function getPokemonMoves(): Collection
+    {
+        return $this->pokemonMoves;
+    }
+
+    public function addPokemonMove(PokemonMove $pokemonMove): self
+    {
+        if (!$this->pokemonMoves->contains($pokemonMove)) {
+            $this->pokemonMoves[] = $pokemonMove;
+            $pokemonMove->setMove($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonMove(PokemonMove $pokemonMove): self
+    {
+        if ($this->pokemonMoves->removeElement($pokemonMove)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonMove->getMove() === $this) {
+                $pokemonMove->setMove(null);
             }
         }
 

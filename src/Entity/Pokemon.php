@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PokemonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,6 +34,16 @@ class Pokemon
      * @ORM\JoinColumn(nullable=false)
      */
     private $pokemonSpecy;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonMove::class, mappedBy="pokemon", orphanRemoval=true)
+     */
+    private $pokemonMoves;
+
+    public function __construct()
+    {
+        $this->pokemonMoves = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -70,6 +82,36 @@ class Pokemon
     public function setPokemonSpecy(?PokemonSpecy $pokemonSpecy): self
     {
         $this->pokemonSpecy = $pokemonSpecy;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonMove[]
+     */
+    public function getPokemonMoves(): Collection
+    {
+        return $this->pokemonMoves;
+    }
+
+    public function addPokemonMove(PokemonMove $pokemonMove): self
+    {
+        if (!$this->pokemonMoves->contains($pokemonMove)) {
+            $this->pokemonMoves[] = $pokemonMove;
+            $pokemonMove->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonMove(PokemonMove $pokemonMove): self
+    {
+        if ($this->pokemonMoves->removeElement($pokemonMove)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonMove->getPokemon() === $this) {
+                $pokemonMove->setPokemon(null);
+            }
+        }
 
         return $this;
     }

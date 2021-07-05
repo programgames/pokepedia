@@ -9,6 +9,7 @@ use App\Entity\Item;
 use App\Entity\Machine;
 use App\Entity\Move;
 use App\Entity\MoveName;
+use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -34,6 +35,9 @@ query MyQuery {
     }
     machine_number
     pokemon_v2_item {
+      name
+    }
+    pokemon_v2_versiongroup {
       name
     }
   }
@@ -63,6 +67,12 @@ GRAPHQL;
                     'name' => $machine['pokemon_v2_item']['name']
                 ]
             );
+            $versionGroup =  $this->entityManager->getRepository(VersionGroup::class)->findOneBy(
+                [
+                    'name' => $machine['pokemon_v2_versiongroup']['name']
+                ]
+            );
+            $machineEntity->getVersionGroup($versionGroup);
             $machineEntity->setMove($move);
             $machineEntity->setItem($item);
             $machineEntity->setMachineNumber($machine['machine_number']);
