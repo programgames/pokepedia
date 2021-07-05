@@ -56,9 +56,6 @@ query MyQuery {
     }
   }
 }
-
-
-
 GRAPHQL;
 
         $cache = new FilesystemAdapter();

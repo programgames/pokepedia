@@ -6,31 +6,32 @@ namespace App\DataFixtures;
 
 use App\Api\PokeAPI\GenerationApi;
 use App\Api\PokeAPI\MoveApi;
+use App\Api\PokeAPI\MoveNameApi;
 use App\Api\PokeAPI\VersionGroupApi;
 use App\Entity\MoveLearnMethod;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadVersionGroup extends Fixture implements DependentFixtureInterface
+class LoadMoveNames extends Fixture implements DependentFixtureInterface
 {
-    private VersionGroupApi $versionGroupApi;
+    private MoveNameApi $moveNameApi;
 
-    public function __construct(VersionGroupApi $versionGroupApi)
+    public function __construct(MoveNameApi $versionGroupApi)
     {
-        $this->versionGroupApi = $versionGroupApi;
+        $this->moveNameApi = $versionGroupApi;
     }
 
     public function load(ObjectManager $manager)
     {
-        foreach ($this->versionGroupApi->getVersionGroups() as $versionGroup) {
-            $manager->persist($versionGroup);
+        foreach ($this->moveNameApi->getMoveNames() as $moveName) {
+            $manager->persist($moveName);
         }
         $manager->flush();
     }
 
     public function getDependencies()
     {
-        return [LoadGeneration::class];
+        return [LoadMove::class];
     }
 }
