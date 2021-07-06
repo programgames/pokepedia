@@ -10,6 +10,7 @@ use App\Entity\Machine;
 use App\Entity\Move;
 use App\Entity\MoveLearnMethod;
 use App\Entity\MoveName;
+use App\Entity\Pokemon;
 use App\Entity\PokemonMove;
 use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,19 +32,10 @@ class PokemonMoveApi
     {
         $query = <<<GRAPHQL
 query MyQuery {
-  pokemon_v2_pokemon(where: {id: {_gte: 1, _lte: 1}}) {
+  pokemon_v2_pokemon(where: {id: {_gte: $id1, _lte: $id1}}) {
     pokemon_v2_pokemonmoves {
       pokemon_v2_move {
-        pokemon_v2_movenames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) {
-          name
-        }
-        pokemon_v2_machines {
-          pokemon_v2_item {
-            pokemon_v2_itemnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}, distinct_on: name) {
-              name
-            }
-          }
-        }
+        name
       }
       level
       pokemon_v2_movelearnmethod {
@@ -80,19 +72,29 @@ GRAPHQL;
                         'name' => $pokemonMove['pokemon_v2_movelearnmethod']['name']
                     ]
                 );
-                $versionGroup = $this->entityManager->getRepository(Item::class)->findOneBy(
+                /** @var VersionGroup $versionGroup */
+                $versionGroup = $this->entityManager->getRepository(VersionGroup::class)->findOneBy(
                     [
                         'name' =>$pokemonMove['pokemon_v2_versiongroup']['name']
                     ]
                 );
+                /** @var Move $move */
                 $move = $this->entityManager->getRepository(Move::class)->findOneBy(
                     [
-                        'name' => $machine['pokemon_v2_versiongroup']['name']
+                        'name' => $pokemonMove['pokemon_v2_move']['name']
                     ]
                 );
-                $pokemonMoveEntity->getVersionGroup($versionGroup);
+                /** @var Pokemon $pokemonEntity */
+                $pokemonEntity = $this->entityManager->getRepository(Pokemon::class)->findOneBy(
+                    [
+                        'name' => $pokemonMove['pokemon_v2_pokemon']['name']
+                    ]
+                );
+                $pokemonMoveEntity->setVersionGroup($versionGroup);
                 $pokemonMoveEntity->setLearnMethod($learnMethod);
-                $pokemonMoveEntity->setPokemon($pokemon);
+                $pokemonMoveEntity->setMove($move);
+
+                $pokemonMoveEntity->setPokemon($pokemonEntity);
                 $pokemonMoves[] = $pokemonMoveEntity;
             }
         }

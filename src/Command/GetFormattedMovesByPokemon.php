@@ -11,23 +11,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImportMovesByPokemon extends Command
+class GetFormattedMovesByPokemon extends Command
 {
-    protected static $defaultName = 'app:import:pokeapi:moveset';
-    protected static $defaultDescription = 'Import pokeapi movesets';
+    protected static $defaultName = 'app:format:pokeapi:moveset';
+    protected static $defaultDescription = 'format movesets';
 
-    private PokemonMoveApi $api;
     private EntityManagerInterface $em;
 
-    /**
-     * ImportMovesByPokemon constructor.
-     * @param PokemonMoveApi $api
-     * @param EntityManagerInterface $em
-     */
-    public function __construct(PokemonMoveApi $api, EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em)
     {
         parent::__construct();
-        $this->api = $api;
         $this->em = $em;
     }
 
@@ -39,10 +32,7 @@ class ImportMovesByPokemon extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        foreach ( $this->api->getMovesByPokemon(1) as $pokemonMove) {
-            $this->em->persist($pokemonMove);
-        }
-        $this->em->flush();
+//        $this->em->getMovesByPokemon(1);
 
         return Command::SUCCESS;
     }

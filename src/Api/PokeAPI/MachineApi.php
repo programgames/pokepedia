@@ -72,7 +72,7 @@ GRAPHQL;
                     'name' => $machine['pokemon_v2_versiongroup']['name']
                 ]
             );
-            $machineEntity->getVersionGroup($versionGroup);
+            $machineEntity->setVersionGroup($versionGroup);
             $machineEntity->setMove($move);
             $machineEntity->setItem($item);
             $machineEntity->setMachineNumber($machine['machine_number']);

@@ -47,4 +47,12 @@ class MoveRepository extends ServiceEntityRepository
         ;
     }
     */
+
+
+    public function findOneBySomeField($value): ?Move
+    {
+//        return $this->createQueryBuilder('move')
+//            ->leftJoin('m.machines','machines')
+//            ->where('machines')
+    }
 }

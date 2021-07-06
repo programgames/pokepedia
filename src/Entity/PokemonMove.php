@@ -41,7 +41,7 @@ class PokemonMove
     private $learnMethod;
 
     /**
-     * @ORM\ManyToOne(targetEntity=pokemon::class, inversedBy="pokemonMoves")
+     * @ORM\ManyToOne(targetEntity=Pokemon::class, inversedBy="pokemonMoves")
      * @ORM\JoinColumn(nullable=false)
      */
     private $pokemon;

@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 
 
 use App\Api\PokeAPI\GenerationApi;
+use App\Api\PokeAPI\MachineApi;
 use App\Api\PokeAPI\PokemonMoveApi;
 use App\Api\PokeAPI\MoveApi;
 use App\Api\PokeAPI\MoveNameApi;
@@ -16,9 +17,9 @@ use Doctrine\Persistence\ObjectManager;
 
 class LoadMachine extends Fixture implements DependentFixtureInterface
 {
-    private PokemonMoveApi $machineApi;
+    private MachineApi $machineApi;
 
-    public function __construct(PokemonMoveApi $machineApi)
+    public function __construct(MachineApi $machineApi)
     {
         $this->machineApi = $machineApi;
     }
