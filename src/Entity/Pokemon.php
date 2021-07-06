@@ -40,6 +40,11 @@ class Pokemon
      */
     private $pokemonMoves;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $pokemonIdentifier;
+
     public function __construct()
     {
         $this->pokemonMoves = new ArrayCollection();
@@ -112,6 +117,18 @@ class Pokemon
                 $pokemonMove->setPokemon(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPokemonIdentifier(): ?int
+    {
+        return $this->pokemonIdentifier;
+    }
+
+    public function setPokemonIdentifier(int $pokemonIdentifier): self
+    {
+        $this->pokemonIdentifier = $pokemonIdentifier;
 
         return $this;
     }

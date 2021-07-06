@@ -43,10 +43,16 @@ class PokemonSpecy
      */
     private $evolutionChain;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SpecyName::class, mappedBy="pokemonSpecy", orphanRemoval=true)
+     */
+    private $names;
+
     public function __construct()
     {
         $this->eggGroups = new ArrayCollection();
         $this->pokemons = new ArrayCollection();
+        $this->names = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -140,6 +146,36 @@ class PokemonSpecy
     public function setEvolutionChain(?EvolutionChain $evolutionChain): self
     {
         $this->evolutionChain = $evolutionChain;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SpecyName[]
+     */
+    public function getNames(): Collection
+    {
+        return $this->names;
+    }
+
+    public function addName(SpecyName $name): self
+    {
+        if (!$this->names->contains($name)) {
+            $this->names[] = $name;
+            $name->setPokemonSpecy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeName(SpecyName $name): self
+    {
+        if ($this->names->removeElement($name)) {
+            // set the owning side to null (unless already changed)
+            if ($name->getPokemonSpecy() === $this) {
+                $name->setPokemonSpecy(null);
+            }
+        }
 
         return $this;
     }

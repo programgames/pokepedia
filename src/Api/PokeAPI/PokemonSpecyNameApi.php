@@ -6,70 +6,65 @@ namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\Generation;
-use App\Entity\Pokemon;
+use App\Entity\Move;
+use App\Entity\MoveName;
 use App\Entity\PokemonSpecy;
+use App\Entity\SpecyName;
 use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
-class PokemonApi
+class PokemonSpecyNameApi
 {
     private PokeAPIGraphQLClient $client;
     private EntityManagerInterface $entityManager;
 
-    /**
-     * PokemonSpeciesApi constructor.
-     * @param PokeAPIGraphQLClient $client
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(PokeAPIGraphQLClient $client, EntityManagerInterface $entityManager)
     {
         $this->client = $client;
         $this->entityManager = $entityManager;
     }
 
-    public function getPokemons(): array
+    public function getSpecyNames(): array
     {
         $query = <<<GRAPHQL
 query MyQuery {
-  pokemon_v2_pokemon {
+  pokemon_v2_pokemonspeciesname(where: {language_id: {_eq: 5}}) {
     name
-    order
+    language_id
     pokemon_v2_pokemonspecy {
       name
     }
-    id
   }
 }
+
+
+
 GRAPHQL;
 
         $cache = new FilesystemAdapter();
 
         $json = $cache->get(
-            sprintf('pokeapi.%s', 'pokemon'),
+            sprintf('pokeapi.%s', 'specyname'),
             function (ItemInterface $item) use ($query) {
                 return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
             }
         );
-        $pokemons = [];
-        foreach ($json['data']['pokemon_v2_pokemon'] as $pokemon) {
-            $pokemonEntity = new Pokemon();
-            $pokemonEntity->setName($pokemon['name']);
-            $pokemonEntity->setPokemonOrder($pokemon['order']);
-            $pokemonEntity->setPokemonIdentifier($pokemon['id']);
-            /** @var PokemonSpecy $specy */
-            $specy = $this->entityManager->getRepository(PokemonSpecy::class)->findOneBy(
+        $specyNames = [];
+        foreach ($json['data']['pokemon_v2_pokemonspeciesname'] as $specyName) {
+            $specyNameEntity = new SpecyName();
+            $specyNameEntity->setName($specyName['name']);
+            $specyNameEntity->setLanguage($specyName['language_id']);
+            $move = $this->entityManager->getRepository(PokemonSpecy::class)->findOneBy(
                 [
-                    'name' => $pokemon['pokemon_v2_pokemonspecy']['name'],
+                    'name' => $specyName['pokemon_v2_pokemonspecy']['name']
                 ]
             );
-            if($specy) {
-                $pokemonEntity->setPokemonSpecy($specy);
-            }
-            $pokemons[] = $pokemonEntity;
+            $specyNameEntity->setPokemonSpecy($move);
+            $specyNames[] = $specyNameEntity;
         }
 
-        return $pokemons;
+        return $specyNames;
     }
 }

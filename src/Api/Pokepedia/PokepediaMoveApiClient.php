@@ -1,0 +1,75 @@
+<?php
+
+
+namespace App\Api\Pokepedia;
+
+
+use App\Entity\Pokemon;
+use App\Exception\InvalidResponse;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\BrowserKit\HttpBrowser;
+use Symfony\Component\HttpClient\HttpClient;
+
+class PokepediaMoveApiClient
+{
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    public function getMovesByPokemonGenerationAndType(string $name, int $generation, string $moveType): array
+    {
+        $sections = $this->getMoveSections($name, $generation);
+
+        $url = strtr(
+            'https://www.pokepedia.fr/api.php?action=parse&format=json&page=Bulbizarre/G%C3%A9n%C3%A9ration_%generation%&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
+            [
+                '%pokemon%' => str_replace('’', '%27', $name),
+                '%generation%' => $generation,
+                '%section%' => $sections[$moveType]
+            ]
+        );
+
+
+        $browser = new HttpBrowser(HttpClient::create());
+        $browser->request('GET', $url);
+
+        $response = $browser->getResponse();
+        $json = json_decode($response->getContent(), true);
+        if (!array_key_exists('parse', $json)) {
+            throw new InvalidResponse(sprintf('Invalid response from pokepedia for pokemon %s generation %s', $name, $generation));
+        }
+        $wikitext = reset($json['parse']['wikitext']);
+        $wikitext = preg_split('/$\R?^/m', $wikitext);
+        return $wikitext;
+    }
+
+    private function getMoveSections(string $name, int $generation)
+    {
+        $formattedSections = [];
+        $sectionsUrl = strtr(
+            'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%/G%C3%A9n%C3%A9ration_%generation%&prop=sections&errorformat=wikitext&disabletoc=1',
+            [
+                '%pokemon%' => str_replace('’', '%27', $name),
+                '%generation%' => $generation,
+            ]
+        );
+
+        $browser = new HttpBrowser(HttpClient::create());
+        $browser->request('GET', $sectionsUrl);
+
+        $response = $browser->getResponse();
+        $json = json_decode($response->getContent(), true);
+
+        if (!array_key_exists('parse', $json)) {
+            throw new InvalidResponse(sprintf('Invalid response from pokepedia for pokemon %s generation %s', $name, $generation));
+        }
+        foreach ($json['parse']['sections'] as $section) {
+            $formattedSections[$section['line']] = $section['index'];
+        }
+
+        return $formattedSections;
+    }
+}

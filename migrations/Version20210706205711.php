@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210706055951 extends AbstractMigration
+final class Version20210706205711 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -32,6 +32,7 @@ final class Version20210706055951 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE pokemon_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE pokemon_move_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE pokemon_specy_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE specy_name_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE version_group_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE egg_group (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE evolution_chain (id INT NOT NULL, PRIMARY KEY(id))');
@@ -47,7 +48,7 @@ final class Version20210706055951 extends AbstractMigration
         $this->addSql('CREATE TABLE move_learn_method (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE move_name (id INT NOT NULL, move_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, language INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_504B42B26DC541A8 ON move_name (move_id)');
-        $this->addSql('CREATE TABLE pokemon (id INT NOT NULL, pokemon_specy_id INT NOT NULL, name VARCHAR(255) NOT NULL, pokemon_order INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE pokemon (id INT NOT NULL, pokemon_specy_id INT NOT NULL, name VARCHAR(255) NOT NULL, pokemon_order INT NOT NULL, pokemon_identifier INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_62DC90F3256D30DF ON pokemon (pokemon_specy_id)');
         $this->addSql('CREATE TABLE pokemon_move (id INT NOT NULL, move_id INT NOT NULL, version_group_id INT NOT NULL, learn_method_id INT NOT NULL, pokemon_id INT NOT NULL, level INT DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_D397493B6DC541A8 ON pokemon_move (move_id)');
@@ -59,6 +60,8 @@ final class Version20210706055951 extends AbstractMigration
         $this->addSql('CREATE TABLE pokemon_specy_egg_group (pokemon_specy_id INT NOT NULL, egg_group_id INT NOT NULL, PRIMARY KEY(pokemon_specy_id, egg_group_id))');
         $this->addSql('CREATE INDEX IDX_4243C8E9256D30DF ON pokemon_specy_egg_group (pokemon_specy_id)');
         $this->addSql('CREATE INDEX IDX_4243C8E9B76DC94C ON pokemon_specy_egg_group (egg_group_id)');
+        $this->addSql('CREATE TABLE specy_name (id INT NOT NULL, pokemon_specy_id INT NOT NULL, name VARCHAR(255) NOT NULL, language INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_C50BC896256D30DF ON specy_name (pokemon_specy_id)');
         $this->addSql('CREATE TABLE version_group (id INT NOT NULL, generation_id INT NOT NULL, name VARCHAR(255) NOT NULL, version_group_order INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_6A1C90C0553A6EC4 ON version_group (generation_id)');
         $this->addSql('ALTER TABLE item_name ADD CONSTRAINT FK_96133AFD126F525E FOREIGN KEY (item_id) REFERENCES item (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -74,6 +77,7 @@ final class Version20210706055951 extends AbstractMigration
         $this->addSql('ALTER TABLE pokemon_specy ADD CONSTRAINT FK_D5938CFDE417AC09 FOREIGN KEY (evolution_chain_id) REFERENCES evolution_chain (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE pokemon_specy_egg_group ADD CONSTRAINT FK_4243C8E9256D30DF FOREIGN KEY (pokemon_specy_id) REFERENCES pokemon_specy (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE pokemon_specy_egg_group ADD CONSTRAINT FK_4243C8E9B76DC94C FOREIGN KEY (egg_group_id) REFERENCES egg_group (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE specy_name ADD CONSTRAINT FK_C50BC896256D30DF FOREIGN KEY (pokemon_specy_id) REFERENCES pokemon_specy (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE version_group ADD CONSTRAINT FK_6A1C90C0553A6EC4 FOREIGN KEY (generation_id) REFERENCES generation (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
@@ -93,6 +97,7 @@ final class Version20210706055951 extends AbstractMigration
         $this->addSql('ALTER TABLE pokemon_move DROP CONSTRAINT FK_D397493B2FE71C3E');
         $this->addSql('ALTER TABLE pokemon DROP CONSTRAINT FK_62DC90F3256D30DF');
         $this->addSql('ALTER TABLE pokemon_specy_egg_group DROP CONSTRAINT FK_4243C8E9256D30DF');
+        $this->addSql('ALTER TABLE specy_name DROP CONSTRAINT FK_C50BC896256D30DF');
         $this->addSql('ALTER TABLE machine DROP CONSTRAINT FK_1505DF8492AE854F');
         $this->addSql('ALTER TABLE pokemon_move DROP CONSTRAINT FK_D397493B92AE854F');
         $this->addSql('DROP SEQUENCE egg_group_id_seq CASCADE');
@@ -107,6 +112,7 @@ final class Version20210706055951 extends AbstractMigration
         $this->addSql('DROP SEQUENCE pokemon_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE pokemon_move_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE pokemon_specy_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE specy_name_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE version_group_id_seq CASCADE');
         $this->addSql('DROP TABLE egg_group');
         $this->addSql('DROP TABLE evolution_chain');
@@ -121,6 +127,7 @@ final class Version20210706055951 extends AbstractMigration
         $this->addSql('DROP TABLE pokemon_move');
         $this->addSql('DROP TABLE pokemon_specy');
         $this->addSql('DROP TABLE pokemon_specy_egg_group');
+        $this->addSql('DROP TABLE specy_name');
         $this->addSql('DROP TABLE version_group');
     }
 }
