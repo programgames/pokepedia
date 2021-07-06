@@ -5,6 +5,11 @@ namespace App\Command;
 
 
 use App\Api\PokeAPI\PokemonMoveApi;
+use App\Entity\MoveLearnMethod;
+use App\Entity\MoveName;
+use App\Entity\Pokemon;
+use App\Entity\PokemonMove;
+use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,8 +37,41 @@ class GetFormattedMovesByPokemon extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-//        $this->em->getMovesByPokemon(1);
+        $pokemon = $this->em->getRepository(Pokemon::class)->findBy(
+            [
+                'pokemonOrder' => 1
+            ]
+        );
+        $versionGroup = $this->em->getRepository(VersionGroup::class)->findBy(
+            [
+                'name' => 'red-blue'
+            ]
+        );
 
+        $learnMethod = $this->em->getRepository(MoveLearnMethod::class)->findBy(
+            [
+                'name' => 'level-up'
+            ]
+        );
+        $pokemonMoves = $this->em->getRepository(PokemonMove::class)->findBy(
+            [
+                'pokemon' => $pokemon,
+                'versionGroup' => $versionGroup,
+                'learnMethod' => $learnMethod
+            ]
+        );
+
+        foreach ($pokemonMoves as $pokemonMove) {
+            $move = $pokemonMove->getMove();
+            $name = $this->em->getRepository(MoveName::class)->findOneBy(
+                [
+                    'move' => $move,
+                    'language' => 5,
+                ]
+            );
+            $names[$pokemonMove->getLevel()] = $name->getName();
+        }
+        ksort($names);
         return Command::SUCCESS;
     }
 }
