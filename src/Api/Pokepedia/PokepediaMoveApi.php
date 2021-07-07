@@ -6,6 +6,7 @@ namespace App\Api\Pokepedia;
 
 use App\Entity\Pokemon;
 use App\Helper\MoveSetHelper;
+use App\Satanizer\TutorMoveSatanizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -14,19 +15,14 @@ class PokepediaMoveApi
 {
     private EntityManagerInterface $entityManager;
     private FilesystemAdapter $cache;
-//    private MoveSatanizer $moveSatanizer;
+    private TutorMoveSatanizer $moveSatanizer;
     private PokepediaMoveApiClient $moveClient;
 
-    /**
-     * PokepediaMoveApi constructor.
-     * @param EntityManagerInterface $entityManager
-     * @param PokepediaMoveApiClient $moveClient
-     */
-    public function __construct(EntityManagerInterface $entityManager, PokepediaMoveApiClient $moveClient)
+    public function __construct(EntityManagerInterface $entityManager, TutorMoveSatanizer $moveSatanizer, PokepediaMoveApiClient $moveClient)
     {
         $this->entityManager = $entityManager;
+        $this->moveSatanizer = $moveSatanizer;
         $this->moveClient = $moveClient;
-
         $this->cache = new FilesystemAdapter();
 
     }
@@ -60,6 +56,6 @@ class PokepediaMoveApi
             }
         );
 
-//        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_LEVEL_WIKI_TYPE);
+        return $this->moveSatanizer->checkAndSanitizeMoves($moves);
     }
 }

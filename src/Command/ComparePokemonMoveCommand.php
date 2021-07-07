@@ -5,8 +5,10 @@ namespace App\Command;
 
 
 use App\Api\Pokepedia\PokepediaMoveApi;
+use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
-use App\Entity\SpecyName;
+use App\Formatter\PokeApiMoveFormatter;
+use App\Helper\MoveSetHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,19 +22,26 @@ class ComparePokemonMoveCommand extends Command
 
     private EntityManagerInterface $em;
     private PokepediaMoveApi $api;
+    private MoveSetHelper $moveSetHelper;
+    private PokeApiMoveFormatter $pokeApiFormatter;
 
     /**
      * ComparePokemonMoveCommand constructor.
      * @param EntityManagerInterface $em
      * @param PokepediaMoveApi $api
+     * @param MoveSetHelper $moveSetHelper
+     * @param PokeApiMoveFormatter $pokeApiFormatter
      */
-    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api)
+    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper, PokeApiMoveFormatter $pokeApiFormatter)
     {
         parent::__construct();
 
         $this->em = $em;
         $this->api = $api;
+        $this->moveSetHelper = $moveSetHelper;
+        $this->pokeApiFormatter = $pokeApiFormatter;
     }
+
 
     protected function configure(): void
     {
@@ -42,21 +51,17 @@ class ComparePokemonMoveCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $pokemon = $this->em->getRepository(Pokemon::class)
-            ->findOneBy(
-                [
-                    'name' => 'bulbasaur'
-                ]
-            );
-        $specyName = $this->em->getRepository(SpecyName::class)
-            ->findOneBy(
-                [
-                    'pokemonSpecy' => $pokemon->getPokemonSpecy(),
-                    'language' => 5
-                ]
-            );
+        $pokemons = $this->em->getRepository(Pokemon::class)->findBy(
+            [
+                'toImport' => true
+            ]);
 
-        $this->api->getLevelMoves($specyName->getName(),1);
+        $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
+        foreach ($pokemons as $pokemon) {
+            $pokepediaMoves = $this->api->getLevelMoves($this->moveSetHelper->getPokepediaPokemonName($pokemon), 1);
+            $pokeApiMoves = $this->pokeApiFormatter->getPokeApiMoves($pokemon, 1,$learnmethod);
+        }
+
         return Command::SUCCESS;
     }
 }
