@@ -43,6 +43,7 @@ class PokeApiMoveFormatter
         $numberOfMoves = count($moves1);
         $formattedMoves = [];
 
+        $names = [];
         for ($i = 0; $i < $numberOfMoves; $i++) {
             if ($moves1[$i]->getMove()->getId() !== $moves2[$i]->getMove()->getId()) {
                 throw new \RuntimeException(sprintf('Moves are different : %s %s', $moves1[$i]->getMove()->getId(), $moves2[$i]->getMove()->getId()));
@@ -54,7 +55,11 @@ class PokeApiMoveFormatter
                         'language' => 5
                     ]
                 ))->getName();
-            $name = str_replace('’','\'',$name);
+            $name = str_replace('’', '\'', $name);
+            $names[] = $name;
+            if (in_array($name, $names, true)) {
+                continue;
+            }
             $formattedMoves[] = sprintf('%s / %s / %s', $name, $this->formatLevel($moves1[$i]->getLevel()), $this->formatLevel($moves2[$i]->getLevel()));
         }
 
