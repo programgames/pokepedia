@@ -5,6 +5,7 @@ namespace App\Command;
 
 
 use App\Api\Pokepedia\PokepediaMoveApi;
+use App\Comparator\LevelMoveComparator;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
 use App\Formatter\PokeApiMoveFormatter;
@@ -24,6 +25,7 @@ class ComparePokemonMoveCommand extends Command
     private PokepediaMoveApi $api;
     private MoveSetHelper $moveSetHelper;
     private PokeApiMoveFormatter $pokeApiFormatter;
+    private LevelMoveComparator $levelMoveComparator;
 
     /**
      * ComparePokemonMoveCommand constructor.
@@ -31,8 +33,9 @@ class ComparePokemonMoveCommand extends Command
      * @param PokepediaMoveApi $api
      * @param MoveSetHelper $moveSetHelper
      * @param PokeApiMoveFormatter $pokeApiFormatter
+     * @param LevelMoveComparator $levelMoveComparator
      */
-    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper, PokeApiMoveFormatter $pokeApiFormatter)
+    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper, PokeApiMoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator)
     {
         parent::__construct();
 
@@ -40,6 +43,7 @@ class ComparePokemonMoveCommand extends Command
         $this->api = $api;
         $this->moveSetHelper = $moveSetHelper;
         $this->pokeApiFormatter = $pokeApiFormatter;
+        $this->levelMoveComparator = $levelMoveComparator;
     }
 
 
@@ -60,6 +64,7 @@ class ComparePokemonMoveCommand extends Command
         foreach ($pokemons as $pokemon) {
             $pokepediaMoves = $this->api->getLevelMoves($this->moveSetHelper->getPokepediaPokemonName($pokemon), 1);
             $pokeApiMoves = $this->pokeApiFormatter->getPokeApiMoves($pokemon, 1,$learnmethod);
+            $this->levelMoveComparator->levelMoveComparator($pokepediaMoves,$pokeApiMoves);
         }
 
         return Command::SUCCESS;

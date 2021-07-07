@@ -23,21 +23,17 @@ class PokeApiMoveFormatter
     public function getPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod)
     {
         $moves1 = $this->em->getRepository(PokemonMove::class)
-            ->findBy(
-                [
-                    'pokemon' => $pokemon,
-                    'learnMethod' => $learnMethod,
-                    'versionGroup' => $this->getFirstVersionGroupByGeneration($generation)
-                ]
+            ->findMovesByPokemonLearnMethodAndVersionGroup(
+                $pokemon,
+                $learnMethod,
+                $this->getFirstVersionGroupByGeneration($generation)
             );
 
         $moves2 = $this->em->getRepository(PokemonMove::class)
-            ->findBy(
-                [
-                    'pokemon' => $pokemon,
-                    'learnMethod' => $learnMethod,
-                    'versionGroup' => $this->getSecondVersionGroupByGeneration($generation)
-                ]
+            ->findMovesByPokemonLearnMethodAndVersionGroup(
+                $pokemon,
+                $learnMethod,
+                $this->getSecondVersionGroupByGeneration($generation)
             );
 
         if (count($moves1) !== count($moves2)) {
@@ -51,13 +47,14 @@ class PokeApiMoveFormatter
             if ($moves1[$i]->getMove()->getId() !== $moves2[$i]->getMove()->getId()) {
                 throw new \RuntimeException(sprintf('Moves are different : %s %s', $moves1[$i]->getMove()->getId(), $moves2[$i]->getMove()->getId()));
             }
-            $name = $this->em->getRepository(MoveName::class)
+            $name = ($this->em->getRepository(MoveName::class)
                 ->findOneBy(
                     [
-                        'move' => $moves1[$i],
+                        'move' => $moves1[$i]->getMove(),
                         'language' => 5
                     ]
-                );
+                ))->getName();
+            $name = str_replace('’','\'',$name);
             $formattedMoves[] = sprintf('%s / %s / %s', $name, $this->formatLevel($moves1[$i]->getLevel()), $this->formatLevel($moves2[$i]->getLevel()));
         }
 
