@@ -58,18 +58,28 @@ GRAPHQL;
             $pokemonEntity->setName($pokemon['name']);
             $pokemonEntity->setPokemonOrder($pokemon['order']);
             $pokemonEntity->setPokemonIdentifier($pokemon['id']);
+            $pokemonEntity = $this->setImportInformations($pokemonEntity, $pokemon);
             /** @var PokemonSpecy $specy */
             $specy = $this->entityManager->getRepository(PokemonSpecy::class)->findOneBy(
                 [
                     'name' => $pokemon['pokemon_v2_pokemonspecy']['name'],
                 ]
             );
-            if($specy) {
+            if ($specy) {
                 $pokemonEntity->setPokemonSpecy($specy);
             }
             $pokemons[] = $pokemonEntity;
         }
 
         return $pokemons;
+    }
+
+    private function setImportInformations(Pokemon $pokemonEntity, $pokemon)
+    {
+        if ($pokemon['id'] >= 1 && $pokemon['id'] <= 898) {
+            $pokemonEntity->setToImport(true);
+        }
+//        if()
+        return $pokemonEntity;
     }
 }
