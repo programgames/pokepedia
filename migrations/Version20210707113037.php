@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210706205711 extends AbstractMigration
+final class Version20210707113037 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -48,7 +48,7 @@ final class Version20210706205711 extends AbstractMigration
         $this->addSql('CREATE TABLE move_learn_method (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE move_name (id INT NOT NULL, move_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, language INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_504B42B26DC541A8 ON move_name (move_id)');
-        $this->addSql('CREATE TABLE pokemon (id INT NOT NULL, pokemon_specy_id INT NOT NULL, name VARCHAR(255) NOT NULL, pokemon_order INT NOT NULL, pokemon_identifier INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE pokemon (id INT NOT NULL, pokemon_specy_id INT NOT NULL, name VARCHAR(255) NOT NULL, pokemon_order INT NOT NULL, pokemon_identifier INT NOT NULL, to_import BOOLEAN NOT NULL, specific_name VARCHAR(255) DEFAULT NULL, is_alola BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_62DC90F3256D30DF ON pokemon (pokemon_specy_id)');
         $this->addSql('CREATE TABLE pokemon_move (id INT NOT NULL, move_id INT NOT NULL, version_group_id INT NOT NULL, learn_method_id INT NOT NULL, pokemon_id INT NOT NULL, level INT DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_D397493B6DC541A8 ON pokemon_move (move_id)');

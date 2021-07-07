@@ -5,10 +5,8 @@ namespace App\Api\PokeAPI;
 
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
-use App\Entity\Generation;
 use App\Entity\Pokemon;
 use App\Entity\PokemonSpecy;
-use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -74,12 +72,51 @@ GRAPHQL;
         return $pokemons;
     }
 
-    private function setImportInformations(Pokemon $pokemonEntity, $pokemon)
+    private function setImportInformations(Pokemon $pokemonEntity, $pokemon): Pokemon
     {
         if ($pokemon['id'] >= 1 && $pokemon['id'] <= 898) {
             $pokemonEntity->setToImport(true);
+            $pokemonEntity->setIsGalar(false);
+            $pokemonEntity->setIsAlola(false);
+        } elseif (preg_match('/-galar$/', $pokemon['name'], $matches)) {
+            $pokemonEntity->setToImport(true);
+            $pokemonEntity->setIsGalar(true);
+            $pokemonEntity->setIsAlola(false);
+        } elseif (preg_match('/-alola$/', $pokemon['name'], $matches)) {
+            $pokemonEntity->setToImport(true);
+            $pokemonEntity->setIsGalar(false);
+            $pokemonEntity->setIsAlola(true);
+        } elseif ($pokemon['name'] === 'kyurem-black') {
+            $pokemonEntity->setToImport(true);
+            $pokemonEntity->setIsGalar(false);
+            $pokemonEntity->setIsAlola(false);
+            $pokemonEntity->setSpecificName('Kyurem_Noir');
+        } elseif ($pokemon['name'] === 'kyurem-white') {
+            $pokemonEntity->setToImport(true);
+            $pokemonEntity->setIsGalar(false);
+            $pokemonEntity->setIsAlola(false);
+            $pokemonEntity->setSpecificName('Kyurem_Blanc');
+        } elseif ($pokemon['name'] === 'necrozma-dusk') {
+            $pokemonEntity->setToImport(true);
+            $pokemonEntity->setIsGalar(false);
+            $pokemonEntity->setIsAlola(false);
+            $pokemonEntity->setSpecificName('Necrozma_Crinière_du_Couchant');
+        } elseif ($pokemon['name'] === 'necrozma-dawn') {
+            $pokemonEntity->setToImport(true);
+            $pokemonEntity->setIsGalar(false);
+            $pokemonEntity->setIsAlola(false);
+            $pokemonEntity->setSpecificName('Necrozma_Ailes_de_l\'Aurore');
+        } elseif ($pokemon['name'] === 'necrozma-ultra') {
+            $pokemonEntity->setToImport(true);
+            $pokemonEntity->setIsGalar(false);
+            $pokemonEntity->setIsAlola(false);
+            $pokemonEntity->setSpecificName('Ultra-Necrozma');
+        } else {
+            $pokemonEntity->setToImport(false);
+            $pokemonEntity->setIsGalar(false);
+            $pokemonEntity->setIsAlola(false);
         }
-//        if()
         return $pokemonEntity;
     }
+
 }

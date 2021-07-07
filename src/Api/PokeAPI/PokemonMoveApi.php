@@ -28,7 +28,7 @@ class PokemonMoveApi
         $this->entityManager = $entityManager;
     }
 
-    public function getMovesByPokemon(): array
+    public function getMovesByPokemon(): \Generator
     {
         $query = <<<GRAPHQL
 query MyQuery {
@@ -62,7 +62,6 @@ GRAPHQL;
             }
         );
         $i =0;
-        $pokemonMoves = [];
         foreach ($json['data']['pokemon_v2_pokemon'] as $pokemon) {
             $i++;
             var_dump($i);
@@ -98,9 +97,8 @@ GRAPHQL;
                 $pokemonMoveEntity->setMove($move);
 
                 $pokemonMoveEntity->setPokemon($pokemonEntity);
-                $pokemonMoves[] = $pokemonMoveEntity;
+                yield $pokemonMoveEntity;
             }
         }
-        return $pokemonMoves;
     }
 }

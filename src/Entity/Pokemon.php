@@ -60,6 +60,11 @@ class Pokemon
      */
     private $isAlola;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isGalar;
+
     public function __construct()
     {
         $this->pokemonMoves = new ArrayCollection();
@@ -180,6 +185,18 @@ class Pokemon
     public function setIsAlola(bool $isAlola): self
     {
         $this->isAlola = $isAlola;
+
+        return $this;
+    }
+
+    public function getIsGalar(): ?bool
+    {
+        return $this->isGalar;
+    }
+
+    public function setIsGalar(bool $isGalar): self
+    {
+        $this->isGalar = $isGalar;
 
         return $this;
     }
