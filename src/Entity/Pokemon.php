@@ -40,6 +40,26 @@ class Pokemon
      */
     private $pokemonMoves;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $pokemonIdentifier;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $toImport;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $specificName;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isAlola;
+
     public function __construct()
     {
         $this->pokemonMoves = new ArrayCollection();
@@ -112,6 +132,54 @@ class Pokemon
                 $pokemonMove->setPokemon(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPokemonIdentifier(): ?int
+    {
+        return $this->pokemonIdentifier;
+    }
+
+    public function setPokemonIdentifier(int $pokemonIdentifier): self
+    {
+        $this->pokemonIdentifier = $pokemonIdentifier;
+
+        return $this;
+    }
+
+    public function getToImport(): ?bool
+    {
+        return $this->toImport;
+    }
+
+    public function setToImport(bool $toImport): self
+    {
+        $this->toImport = $toImport;
+
+        return $this;
+    }
+
+    public function getSpecificName(): ?string
+    {
+        return $this->specificName;
+    }
+
+    public function setSpecificName(?string $specificName): self
+    {
+        $this->specificName = $specificName;
+
+        return $this;
+    }
+
+    public function getIsAlola(): ?bool
+    {
+        return $this->isAlola;
+    }
+
+    public function setIsAlola(bool $isAlola): self
+    {
+        $this->isAlola = $isAlola;
 
         return $this;
     }

@@ -5,8 +5,6 @@ namespace App\DataFixtures;
 
 
 use App\Api\PokeAPI\GenerationApi;
-use App\Api\PokeAPI\MachineApi;
-use App\Api\PokeAPI\PokemonMoveApi;
 use App\Api\PokeAPI\MoveApi;
 use App\Api\PokeAPI\PokemonSpecyNameApi;
 use App\Api\PokeAPI\VersionGroupApi;
@@ -15,25 +13,25 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadMachine extends Fixture implements DependentFixtureInterface
+class LoadSpecyNames extends Fixture implements DependentFixtureInterface
 {
-    private MachineApi $machineApi;
+    private PokemonSpecyNameApi $pokemonSpecyNameApi;
 
-    public function __construct(MachineApi $machineApi)
+    public function __construct(PokemonSpecyNameApi $pokemonSpecyNameApi)
     {
-        $this->machineApi = $machineApi;
+        $this->pokemonSpecyNameApi = $pokemonSpecyNameApi;
     }
 
     public function load(ObjectManager $manager)
     {
-        foreach ($this->machineApi->getMachines() as $machine) {
-            $manager->persist($machine);
+        foreach ($this->pokemonSpecyNameApi->getSpecyNames() as $moveName) {
+            $manager->persist($moveName);
         }
         $manager->flush();
     }
 
     public function getDependencies()
     {
-        return [LoadMove::class,LoadItem::class,LoadVersionGroup::class];
+        return [LoadPokemonSpecies::class];
     }
 }

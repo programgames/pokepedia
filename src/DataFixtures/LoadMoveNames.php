@@ -6,7 +6,7 @@ namespace App\DataFixtures;
 
 use App\Api\PokeAPI\GenerationApi;
 use App\Api\PokeAPI\MoveApi;
-use App\Api\PokeAPI\MoveNameApi;
+use App\Api\PokeAPI\PokemonSpecyNameApi;
 use App\Api\PokeAPI\VersionGroupApi;
 use App\Entity\MoveLearnMethod;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -15,16 +15,16 @@ use Doctrine\Persistence\ObjectManager;
 
 class LoadMoveNames extends Fixture implements DependentFixtureInterface
 {
-    private MoveNameApi $moveNameApi;
+    private PokemonSpecyNameApi $moveNameApi;
 
-    public function __construct(MoveNameApi $versionGroupApi)
+    public function __construct(PokemonSpecyNameApi $versionGroupApi)
     {
         $this->moveNameApi = $versionGroupApi;
     }
 
     public function load(ObjectManager $manager)
     {
-        foreach ($this->moveNameApi->getMoveNames() as $moveName) {
+        foreach ($this->moveNameApi->getSpecyNames() as $moveName) {
             $manager->persist($moveName);
         }
         $manager->flush();
