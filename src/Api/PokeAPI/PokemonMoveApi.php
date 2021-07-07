@@ -28,11 +28,11 @@ class PokemonMoveApi
         $this->entityManager = $entityManager;
     }
 
-    public function getMovesByPokemon($id1): array
+    public function getMovesByPokemon(): array
     {
         $query = <<<GRAPHQL
 query MyQuery {
-  pokemon_v2_pokemon(where: {id: {_gte: $id1, _lte: $id1}}) {
+  pokemon_v2_pokemon {
     pokemon_v2_pokemonmoves {
       pokemon_v2_move {
         name
@@ -61,8 +61,11 @@ GRAPHQL;
                 return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
             }
         );
+        $i =0;
         $pokemonMoves = [];
         foreach ($json['data']['pokemon_v2_pokemon'] as $pokemon) {
+            $i++;
+            var_dump($i);
             foreach ($pokemon['pokemon_v2_pokemonmoves'] as $pokemonMove) {
                 $pokemonMoveEntity = new PokemonMove();
                 $pokemonMoveEntity->setLevel($pokemonMove['level']);

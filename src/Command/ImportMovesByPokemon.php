@@ -39,10 +39,21 @@ class ImportMovesByPokemon extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        foreach ( $this->api->getMovesByPokemon(1) as $pokemonMove) {
+        $flush = 200;
+        $entity = 0;
+        foreach ( $this->api->getMovesByPokemon() as $pokemonMove) {
             $this->em->persist($pokemonMove);
+            $flush--;
+            $entity ++;
+            if($flush === 0) {
+                $io->info('flushing');
+                $this->em->flush();
+                $flush = 200;
+            }
+            $io->info(sprintf('Entity %s', $entity));
         }
         $this->em->flush();
+
 
         return Command::SUCCESS;
     }
