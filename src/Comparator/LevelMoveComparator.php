@@ -6,7 +6,6 @@ namespace App\Comparator;
 
 class LevelMoveComparator
 {
-
     public function levelMoveComparator(array $pokepediaMoves, array $pokeApiMoves)
     {
         $numberOfMoves = count($pokeApiMoves);

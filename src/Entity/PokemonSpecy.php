@@ -48,6 +48,12 @@ class PokemonSpecy
      */
     private $names;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Generation::class, inversedBy="pokemonSpecies")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $generation;
+
     public function __construct()
     {
         $this->eggGroups = new ArrayCollection();
@@ -176,6 +182,18 @@ class PokemonSpecy
                 $name->setPokemonSpecy(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGeneration(): ?Generation
+    {
+        return $this->generation;
+    }
+
+    public function setGeneration(?Generation $generation): self
+    {
+        $this->generation = $generation;
 
         return $this;
     }

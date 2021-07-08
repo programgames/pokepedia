@@ -42,8 +42,12 @@ query MyQuery {
         name
       }
     }
+    pokemon_v2_generation {
+      name
+    }
   }
 }
+
 
 GRAPHQL;
 
@@ -67,11 +71,17 @@ GRAPHQL;
                             'name' => $eggGroup['pokemon_v2_egggroup']['name']
                         ]
                     );
-                if(!$eggGroupEntity) {
+                if (!$eggGroupEntity) {
                     continue;
                 }
                 $pokemonSpecyEntity->addEggGroup($eggGroupEntity);
             }
+            $generation = $this->entityManager->getRepository(Generation::class)
+                ->findOneBy(
+                    [
+                        'name' => $pokemonspecy['pokemon_v2_generation']['name']
+                    ]
+                );
             $pokemonSpecies[] = $pokemonSpecyEntity;
         }
 

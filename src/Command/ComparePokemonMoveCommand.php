@@ -6,9 +6,11 @@ namespace App\Command;
 
 use App\Api\Pokepedia\PokepediaMoveApi;
 use App\Comparator\LevelMoveComparator;
+use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
-use App\Formatter\PokeApiMoveFormatter;
+use App\Formatter\PokeApi\PokeApiTutorMoveFormatter;
+use App\Helper\GenerationHelper;
 use App\Helper\MoveSetHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -24,7 +26,7 @@ class ComparePokemonMoveCommand extends Command
     private EntityManagerInterface $em;
     private PokepediaMoveApi $api;
     private MoveSetHelper $moveSetHelper;
-    private PokeApiMoveFormatter $pokeApiFormatter;
+    private PokeApiTutorMoveFormatter $pokeApiFormatter;
     private LevelMoveComparator $levelMoveComparator;
 
     /**
@@ -32,10 +34,10 @@ class ComparePokemonMoveCommand extends Command
      * @param EntityManagerInterface $em
      * @param PokepediaMoveApi $api
      * @param MoveSetHelper $moveSetHelper
-     * @param PokeApiMoveFormatter $pokeApiFormatter
+     * @param PokeApiTutorMoveFormatter $pokeApiFormatter
      * @param LevelMoveComparator $levelMoveComparator
      */
-    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper, PokeApiMoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator)
+    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper, PokeApiTutorMoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator)
     {
         parent::__construct();
 
@@ -57,15 +59,29 @@ class ComparePokemonMoveCommand extends Command
 
         $pokemons = $this->em->getRepository(Pokemon::class)->findBy(
             [
-                'toImport' => true
+                'toImport' => true,
             ]);
 
         $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
+
+        $generations = $this->em->getRepository(Generation::class)->findAll();
+
         foreach ($pokemons as $pokemon) {
-            $io->info(sprintf('comparing %s generation %s tutor moves', $pokemon->getName(),1));
-            $pokepediaMoves = $this->api->getLevelMoves($this->moveSetHelper->getPokepediaPokemonName($pokemon), 1);
-            $pokeApiMoves = $this->pokeApiFormatter->getPokeApiMoves($pokemon, 1,$learnmethod);
-            $this->levelMoveComparator->levelMoveComparator($pokepediaMoves,$pokeApiMoves);
+
+            foreach ($generations as $generation) {
+                $generationNumber = GenerationHelper::genGenerationNumberByName($generation->getName());
+                $pokemongeneration = GenerationHelper::genGenerationNumberByName($pokemon->getPokemonSpecy()->getGeneration()->getName());
+                if($pokemongeneration > $generationNumber) {
+                    continue;
+                }
+                $io->info(sprintf('comparing %s generation %s tutor moves', $pokemon->getName(), $generationNumber));
+                $pokepediaMoves = $this->api->getLevelMoves($this->moveSetHelper->getPokepediaPokemonName($pokemon), $generationNumber);
+                $pokeApiMoves = $this->pokeApiFormatter->getTutorPokeApiMoves($pokemon, $generationNumber, $learnmethod);
+                if(!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
+                    $pokemon = 2;
+                }
+            }
+
         }
 
         return Command::SUCCESS;

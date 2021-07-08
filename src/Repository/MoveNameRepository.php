@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\MoveName;
+use App\Entity\PokemonMove;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,22 +20,18 @@ class MoveNameRepository extends ServiceEntityRepository
         parent::__construct($registry, MoveName::class);
     }
 
-    // /**
-    //  * @return MoveName[] Returns an array of MoveName objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findAndFormatMoveNameByPokemonMove(PokemonMove $pokemonMove)
     {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('m.id', 'ASC')
-            ->setMaxResults(10)
+        $moveName =  $this->createQueryBuilder('move_name')
+            ->leftJoin('m.move','move' )
+            ->andWhere('move_name.language = 5')
+            ->andWhere('move.id = :moveId')
+            ->setParameter('moveId', $pokemonMove->getMove()->getId())
             ->getQuery()
-            ->getResult()
+            ->getOneOrNullResult();
         ;
+        return str_replace('’', '\'', $moveName->getName());
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?MoveName

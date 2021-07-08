@@ -4,7 +4,7 @@
 namespace App\Api\Pokepedia;
 
 
-use App\Entity\Pokemon;
+use App\Formatter\Pokepedia\PokepediaTutorMoveFormatter;
 use App\Helper\MoveSetHelper;
 use App\Satanizer\TutorMoveSatanizer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,16 +13,15 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class PokepediaMoveApi
 {
-    private EntityManagerInterface $entityManager;
     private FilesystemAdapter $cache;
     private TutorMoveSatanizer $moveSatanizer;
     private PokepediaMoveApiClient $moveClient;
 
-    public function __construct(EntityManagerInterface $entityManager, TutorMoveSatanizer $moveSatanizer, PokepediaMoveApiClient $moveClient)
+    public function __construct(TutorMoveSatanizer $moveSatanizer, PokepediaMoveApiClient $moveClient)
     {
-        $this->entityManager = $entityManager;
         $this->moveSatanizer = $moveSatanizer;
         $this->moveClient = $moveClient;
+
         $this->cache = new FilesystemAdapter();
 
     }
@@ -46,7 +45,7 @@ class PokepediaMoveApi
     public function getLevelMoves(string $name, int $generation)
     {
         $moves = $this->cache->get(
-            sprintf('pokepedia.wikitext.%s,%s.%s',$name, $generation, MoveSetHelper::LEVELING_UP_TYPE),
+            sprintf('pokepedia.wikitext.%s,%s.%s', $name, $generation, MoveSetHelper::LEVELING_UP_TYPE),
             function (ItemInterface $item) use ($name, $generation) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $name,

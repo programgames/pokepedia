@@ -29,9 +29,15 @@ class Generation
      */
     private $versionGroups;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonSpecy::class, mappedBy="generation", orphanRemoval=true)
+     */
+    private $pokemonSpecies;
+
     public function __construct()
     {
         $this->versionGroups = new ArrayCollection();
+        $this->pokemonSpecies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -75,6 +81,36 @@ class Generation
             // set the owning side to null (unless already changed)
             if ($versionGroup->getGeneration() === $this) {
                 $versionGroup->setGeneration(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonSpecy[]
+     */
+    public function getPokemonSpecies(): Collection
+    {
+        return $this->pokemonSpecies;
+    }
+
+    public function addPokemonSpecies(PokemonSpecy $pokemonSpecies): self
+    {
+        if (!$this->pokemonSpecies->contains($pokemonSpecies)) {
+            $this->pokemonSpecies[] = $pokemonSpecies;
+            $pokemonSpecies->setGeneration($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonSpecies(PokemonSpecy $pokemonSpecies): self
+    {
+        if ($this->pokemonSpecies->removeElement($pokemonSpecies)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonSpecies->getGeneration() === $this) {
+                $pokemonSpecies->setGeneration(null);
             }
         }
 
