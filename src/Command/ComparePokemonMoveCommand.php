@@ -62,6 +62,7 @@ class ComparePokemonMoveCommand extends Command
 
         $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
         foreach ($pokemons as $pokemon) {
+            $io->info(sprintf('comparing %s generation %s tutor moves', $pokemon->getName(),1));
             $pokepediaMoves = $this->api->getLevelMoves($this->moveSetHelper->getPokepediaPokemonName($pokemon), 1);
             $pokeApiMoves = $this->pokeApiFormatter->getPokeApiMoves($pokemon, 1,$learnmethod);
             $this->levelMoveComparator->levelMoveComparator($pokepediaMoves,$pokeApiMoves);

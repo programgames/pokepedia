@@ -36,10 +36,6 @@ class PokeApiMoveFormatter
                 $this->getSecondVersionGroupByGeneration($generation)
             );
 
-        if (count($moves1) !== count($moves2)) {
-            throw new \RuntimeException(sprintf('Number of moves different between version for pokemon %s generation %s',
-                $pokemon->getName(), $generation));
-        }
         $numberOfMoves = count($moves1);
         $formattedMoves = [];
 
@@ -56,10 +52,11 @@ class PokeApiMoveFormatter
                     ]
                 ))->getName();
             $name = str_replace('’', '\'', $name);
-            $names[] = $name;
             if (in_array($name, $names, true)) {
                 continue;
             }
+            $names[] = $name;
+
             $formattedMoves[] = sprintf('%s / %s / %s', $name, $this->formatLevel($moves1[$i]->getLevel()), $this->formatLevel($moves2[$i]->getLevel()));
         }
 
