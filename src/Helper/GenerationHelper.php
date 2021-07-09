@@ -4,8 +4,13 @@
 namespace App\Helper;
 
 
+use App\Entity\VersionGroup;
+use Doctrine\ORM\EntityManagerInterface;
+
 class GenerationHelper
 {
+    private EntityManagerInterface $em;
+
     public static function genGenerationNumberByName($generation)
     {
         $mapping = [
@@ -20,5 +25,38 @@ class GenerationHelper
         ];
 
         return $mapping[$generation];
+    }
+
+    public function getVersionGroupByGenerationAndColumn(int $generation, int $column): VersionGroup
+    {
+        $col1 = [
+            '1' => 'red-blue',
+            '2' => ''
+        ];
+        $col2 = [
+            '1' => 'yellow',
+        ];
+
+        $col3 = [
+
+        ];
+
+        switch ($column) {
+            case 1 :
+                $mapping = $col1;
+                break;
+            case 2:
+                $mapping = $col2;
+                break;
+            case 3:
+                $mapping = $col3;
+                break;
+        }
+
+        return $this->em->getRepository(VersionGroup::class)->findOneBy(
+            [
+                'name' => $mapping[$generation]
+            ]
+        );
     }
 }

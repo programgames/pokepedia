@@ -9,125 +9,63 @@ use App\Entity\MoveName;
 use App\Entity\Pokemon;
 use App\Entity\PokemonMove;
 use App\Entity\VersionGroup;
+use App\Formatter\MoveFullFiller;
+use App\Helper\GenerationHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Formatter\DTO;
 
 class PokeApiTutorMoveFormatter
 {
     private EntityManagerInterface $em;
+    private MoveFullFiller $moveFullFiller;
+    private GenerationHelper $generationHelper;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, MoveFullFiller $moveFullFiller, GenerationHelper $generationHelper)
     {
         $this->em = $em;
+        $this->moveFullFiller = $moveFullFiller;
+        $this->generationHelper = $generationHelper;
     }
 
-    public function getTutorPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod): array
+    public function getFormattedTutorPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod): array
     {
-        $moves1 = $this->em->getRepository(PokemonMove::class)
-            ->findMovesByPokemonLearnMethodAndVersionGroup(
-                $pokemon,
-                $learnMethod,
-                $this->getFirstVersionGroupByGeneration($generation)
-            );
+        $preFormatteds = $this->getPreFormattedTutorPokeApiMoves($pokemon, $generation, $learnMethod);
+        $formatteds = [];
 
-        $moves2 = $this->em->getRepository(PokemonMove::class)
-            ->findMovesByPokemonLearnMethodAndVersionGroup(
-                $pokemon,
-                $learnMethod,
-                $this->getSecondVersionGroupByGeneration($generation)
-            );
+        return $formatteds;
 
-        $moves1DTO = [];
-        foreach ($moves1 as $pokemonMoveEntity) {
-            $name = $this->em->getRepository(MoveName::class)
-                ->findAndFormatMoveNameByPokemonMove($pokemonMoveEntity);
+    }
 
-            if (array_key_exists($name, $moves1DTO)) {
-                $move = $moves1DTO[$name];
-            } else {
-                $move = new DTO\LevelUpMove();
+    private function getPreFormattedTutorPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod): array
+    {
+        $moves = [];
+        $columns = in_array($generation, [3, 4]) ? 3 : 2;
+
+        for ($column = 1; $column < $columns; $column++) {
+            $moves = $this->em->getRepository(PokemonMove::class)
+                ->findMovesByPokemonLearnMethodAndVersionGroup(
+                    $pokemon,
+                    $learnMethod,
+                    $this->generationHelper->getVersionGroupByGenerationAndColumn($generation, $column)
+                );
+
+            $movesDTO = [];
+            foreach ($moves as $pokemonMoveEntity) {
+                $name = $this->em->getRepository(MoveName::class)
+                    ->findAndFormatMoveNameByPokemonMove($pokemonMoveEntity);
+
+                if (array_key_exists($name, $movesDTO)) {
+                    $move = $movesDTO[$name];
+                } else {
+                    $move = new DTO\LevelUpMove();
+                }
+
+                $move = $this->moveFullFiller->fullFillTutorMove($move, $column, $name, $pokemonMoveEntity);
+
+                $movesDTO[$name] = $move;
             }
-
-            $move->name = $name;
-            $level = $pokemonMoveEntity->getMove()->getLevel();
-            if ($level === 1) {
-                $move->onStart = true;
-            } elseif ($level === 0) {
-                $move->onEvolution = true;
-            } else {
-                $move->level = $level;
-            }
-
-            $move->level = $pokemonMoveEntity->getMove()->getLevel();
-            $move->column = 1;
-
-            $moves1DTO[$name] = $move;
+            $moves[$column] = $movesDTO;
         }
-
-        $moves2DTO = [];
-        foreach ($moves2 as $pokemonMoveEntity) {
-            $name = $this->em->getRepository(MoveName::class)
-                ->findAndFormatMoveNameByPokemonMove($pokemonMoveEntity);
-
-            if (array_key_exists($name, $moves1DTO)) {
-                $move = $moves2DTO[$name];
-            } else {
-                $move = new DTO\LevelUpMove();
-            }
-
-            $move = $this->fillMove($move, $name, $pokemonMoveEntity);
-            $move->column = 2;
-
-            $moves2DTO[$name] = $move;
-        }
-
-        return [
-            '1' => $moves1DTO,
-            '2' => $moves2DTO
-        ];
-    }
-
-    private function getFirstVersionGroupByGeneration(int $generation): VersionGroup
-    {
-        $mapping = [
-            '1' => 'red-blue',
-            '4' => ''
-        ];
-
-        return $this->em->getRepository(VersionGroup::class)->findOneBy(
-            [
-                'name' => $mapping[$generation]
-            ]
-        );
-    }
-
-    private function getSecondVersionGroupByGeneration(int $generation): VersionGroup
-    {
-        $mapping = [
-            '1' => 'yellow',
-        ];
-
-        return $this->em->getRepository(VersionGroup::class)->findOneBy(
-            [
-                'name' => $mapping[$generation]
-            ]
-        );
-    }
-
-    private function fillMove(DTO\LevelUpMove $move, $name, $pokemonMoveEntity)
-    {
-        $move->name = $name;
-        $level = $pokemonMoveEntity->getMove()->getLevel();
-        if ($level === 1) {
-            $move->onStart = true;
-        } elseif ($level === 0) {
-            $move->onEvolution = true;
-        } else {
-            $move->level = $level;
-        }
-
-        $move->level = $pokemonMoveEntity->getMove()->getLevel();
-
-        return $move;
+        return $moves;
     }
 }

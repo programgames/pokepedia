@@ -76,7 +76,7 @@ class ComparePokemonMoveCommand extends Command
                 }
                 $io->info(sprintf('comparing %s generation %s tutor moves', $pokemon->getName(), $generationNumber));
                 $pokepediaMoves = $this->api->getLevelMoves($this->moveSetHelper->getPokepediaPokemonName($pokemon), $generationNumber);
-                $pokeApiMoves = $this->pokeApiFormatter->getTutorPokeApiMoves($pokemon, $generationNumber, $learnmethod);
+                $pokeApiMoves = $this->pokeApiFormatter->getFormattedTutorPokeApiMoves($pokemon, $generationNumber, $learnmethod);
                 if(!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
                     $pokemon = 2;
                 }

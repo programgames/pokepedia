@@ -4,10 +4,8 @@
 namespace App\Api\Pokepedia;
 
 
-use App\Formatter\Pokepedia\PokepediaTutorMoveFormatter;
 use App\Helper\MoveSetHelper;
 use App\Satanizer\TutorMoveSatanizer;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
