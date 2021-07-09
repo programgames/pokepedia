@@ -32,6 +32,46 @@ class MoveName
      */
     private $move;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $gen1;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $gen2;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $gen3;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $gen4;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $gen5;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $gen6;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $gen7;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $gen8;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +109,102 @@ class MoveName
     public function setMove(?Move $move): self
     {
         $this->move = $move;
+
+        return $this;
+    }
+
+    public function getGen1(): ?string
+    {
+        return $this->gen1;
+    }
+
+    public function setGen1(?string $gen1): self
+    {
+        $this->gen1 = $gen1;
+
+        return $this;
+    }
+
+    public function getGen2(): ?string
+    {
+        return $this->gen2;
+    }
+
+    public function setGen2(?string $gen2): self
+    {
+        $this->gen2 = $gen2;
+
+        return $this;
+    }
+
+    public function getGen3(): ?string
+    {
+        return $this->gen3;
+    }
+
+    public function setGen3(?string $gen3): self
+    {
+        $this->gen3 = $gen3;
+
+        return $this;
+    }
+
+    public function getGen4(): ?string
+    {
+        return $this->gen4;
+    }
+
+    public function setGen4(?string $gen4): self
+    {
+        $this->gen4 = $gen4;
+
+        return $this;
+    }
+
+    public function getGen5(): ?string
+    {
+        return $this->gen5;
+    }
+
+    public function setGen5(?string $gen5): self
+    {
+        $this->gen5 = $gen5;
+
+        return $this;
+    }
+
+    public function getGen6(): ?string
+    {
+        return $this->gen6;
+    }
+
+    public function setGen6(?string $gen6): self
+    {
+        $this->gen6 = $gen6;
+
+        return $this;
+    }
+
+    public function getGen7(): ?string
+    {
+        return $this->gen7;
+    }
+
+    public function setGen7(?string $gen7): self
+    {
+        $this->gen7 = $gen7;
+
+        return $this;
+    }
+
+    public function getGen8(): ?string
+    {
+        return $this->gen8;
+    }
+
+    public function setGen8(?string $gen8): self
+    {
+        $this->gen8 = $gen8;
 
         return $this;
     }

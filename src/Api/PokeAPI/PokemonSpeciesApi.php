@@ -82,6 +82,7 @@ GRAPHQL;
                         'name' => $pokemonspecy['pokemon_v2_generation']['name']
                     ]
                 );
+            $pokemonSpecyEntity->setGeneration($generation);
             $pokemonSpecies[] = $pokemonSpecyEntity;
         }
 
