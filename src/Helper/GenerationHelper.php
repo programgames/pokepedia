@@ -11,6 +11,11 @@ class GenerationHelper
 {
     private EntityManagerInterface $em;
 
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
+
     public static function genGenerationNumberByName($generation)
     {
         $mapping = [
@@ -31,14 +36,28 @@ class GenerationHelper
     {
         $col1 = [
             '1' => 'red-blue',
-            '2' => ''
+            '2' => 'gold-silver',
+            '3' => 'ruby-sapphire',
+            '4' => 'diamond-pearl',
+            '5' => 'black-white',
+            '6' => 'x-y',
+            '7' => 'sun-moon',
+            '8' => 'sword-shield'
         ];
         $col2 = [
             '1' => 'yellow',
+            '2' => 'crystal',
+            '3' => 'emerald',
+            '4' => 'platinum',
+            '5' => 'black-2-white-2',
+            '6' => 'omega-ruby-alpha-sapphire',
+            '7' => 'ultra-sun-ultra-moon'
         ];
 
         $col3 = [
-
+            '3' => 'firered-leafgreen',
+            '4' => 'heartgold-soulsilver',
+            '7' => 'lets-go'
         ];
 
         switch ($column) {

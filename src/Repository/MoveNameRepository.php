@@ -20,17 +20,18 @@ class MoveNameRepository extends ServiceEntityRepository
         parent::__construct($registry, MoveName::class);
     }
 
-    public function findAndFormatMoveNameByPokemonMove(PokemonMove $pokemonMove)
+    public function findMoveNameByPokemonMove(PokemonMove $pokemonMove)
     {
         $moveName =  $this->createQueryBuilder('move_name')
-            ->leftJoin('m.move','move' )
+            ->leftJoin('move_name.move','move' )
             ->andWhere('move_name.language = 5')
             ->andWhere('move.id = :moveId')
             ->setParameter('moveId', $pokemonMove->getMove()->getId())
             ->getQuery()
             ->getOneOrNullResult();
         ;
-        return str_replace('’', '\'', $moveName->getName());
+
+        return $moveName;
     }
 
     /*

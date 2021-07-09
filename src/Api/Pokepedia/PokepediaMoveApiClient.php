@@ -23,15 +23,25 @@ class PokepediaMoveApiClient
     {
         $sections = $this->getMoveSections($name, $generation);
 
-        $url = strtr(
-            'https://www.pokepedia.fr/api.php?action=parse&format=json&page=Bulbizarre/G%C3%A9n%C3%A9ration_%generation%&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
-            [
-                '%pokemon%' => str_replace('’', '%27', $name),
-                '%generation%' => $generation,
-                '%section%' => $sections[$moveType]
-            ]
-        );
-
+        if ($generation < 7) {
+            $url = strtr(
+                'https://www.pokepedia.fr/api.php?action=parse&format=json&page=Bulbizarre/G%C3%A9n%C3%A9ration_%generation%&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
+                [
+                    '%pokemon%' => str_replace('’', '%27', $name),
+                    '%generation%' => $generation,
+                    '%section%' => $sections[$moveType]
+                ]
+            );
+        } else {
+            $url = strtr(
+                'https://www.pokepedia.fr/api.php?action=parse&format=json&page=Bulbizarre&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
+                [
+                    '%pokemon%' => str_replace('’', '%27', $name),
+                    '%generation%' => $generation,
+                    '%section%' => $sections[$moveType] + ($generation === 7 ? 1 : 2)
+                ]
+            );
+        }
 
         $browser = new HttpBrowser(HttpClient::create());
         $browser->request('GET', $url);
@@ -49,13 +59,24 @@ class PokepediaMoveApiClient
     private function getMoveSections(string $name, int $generation)
     {
         $formattedSections = [];
-        $sectionsUrl = strtr(
-            'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%/G%C3%A9n%C3%A9ration_%generation%&prop=sections&errorformat=wikitext&disabletoc=1',
-            [
-                '%pokemon%' => str_replace('’', '%27', $name),
-                '%generation%' => $generation,
-            ]
-        );
+
+        if ($generation < 7) {
+            $sectionsUrl = strtr(
+                'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%/G%C3%A9n%C3%A9ration_%generation%&prop=sections&errorformat=wikitext&disabletoc=1',
+                [
+                    '%pokemon%' => str_replace('’', '%27', $name),
+                    '%generation%' => $generation,
+                ]
+            );
+        } else {
+            $sectionsUrl = strtr(
+                'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%&prop=sections&errorformat=wikitext',
+                [
+                    '%pokemon%' => str_replace('’', '%27', $name),
+                    '%generation%' => $generation,
+                ]
+            );
+        }
 
         $browser = new HttpBrowser(HttpClient::create());
         $browser->request('GET', $sectionsUrl);

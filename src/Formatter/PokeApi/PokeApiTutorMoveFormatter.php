@@ -8,7 +8,6 @@ use App\Entity\MoveLearnMethod;
 use App\Entity\MoveName;
 use App\Entity\Pokemon;
 use App\Entity\PokemonMove;
-use App\Entity\VersionGroup;
 use App\Formatter\MoveFullFiller;
 use App\Helper\GenerationHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,18 +29,31 @@ class PokeApiTutorMoveFormatter
     public function getFormattedTutorPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod): array
     {
         $preFormatteds = $this->getPreFormattedTutorPokeApiMoves($pokemon, $generation, $learnMethod);
-        $formatteds = [];
+        if (empty($preFormatteds[3])) {
+            $firstColumn = count($preFormatteds[1]);
+            $secondColumn = count($preFormatteds[2]);
+            $moves = $firstColumn > $secondColumn ? $preFormatteds[1] : $preFormatteds[2];
 
-        return $formatteds;
+            foreach ($moves as $name => $move) {
+                strtr('%name% / %firstLevel% / %secondLevel%',
+                    [
+                        '%name%' => $name,
+                        '%firstLevel%' => $this->formatLevel(),
+                    ]
+                );
+            }
 
+        }
+
+        return [];
     }
 
     private function getPreFormattedTutorPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod): array
     {
-        $moves = [];
+        $preformatteds = [];
         $columns = in_array($generation, [3, 4]) ? 3 : 2;
 
-        for ($column = 1; $column < $columns; $column++) {
+        for ($column = 1; $column < $columns + 1; $column++) {
             $moves = $this->em->getRepository(PokemonMove::class)
                 ->findMovesByPokemonLearnMethodAndVersionGroup(
                     $pokemon,
@@ -49,23 +61,21 @@ class PokeApiTutorMoveFormatter
                     $this->generationHelper->getVersionGroupByGenerationAndColumn($generation, $column)
                 );
 
-            $movesDTO = [];
             foreach ($moves as $pokemonMoveEntity) {
-                $name = $this->em->getRepository(MoveName::class)
-                    ->findAndFormatMoveNameByPokemonMove($pokemonMoveEntity);
+                $nameEntity = $this->em->getRepository(MoveName::class)
+                    ->findMoveNameByPokemonMove($pokemonMoveEntity);
 
-                if (array_key_exists($name, $movesDTO)) {
-                    $move = $movesDTO[$name];
+                if (array_key_exists($nameEntity->getName(), $preformatteds)) {
+                    $move = $preformatteds[$nameEntity->getName()];
                 } else {
                     $move = new DTO\LevelUpMove();
                 }
 
-                $move = $this->moveFullFiller->fullFillTutorMove($move, $column, $name, $pokemonMoveEntity);
+                $move = $this->moveFullFiller->fullFillTutorMove($move, $column, $nameEntity->getName(), $pokemonMoveEntity);
 
-                $movesDTO[$name] = $move;
+                $preformatteds[$nameEntity->getName()] = $move;
             }
-            $moves[$column] = $movesDTO;
         }
-        return $moves;
+        return $preformatteds;
     }
 }

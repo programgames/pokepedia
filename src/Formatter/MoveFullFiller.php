@@ -1,27 +1,20 @@
 <?php
 
-
 namespace App\Formatter;
-
-
-use App\Entity\VersionGroup;
 
 class MoveFullFiller
 {
-    public function fullFillTutorMove(DTO\LevelUpMove $move,int $column, $name, $pokemonMoveEntity)
+    public function fullFillTutorMove(DTO\LevelUpMove $move,int $column, $name, $pokemonMoveEntity): DTO\LevelUpMove
     {
-        $move->name = $name;
-        $level = $pokemonMoveEntity->getMove()->getLevel();
+        $move->{'name'.$column} = $name;
+        $level = $pokemonMoveEntity->getLevel();
         if ($level === 1) {
-            $move->onStart = true;
+            $move->{'onStart'.$column} = true;
         } elseif ($level === 0) {
-            $move->onEvolution = true;
+            $move->{'onEvolution'.$column} = true;
         } else {
-            $move->level = $level;
+            $move->{'level'.$column} = $level;
         }
-
-        $move->level = $pokemonMoveEntity->getMove()->getLevel();
-        $move->column = $column;
 
         return $move;
     }

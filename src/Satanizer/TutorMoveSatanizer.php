@@ -11,7 +11,7 @@ class TutorMoveSatanizer
 {
     public function checkAndSanitizeMoves(array $moves)
     {
-        if ($moves[0] !== '=== Par montée en [[niveau]] ===') {
+        if (!in_array($moves[0],['=== Par montée en [[niveau]] ===','==== [[Septième génération]] ====','==== [[Huitième génération]] ===='])) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         };
 
