@@ -6,18 +6,18 @@ namespace App\Formatter\DTO;
 
 class LevelUpMove
 {
-    public string $name1;
-    public int $level1;
-    public bool $onEvolution1;
-    public bool $onStart1;
+    public ?string $name1 = null;
+    public ?int $level1 = null;
+    public ?bool $onEvolution1 = null;
+    public ?bool $onStart1 = null;
 
-    public string $name2;
-    public int $level2;
-    public bool $onEvolution2;
-    public bool $onStart2;
+    public ?string $name2 = null;
+    public ?int $level2 = null;
+    public ?bool $onEvolution2 = null;
+    public ?bool $onStart2 = null;
 
-    public string $name3;
-    public int $level3;
-    public bool $onEvolution3;
-    public bool $onStart3;
+    public ?string $name3 = null;
+    public ?int $level3 = null;
+    public ?bool $onEvolution3 = null;
+    public ?bool $onStart3 = null;
 }

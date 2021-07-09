@@ -29,23 +29,21 @@ class PokeApiTutorMoveFormatter
     public function getFormattedTutorPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod): array
     {
         $preFormatteds = $this->getPreFormattedTutorPokeApiMoves($pokemon, $generation, $learnMethod);
-        if (empty($preFormatteds[3])) {
-            $firstColumn = count($preFormatteds[1]);
-            $secondColumn = count($preFormatteds[2]);
-            $moves = $firstColumn > $secondColumn ? $preFormatteds[1] : $preFormatteds[2];
-
-            foreach ($moves as $name => $move) {
-                strtr('%name% / %firstLevel% / %secondLevel%',
+        $formatted = [];
+        if (true) {
+            foreach ($preFormatteds as $name => $move) {
+                $formatted[] = strtr('%name% / %firstLevel% / %secondLevel%',
                     [
                         '%name%' => $name,
-                        '%firstLevel%' => $this->formatLevel(),
+                        '%firstLevel%' => $this->formatLevel($move,1),
+                        '%secondLevel%' => $this->formatLevel($move,2),
                     ]
                 );
             }
 
         }
 
-        return [];
+        return $formatted;
     }
 
     private function getPreFormattedTutorPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod): array
@@ -77,5 +75,28 @@ class PokeApiTutorMoveFormatter
             }
         }
         return $preformatteds;
+    }
+
+    private function formatLevel($move,$column): string
+    {
+        $level = '';
+
+        if($move->{'level'.$column} === null && $move->{'onEvolution'.$column} === null && $move->{'onStart'.$column} === null) {
+            return '-';
+        }
+
+        if($move->{'onStart'.$column}) {
+            $level .= 'Départ';
+        }
+
+        if($move->{'onEvolution'.$column}) {
+            empty($level) ? $level = 'Évolution' : $level .= ', ' . 'Évolution';
+        }
+
+        if($move->{'level'.$column}) {
+            empty($level) ? $level = $move->{'level'.$column} : $level .= ', ' . $move->{'level'.$column};
+        }
+
+        return $level;
     }
 }
