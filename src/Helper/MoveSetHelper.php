@@ -13,6 +13,14 @@ class MoveSetHelper
     public const POKEPEDIA_LEVELING_UP_TYPE_LABEL = 'Par montée en niveau';
     public  const LEVELING_UP_TYPE = 'tutor';
 
+    /* bulbapedia title of sections*/
+    public const BULBAPEDIA_TUTORING_TYPE_LABEL = 'By tutoring';
+    public const BULBAPEDIA_LEVELING_UP_TYPE_LABEL = 'By leveling up';
+
+    /* used to parse type of learnlist in learnlist/tutorf for example */
+    public const BULBAPEDIA_TUTOR_WIKI_TYPE = 'tutor';
+    public const BULBAPEDIA_LEVEL_WIKI_TYPE = 'level';
+
     private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em)

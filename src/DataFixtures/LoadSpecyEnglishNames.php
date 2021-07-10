@@ -10,10 +10,11 @@ use App\Api\PokeAPI\PokemonSpecyNameApi;
 use App\Api\PokeAPI\VersionGroupApi;
 use App\Entity\MoveLearnMethod;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadSpecyNames extends Fixture implements DependentFixtureInterface
+class LoadSpecyEnglishNames extends Fixture implements DependentFixtureInterface
 {
     private PokemonSpecyNameApi $pokemonSpecyNameApi;
 
@@ -24,7 +25,7 @@ class LoadSpecyNames extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
-        foreach ($this->pokemonSpecyNameApi->getFrenchSpecyNames() as $moveName) {
+        foreach ($this->pokemonSpecyNameApi->getEnglishSpecyNames() as $moveName) {
             $manager->persist($moveName);
         }
         $manager->flush();

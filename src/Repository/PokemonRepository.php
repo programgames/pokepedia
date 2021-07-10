@@ -19,22 +19,29 @@ class PokemonRepository extends ServiceEntityRepository
         parent::__construct($registry, Pokemon::class);
     }
 
-    // /**
-    //  * @return Pokemon[] Returns an array of Pokemon objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findLGPEPokemons()
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+        $gen1 =  $this->createQueryBuilder('p')
+            ->leftJoin('p.pokemonSpecy','s')
+            ->andWhere('p.pokemonIdentifier >= 1 AND p.pokemonIdentifier <= 151')
+            ->andWhere('p.toImport = TRUE')
+            ->orderBy('s.pokemonSpeciesOrder', 'ASC')
             ->getQuery()
             ->getResult()
         ;
+
+        $news = $this->createQueryBuilder('p')
+            ->leftJoin('p.pokemonSpecy','s')
+            ->andWhere('p.name = \'melmetal\'')
+            ->orWhere('p.name = \'meltan\'')
+            ->andWhere('p.toImport = \'TRUE\'')
+            ->orderBy('s.pokemonSpeciesOrder', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return array_merge($gen1,$news);
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?Pokemon

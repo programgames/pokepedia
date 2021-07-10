@@ -5,9 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\MoveName;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadFrenchMoves extends Fixture implements FixtureGroupInterface
+class LoadFrenchMovesAliases extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
@@ -60,5 +61,10 @@ class LoadFrenchMoves extends Fixture implements FixtureGroupInterface
     public static function getGroups(): array
     {
         return ['french_moves'];
+    }
+
+    public function getDependencies()
+    {
+        return [LoadMoveNames::class];
     }
 }
