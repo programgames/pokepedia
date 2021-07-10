@@ -30,17 +30,28 @@ class PokeApiTutorMoveFormatter
     {
         $preFormatteds = $this->getPreFormattedTutorPokeApiMoves($pokemon, $generation, $learnMethod);
         $formatted = [];
-        if (true) {
+        if (in_array($generation, [1, 2, 5, 6, 8])) {
             foreach ($preFormatteds as $name => $move) {
                 $formatted[] = strtr('%name% / %firstLevel% / %secondLevel%',
                     [
                         '%name%' => $name,
-                        '%firstLevel%' => $this->formatLevel($move,1),
-                        '%secondLevel%' => $this->formatLevel($move,2),
+                        '%firstLevel%' => $this->formatLevel($move, 1),
+                        '%secondLevel%' => $this->formatLevel($move, 2),
                     ]
                 );
             }
 
+        } else {
+            foreach ($preFormatteds as $name => $move) {
+                $formatted[] = strtr('%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
+                    [
+                        '%name%' => $name,
+                        '%firstLevel%' => $this->formatLevel($move, 1),
+                        '%secondLevel%' => $this->formatLevel($move, 2),
+                        '%thirdLevel%' => $this->formatLevel($move, 3),
+                    ]
+                );
+            }
         }
 
         return $formatted;
@@ -77,24 +88,28 @@ class PokeApiTutorMoveFormatter
         return $preformatteds;
     }
 
-    private function formatLevel($move,$column): string
+    private function formatLevel($move, $column): string
     {
         $level = '';
 
-        if($move->{'level'.$column} === null && $move->{'onEvolution'.$column} === null && $move->{'onStart'.$column} === null) {
+        if ($move->{'level' . $column} === null && $move->{'onEvolution' . $column} === null && $move->{'onStart' . $column} === null) {
             return '-';
         }
 
-        if($move->{'onStart'.$column}) {
+        if ($move->{'onStart' . $column}) {
             $level .= 'Départ';
         }
 
-        if($move->{'onEvolution'.$column}) {
+        if ($move->{'onEvolution' . $column}) {
             empty($level) ? $level = 'Évolution' : $level .= ', ' . 'Évolution';
         }
 
-        if($move->{'level'.$column}) {
-            empty($level) ? $level = $move->{'level'.$column} : $level .= ', ' . $move->{'level'.$column};
+        if ($move->{'level' . $column}) {
+            empty($level) ? $level = $move->{'level' . $column} : $level .= ', ' . $move->{'level' . $column};
+        }
+
+        if ($move->{'level' . $column . 'Extra'}) {
+            $level .= ', ' . $move->{'level' . $column.'Extra'};
         }
 
         return $level;
