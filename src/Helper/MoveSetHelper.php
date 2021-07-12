@@ -20,6 +20,8 @@ class MoveSetHelper
     /* used to parse type of learnlist in learnlist/tutorf for example */
     public const BULBAPEDIA_TUTOR_WIKI_TYPE = 'tutor';
     public const BULBAPEDIA_LEVEL_WIKI_TYPE = 'level';
+    const BULBAPEDIA_MOVE_TYPE_GLOBAL = 'global';
+    const BULBAPEDIA_MOVE_TYPE_SPECIFIC = 'specific';
 
     private EntityManagerInterface $em;
 
@@ -63,5 +65,7 @@ class MoveSetHelper
         return $name;
     }
 
-
+    public static function convertLevel($level) {
+        return $level;
+    }
 }

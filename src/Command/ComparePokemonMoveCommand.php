@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ComparePokemonMoveCommand extends Command
 {
-    protected static $defaultName = 'app:compare:pokepedia:moveset';
+    protected static $defaultName = 'app:compare';
     protected static $defaultDescription = 'compare movesets';
 
     private EntityManagerInterface $em;

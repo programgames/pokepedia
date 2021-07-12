@@ -21,14 +21,15 @@ class BulbapediaMoveSatanizer
         $formattedMoves = [];
 
         $movesSize = count($moves);
-        if (!preg_match('/learnlist.*/', $moves[$movesSize-1],$matches)) {
-            array_pop($moves);
-            $movesSize--;
-        }
+//        if (!preg_match('/learnlist.*/', $moves[$movesSize-1],$matches)) {
+//            array_pop($moves);
+//            $movesSize--;
+//        }
 
         if (!in_array($moves[0], [
                 '====By [[Level|leveling up]]====',
                 '====By [[level|leveling up]]====',
+                '=====By [[Level|leveling up]]=====',
                 '====By [[Move Tutor|tutoring]]====']
         )) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));

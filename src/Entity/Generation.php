@@ -34,6 +34,11 @@ class Generation
      */
     private $pokemonSpecies;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $generationIdentifier;
+
     public function __construct()
     {
         $this->versionGroups = new ArrayCollection();
@@ -113,6 +118,18 @@ class Generation
                 $pokemonSpecies->setGeneration(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGenerationIdentifier(): ?int
+    {
+        return $this->generationIdentifier;
+    }
+
+    public function setGenerationIdentifier(?int $generationIdentifier): self
+    {
+        $this->generationIdentifier = $generationIdentifier;
 
         return $this;
     }

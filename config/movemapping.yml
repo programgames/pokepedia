@@ -1,0 +1,25 @@
+moves:
+  leveling_up:
+#    1:
+#      specific:
+#        - complex:
+#            games:
+#              - red
+#              - blue
+#              - green
+#            fields:
+#              - integer: level
+#        - complex:
+#            games:
+#              - yellow
+#            fields:
+#              - integer: level
+#        - string: move
+#    2:
+#      global:
+#        - integer: level
+#        - string: move
+    7:
+      global:
+        - integer: level
+        - string: move

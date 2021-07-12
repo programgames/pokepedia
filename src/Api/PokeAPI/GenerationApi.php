@@ -25,6 +25,7 @@ class GenerationApi
 query MyQuery {
   pokemon_v2_generation {
     name
+    id
   }
 }
 
@@ -42,6 +43,7 @@ GRAPHQL;
         foreach ($json['data']['pokemon_v2_generation'] as $generation) {
             $generationEntity = new Generation();
             $generationEntity->setName($generation['name']);
+            $generationEntity->setGenerationIdentifier($generation['id']);
             $generations[] = $generationEntity;
         }
 

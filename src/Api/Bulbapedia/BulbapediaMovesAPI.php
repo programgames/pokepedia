@@ -44,15 +44,16 @@ class BulbapediaMovesAPI
         return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation,MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE);
     }
 
-    public function getLevelMoves(Pokemon $pokemon, int $generation)
+    public function getLevelMoves(Pokemon $pokemon, int $generation,bool $lgpe = false)
     {
         $moves = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::LEVELING_UP_TYPE),
-            function (ItemInterface $item) use ($pokemon, $generation) {
+            function (ItemInterface $item) use ($pokemon, $generation,$lgpe) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $pokemon,
                     $generation,
-                    MoveSetHelper::BULBAPEDIA_LEVELING_UP_TYPE_LABEL
+                    MoveSetHelper::BULBAPEDIA_LEVELING_UP_TYPE_LABEL,
+                    $lgpe
                 );
             }
         );

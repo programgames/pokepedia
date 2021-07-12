@@ -19,8 +19,11 @@ class BulbapediaMoveClient
         $this->entityManager = $entityManager;
     }
 
-    public function getMovesByPokemonGenerationAndType(Pokemon $pokemon, int $generation, string $moveType): array
+    public function getMovesByPokemonGenerationAndType(Pokemon $pokemon, int $generation, string $moveType,bool $lgpe = false): array
     {
+        if($lgpe && $generation != 7 ) {
+            throw new \RuntimeException('Using lgpe flag is not possible without using gen 7');
+        }
         $pokemonName = ($this->entityManager->getRepository(SpecyName::class)
             ->findOneBy(
                 [
@@ -36,7 +39,7 @@ class BulbapediaMoveClient
             [
                 '%pokemon%' => str_replace('’','%27',$pokemonName),
                 '%generation%' => GenerationHelper::convertGenerationToBulbapediaRomanNotation($generation),
-                '%section%' => $sections[$moveType]
+                '%section%' => $sections[$lgpe ? $moveType .'-2' : $moveType ]
             ]
         );
 
@@ -82,9 +85,13 @@ class BulbapediaMoveClient
         $json = json_decode($response->getContent(), true);
 
         foreach ($json['parse']['sections'] as $section) {
-            $formattedSections[$section['line']] = $section['index'];
-        }
+            if(array_key_exists($section['line'],$formattedSections)) {
+                $formattedSections[$section['line'].'-2'] = $section['index'];
 
+            } else {
+                $formattedSections[$section['line']] = $section['index'];
+            }
+        }
         return $formattedSections;
     }
 }
