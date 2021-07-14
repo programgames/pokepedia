@@ -4,6 +4,7 @@ namespace App\Formatter\Bulbapedia;
 
 
 use App\Exception\WrongLearnListFormat;
+use App\Helper\MoveSetHelper;
 
 class MoveFormatter
 {
@@ -19,13 +20,15 @@ class MoveFormatter
 
         if (preg_match(sprintf('/%s\d+.*/',$type), $move)) {
             return [
-                'format' => 'numeral',
+                'type' => $type,
+                'format' => MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL,
                 'value' => explode('|', $move),
                 'gen' => $generation
             ];
         }
         if (preg_match(sprintf('/%s[XVI]+.*/',$type), $move)) {
             return [
+                'type' => $type,
                 'format' => 'roman',
                 'value' => explode('|', $move),
                 'gen' => $generation

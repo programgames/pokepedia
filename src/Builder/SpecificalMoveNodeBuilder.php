@@ -9,13 +9,9 @@ use App\Helper\MoveSetHelper;
 use App\Helper\NumberHelper;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\LNumber;
@@ -24,20 +20,13 @@ use PhpParser\Node\Stmt\Expression;
 
 class SpecificalMoveNodeBuilder
 {
-    private CommonMoveSetBuilder $commonMoveSetBuilder;
 
-    public function __construct(CommonMoveSetBuilder $commonMoveSetBuilder)
-    {
-        $this->commonMoveSetBuilder = $commonMoveSetBuilder;
-    }
-
-    public function getSpecificMoveNodes( string $moveType, array $propertiesData)
+    public function getSpecificMoveNodes(array $propertiesData): array
     {
         $nodes = [];
         $i = 1;
         $complexes = $this->getComplexesMoves($propertiesData);
         for ($j = 0; $j < $complexes ; $j++) {
-            array_merge($nodes,$this->commonMoveSetBuilder->getCommonMoveSet($moveType));
             foreach ($propertiesData as $property) {
                 $complexeMoveType = key($property);
                 $propertyName = $property[$complexeMoveType];

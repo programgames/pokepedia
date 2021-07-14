@@ -20,13 +20,27 @@ class MoveNameRepository extends ServiceEntityRepository
         parent::__construct($registry, MoveName::class);
     }
 
-    public function findMoveNameByPokemonMove(PokemonMove $pokemonMove)
+    public function findFrenchMoveNameByPokemonMove(PokemonMove $pokemonMove)
     {
         $moveName =  $this->createQueryBuilder('move_name')
             ->leftJoin('move_name.move','move' )
             ->andWhere('move_name.language = 5')
             ->andWhere('move.id = :moveId')
             ->setParameter('moveId', $pokemonMove->getMove()->getId())
+            ->getQuery()
+            ->getOneOrNullResult();
+        ;
+
+        return $moveName;
+    }
+
+    public function findEnglishMoveNameByName(string $name, int $generation)
+    {
+        $moveName =  $this->createQueryBuilder('move_name')
+            ->where('move_name.language = 9')
+            ->andWhere('move_name = :name')
+            ->andWhere(sprintf('move_name.gen%s = :name',$generation))
+            ->setParameter('name',$name)
             ->getQuery()
             ->getOneOrNullResult();
         ;

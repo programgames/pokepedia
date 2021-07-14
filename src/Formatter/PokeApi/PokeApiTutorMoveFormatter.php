@@ -72,7 +72,7 @@ class PokeApiTutorMoveFormatter
 
             foreach ($moves as $pokemonMoveEntity) {
                 $nameEntity = $this->em->getRepository(MoveName::class)
-                    ->findMoveNameByPokemonMove($pokemonMoveEntity);
+                    ->findFrenchMoveNameByPokemonMove($pokemonMoveEntity);
 
                 if (array_key_exists($nameEntity->getName(), $preformatteds)) {
                     $move = $preformatteds[$nameEntity->getName()];

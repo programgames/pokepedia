@@ -7,9 +7,8 @@ namespace App\Command;
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
-use App\Entity\MoveName;
 use App\Entity\Pokemon;
-use App\Entity\PokemonMove;
+use App\Helper\MoveSetHelper;
 use App\MoveMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -46,40 +45,32 @@ class ImportLGPEMoves extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $moveMapper = new MoveMapper();
-        $repository = $this->em->getRepository(MoveName::class);
         $io = new SymfonyStyle($input, $output);
 
         $pokemons = $this->em->getRepository(Pokemon::class)->findLGPEPokemons();
 
         $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
 
-        $generations = $this->em->getRepository(Generation::class)->findAll();
+        $generation = $this->em->getRepository(Generation::class)->findOneBy(
+            [
+                'generationIdentifier' => 7
+            ]
+        );
 
         foreach ($pokemons as $pokemon) {
 
+            $io->info(sprintf('import tutoring move for LGPE %s',$pokemon->getName()));
             $moves = $this->api->getLevelMoves($pokemon, 7, true);
             if (array_key_exists('noform', $moves)) {
                 foreach ($moves['noform'] as $move) {
-                    if ($move['format'] === 'numeral') {
-                        $moveMapper->mapMoves($pokemon,$move);
-//                        $moveNameEntity = $repository->findOneBy([
-//                            'name' => $move['value'][2],
-//                            'language' => 9
-//                        ]);
-//                        if (!$moveNameEntity) {
-//                            throw new \RuntimeException(sprintf('MoveName not found %s', $move['value'][2]));
-//                        }
-//                        $pokemonMove = new PokemonMove();
-//                        $pokemonMove->setLevel($move['value'][1]);
-//                        $pokemonMove->setMove($moveNameEntity->getMove());
-//                        $pokemonMove->setLearnMethod($learnmethod);
-//                        $pokemonMove->setPokemon($pokemon);
-//                        $this->em->persist($pokemonMove);
+                    if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
+                        $moveMapper->mapMoves($pokemon,$move,$generation,$this->em,$learnmethod);
                     }
                     else {
                         throw new \RuntimeException('Format roman');
                     }
                 }
+//                $this->em->flush();
             }
 
         }

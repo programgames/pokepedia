@@ -12,27 +12,24 @@ use App\Helper\MoveSetHelper;
 use Doctrine\Persistence\ObjectManager;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\DNumber;
+use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Else_;
-use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Throw_;
 use PhpParser\PrettyPrinter\Standard;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class MoveSetMapperBuilder
 {
@@ -67,9 +64,8 @@ class MoveSetMapperBuilder
                                     new Param(new Variable('pokemon'), null, new Name\FullyQualified(Pokemon::class)),
                                     new Param(new Variable('move'), null, new Identifier('array')),
                                     new Param(new Variable('generation'), null, new Name\FullyQualified(Generation::class)),
-                                    new Param(new Variable('format'), null, new Identifier('string')),
                                     new Param(new Variable('em'), null, new Name\FullyQualified(ObjectManager::class)),
-                                    new Param(new Variable('learnMethod'),null,new Name\FullyQualified(MoveLearnMethod::class)),
+                                    new Param(new Variable('learnMethod'), null, new Name\FullyQualified(MoveLearnMethod::class)),
                                 ],
                                 'stmts' =>
                                     [
@@ -90,12 +86,12 @@ class MoveSetMapperBuilder
         $formattedMovesConfigurations = [];
         foreach ($movesConfig as $typeName => $type) {
             foreach ($type as $genNumber => $genMoves) {
-                foreach ($genMoves as $formatName => $properties) {
+                foreach ($genMoves as $formatName => $datas) {
                     $formattedMovesConfigurations[] = [
                         'type' => $typeName,
                         'generation' => $genNumber,
                         'format' => $formatName,
-                        'properties' => $properties
+                        'datas' => $datas
                     ];
                 }
             }
@@ -110,16 +106,20 @@ class MoveSetMapperBuilder
                             new String_($formattedMovesConfiguration['type'])
                         ),
                         new BinaryOp\Identical(
-                           new MethodCall(new Variable('generation'),'getGenerationIdentifier'), new DNumber($formattedMovesConfiguration['generation']),
+                            new MethodCall(new Variable('generation'), 'getGenerationIdentifier'), new LNumber($formattedMovesConfiguration['generation']),
                         ),
                     ),
                     new BinaryOp\Identical(
-                        new Variable('format'), new String_($formattedMovesConfiguration['format']),
+                        new ArrayDimFetch(
+                            new Variable('move'),
+                            new String_('format')
+                        ),
+                        new String_($formattedMovesConfiguration['format']),
                     )
                 ),
                 [
                     'stmts' => [
-                        ...$this->getMoveNodesByFormatAndType($formattedMovesConfiguration['format'], $formattedMovesConfiguration['type'], $formattedMovesConfiguration['properties']),
+                        ...$this->getMoveNodesByFormatAndType($formattedMovesConfiguration['generation'], $formattedMovesConfiguration['format'], $formattedMovesConfiguration['datas']),
                     ]
                 ],
 
@@ -133,8 +133,13 @@ class MoveSetMapperBuilder
                             new Arg(
                                 new FuncCall(new Name('sprintf'), [
                                         new Arg(new String_('Unknown mapping format : %s / gen : %s ')),
-                                        new Arg(new Variable('format')),
-                                        new Arg(new Variable('generation'))
+                                        new Arg(
+                                            new ArrayDimFetch(
+                                                new Variable('move'),
+                                                new String_('format')
+                                            ),
+                                        ),
+                                        new Arg(new MethodCall(new Variable('generation'), 'getGenerationIdentifier'))
                                     ]
                                 )
                             )
@@ -147,12 +152,12 @@ class MoveSetMapperBuilder
         return $mappingsNodes;
     }
 
-    private function getMoveNodesByFormatAndType(string $format, string $propertyType, array $propertiesData): array
+    private function getMoveNodesByFormatAndType(int $generation, string $format, array $datas): array
     {
         if ($format === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-            $nodes = $this->globalMoveNodeBuilder->getGlobalMoveNodes($propertyType, $propertiesData);
+            $nodes = $this->globalMoveNodeBuilder->getGlobalMoveNodes($generation, $datas);
         } elseif ($format === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_SPECIFIC) {
-            $nodes = $this->specificalMoveNodeBuilder->getSpecificMoveNodes($propertyType, $propertiesData);
+            $nodes = $this->specificalMoveNodeBuilder->getSpecificMoveNodes($datas);
         } else {
             throw new UnknownMapping('Unknown move type ' . $format);
         }
