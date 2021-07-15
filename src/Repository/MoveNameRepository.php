@@ -38,13 +38,15 @@ class MoveNameRepository extends ServiceEntityRepository
     {
         $moveName =  $this->createQueryBuilder('move_name')
             ->where('move_name.language = 9')
-            ->andWhere('move_name = :name')
-            ->andWhere(sprintf('move_name.gen%s = :name',$generation))
+            ->andWhere('move_name.name = :name')
+            ->orWhere(sprintf('move_name.gen%s = :name',$generation))
             ->setParameter('name',$name)
             ->getQuery()
             ->getOneOrNullResult();
-        ;
 
+        if(!$moveName) {
+            throw new \RuntimeException(sprintf('Missing moveName : %s',$name));
+        }
         return $moveName;
     }
 

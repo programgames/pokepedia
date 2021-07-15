@@ -21,10 +21,6 @@ class BulbapediaMoveSatanizer
         $formattedMoves = [];
 
         $movesSize = count($moves);
-//        if (!preg_match('/learnlist.*/', $moves[$movesSize-1],$matches)) {
-//            array_pop($moves);
-//            $movesSize--;
-//        }
 
         if (!in_array($moves[0], [
                 '====By [[Level|leveling up]]====',

@@ -59,6 +59,9 @@ class ImportLGPEMoves extends Command
 
         foreach ($pokemons as $pokemon) {
 
+            if($pokemon->getName() != 'venusaur') {
+                continue;
+            }
             $io->info(sprintf('import tutoring move for LGPE %s',$pokemon->getName()));
             $moves = $this->api->getLevelMoves($pokemon, 7, true);
             if (array_key_exists('noform', $moves)) {

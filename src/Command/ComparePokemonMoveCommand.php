@@ -29,14 +29,6 @@ class ComparePokemonMoveCommand extends Command
     private PokeApiTutorMoveFormatter $pokeApiFormatter;
     private LevelMoveComparator $levelMoveComparator;
 
-    /**
-     * ComparePokemonMoveCommand constructor.
-     * @param EntityManagerInterface $em
-     * @param PokepediaMoveApi $api
-     * @param MoveSetHelper $moveSetHelper
-     * @param PokeApiTutorMoveFormatter $pokeApiFormatter
-     * @param LevelMoveComparator $levelMoveComparator
-     */
     public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper, PokeApiTutorMoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator)
     {
         parent::__construct();
@@ -46,11 +38,6 @@ class ComparePokemonMoveCommand extends Command
         $this->moveSetHelper = $moveSetHelper;
         $this->pokeApiFormatter = $pokeApiFormatter;
         $this->levelMoveComparator = $levelMoveComparator;
-    }
-
-
-    protected function configure(): void
-    {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -66,6 +66,23 @@ class MoveSetHelper
     }
 
     public static function convertLevel($level) {
-        return $level;
+        $number = trim($level);
+        if (is_numeric($number)) {
+            return $number;
+        }
+
+        if ($number === '—') {
+            return null;
+        }
+
+        if ($number === 'N/A') {
+            return null;
+        }
+
+        if(preg_match('/\d\*/',$number)) {
+            return (int)$number;
+        }
+
+        throw new \RuntimeException('Invalid number : ' . $number);
     }
 }

@@ -3,5 +3,6 @@ moves:
     7:
       global:
         lets-go:
+          - learnlist
           - level
           - move

@@ -57,9 +57,14 @@ class GlobalMoveNodeBuilder
                         'findEnglishMoveNameByName',
                         [
                             new Arg(
-                                new ArrayDimFetch(new ArrayDimFetch(new Variable('move'),new String_('value')),1),
+                                new ArrayDimFetch(
+                                    new ArrayDimFetch(
+                                        new Variable('move'), new String_('value')
+                                    ),
+                                    new LNumber($moveData['move'])
+                                )
+                            ),
                             new Arg(new LNumber($generation))
-                            )
                         ]
                     )
                 )
@@ -95,11 +100,11 @@ class GlobalMoveNodeBuilder
                     )
                 )
             );
-            $nodes[] = new Expression(new Assign(new Variable('move'), new MethodCall(new Variable('moveName'), 'getMove')));
+            $nodes[] = new Expression(new Assign(new Variable('moveEntity'), new MethodCall(new Variable('moveName'), 'getMove')));
             $nodes[] = new  Expression(new Assign(new Variable($entityName), new New_(new Name\FullyQualified(PokemonMove::class))));
             $nodes[] = new Expression(new MethodCall(new Variable($entityName), 'setPokemon', [new Arg(new Variable('pokemon'))]));
             $nodes[] = new Expression(new MethodCall(new Variable($entityName), 'setLearnMethod', [new Arg(new Variable('learnMethod'))]));
-            $nodes[] = new Expression(new MethodCall(new Variable($entityName), 'setMove', [new Arg(new Variable('move'))]));
+            $nodes[] = new Expression(new MethodCall(new Variable($entityName), 'setMove', [new Arg(new Variable('moveEntity'))]));
             $nodes[] = new Expression(new MethodCall(new Variable($entityName), 'setVersionGroup', [new Arg(new Variable('versionGroupEntity'))]));
 
             $nodes[] = new If_(

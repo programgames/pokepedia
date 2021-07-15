@@ -8,6 +8,7 @@ class StringHelper
 {
     public static function clearBraces(string $string): string
     {
-        return str_replace(array('{', '}'), '', $string);
+        $formated = preg_replace('/^{{|}}$/', '', $string, 2);
+        return $formated;
     }
 }
