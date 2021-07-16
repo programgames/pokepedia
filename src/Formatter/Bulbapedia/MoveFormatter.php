@@ -10,31 +10,65 @@ class MoveFormatter
 {
     public function formatLearnlist(string $move, int $generation, string $type)
     {
-        if (preg_match(sprintf('/%s\dnull/',$type), $move)) {
-            $return = [
+        if (preg_match(sprintf('/%s\dnull/', $type), $move)) {
+            return [
                 'format' => 'empty',
                 'value' => null,
                 'gen' => $generation
             ];
         }
 
-        if (preg_match(sprintf('/%s\d+.*/',$type), $move)) {
+        if (preg_match(sprintf('/%s\d+.*/', $type), $move)) {
             return [
                 'type' => $type,
                 'format' => MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL,
-                'value' => explode('|', $move),
+                'value' => $this->explodeMove( $move),
                 'gen' => $generation
             ];
         }
-        if (preg_match(sprintf('/%s[XVI]+.*/',$type), $move)) {
+        if (preg_match(sprintf('/%s[XVI]+.*/', $type), $move)) {
             return [
                 'type' => $type,
                 'format' => 'roman',
-                'value' => explode('|', $move),
+                'value' => $this->explodeMove( $move),
                 'gen' => $generation
             ];
         }
 
         throw new WrongLearnListFormat('Invalid learnlist: ' . $move);
+    }
+
+    private function explodeMove(string $move)
+    {
+        $template = true;
+        $moveData = [];
+        $temp = "";
+        $newWord = false;
+        $length = strlen($move);
+
+        for ($i = 0; $i < $length; $i++) {
+            if ($move[$i] === "|") {
+                if ($move[$i + 1] === "{") {
+                    $template = true;
+                } elseif ($move[$i - 1] === "{" && $move[$i - 2] === "{") {
+                    $template = false;
+                }
+                if($template) {
+                    $temp .= $move[$i];
+                } else {
+                    $newWord = !$newWord;
+                    continue;
+                }
+            }
+            if($newWord) {
+                $moveData[] = $temp;
+                $temp = "";
+                $newWord = false;
+            } else {
+                $temp .= $move[$i];
+            }
+        }
+
+        return $moveData;
     }
 }
