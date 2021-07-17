@@ -34,6 +34,6 @@ class LoadMachine extends Fixture implements DependentFixtureInterface
 
     public function getDependencies()
     {
-        return [LoadMove::class,LoadItem::class,LoadVersionGroup::class];
+        return [LoadLetsGoMachine::class,LoadItem::class,LoadVersionGroup::class];
     }
 }

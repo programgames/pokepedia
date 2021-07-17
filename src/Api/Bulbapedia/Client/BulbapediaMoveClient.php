@@ -19,9 +19,12 @@ class BulbapediaMoveClient
         $this->entityManager = $entityManager;
     }
 
-    public function getMovesByPokemonGenerationAndType(Pokemon $pokemon, int $generation, string $moveType,bool $lgpe = false): array
+    public function getMovesByPokemonGenerationAndType(Pokemon $pokemon, int $generation, string $moveType, bool $lgpe = false): array
     {
-        if($lgpe && $generation != 7 ) {
+        if ($lgpe && ($pokemon->getName() === 'meltan' || $pokemon->getName() === 'melmetal')) {
+            $lgpe = false;
+        }
+        if ($lgpe && $generation != 7) {
             throw new \RuntimeException('Using lgpe flag is not possible without using gen 7');
         }
         $pokemonName = ($this->entityManager->getRepository(SpecyName::class)
@@ -37,9 +40,9 @@ class BulbapediaMoveClient
         $url = strtr(
             'https://bulbapedia.bulbagarden.net/w/api.php?action=parse&format=json&page=%pokemon%_(Pok%C3%A9mon)/Generation_%generation%_learnset&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
             [
-                '%pokemon%' => str_replace('’','%27',$pokemonName),
+                '%pokemon%' => str_replace('’', '%27', $pokemonName),
                 '%generation%' => GenerationHelper::convertGenerationToBulbapediaRomanNotation($generation),
-                '%section%' => $sections[$lgpe ? $moveType .'-2' : $moveType ]
+                '%section%' => $sections[$lgpe ? $moveType . '-2' : $moveType]
             ]
         );
 
@@ -73,7 +76,7 @@ class BulbapediaMoveClient
         $sectionsUrl = strtr(
             'https://bulbapedia.bulbagarden.net/w/api.php?action=parse&format=json&page=%pokemon%_(Pok%C3%A9mon)/Generation_%generation%_learnset&prop=sections&errorformat=wikitext&disabletoc=1',
             [
-                '%pokemon%' => str_replace('’','%27',$pokemonName),
+                '%pokemon%' => str_replace('’', '%27', $pokemonName),
                 '%generation%' => GenerationHelper::convertGenerationToBulbapediaRomanNotation($generation),
             ]
         );
@@ -85,8 +88,8 @@ class BulbapediaMoveClient
         $json = json_decode($response->getContent(), true);
 
         foreach ($json['parse']['sections'] as $section) {
-            if(array_key_exists($section['line'],$formattedSections)) {
-                $formattedSections[$section['line'].'-2'] = $section['index'];
+            if (array_key_exists($section['line'], $formattedSections)) {
+                $formattedSections[$section['line'] . '-2'] = $section['index'];
 
             } else {
                 $formattedSections[$section['line']] = $section['index'];

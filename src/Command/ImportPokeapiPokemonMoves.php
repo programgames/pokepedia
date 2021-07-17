@@ -11,9 +11,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImportMovesByPokemon extends Command
+class ImportPokeapiPokemonMoves extends Command
 {
-    protected static $defaultName = 'app:import:pokeapi:moveset';
+    protected static $defaultName = 'app:import:pokeapi:pokemonmoves';
     protected static $defaultDescription = 'Import pokeapi movesets';
 
     private PokemonMoveApi $api;
@@ -37,20 +37,14 @@ class ImportMovesByPokemon extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-
-        $flush = 200;
-        $entity = 0;
+        $flush = 1000;
         foreach ( $this->api->getMovesByPokemon() as $pokemonMove) {
             $this->em->persist($pokemonMove);
             $flush--;
-            $entity ++;
             if($flush === 0) {
-                $io->info('flushing');
                 $this->em->flush();
-                $flush = 200;
+                $flush = 1000;
             }
-            $io->info(sprintf('Entity %s', $entity));
         }
         $this->em->flush();
 

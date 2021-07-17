@@ -6,3 +6,18 @@ moves:
           - learnlist
           - level
           - move
+  tutor:
+    7:
+      global:
+        lets-go:
+          - learnlist
+          - move
+  machine:
+    7:
+      global:
+        lets-go:
+         - learnlist
+         - machine
+         - move
+
+

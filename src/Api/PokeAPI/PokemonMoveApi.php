@@ -63,8 +63,6 @@ GRAPHQL;
         );
         $i =0;
         foreach ($json['data']['pokemon_v2_pokemon'] as $pokemon) {
-            $i++;
-            var_dump($i);
             foreach ($pokemon['pokemon_v2_pokemonmoves'] as $pokemonMove) {
                 $pokemonMoveEntity = new PokemonMove();
                 $pokemonMoveEntity->setLevel($pokemonMove['level']);

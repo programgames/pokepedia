@@ -29,7 +29,7 @@ use PhpParser\Node\Stmt\If_;
 class GlobalMoveNodeBuilder
 {
 
-    public function getGlobalMoveNodes(int $generation, array $datas): array
+    public function getGlobalMoveNodes(int $generation, array $datas, string $type): array
     {
         $nodes = [];
         $i = 0;
@@ -107,38 +107,31 @@ class GlobalMoveNodeBuilder
             $nodes[] = new Expression(new MethodCall(new Variable($entityName), 'setMove', [new Arg(new Variable('moveEntity'))]));
             $nodes[] = new Expression(new MethodCall(new Variable($entityName), 'setVersionGroup', [new Arg(new Variable('versionGroupEntity'))]));
 
-            $nodes[] = new If_(
-                new Identical(
-                    new MethodCall(new Variable('learnMethod'), 'getName'),
-                    new String_('level-up')
-                ),
-                [
-                    'stmts' => [
-                        new Expression(
-                            new MethodCall(
-                                new Variable($entityName),
-                                'setLevel',
-                                [
-                                    new Arg(
-                                        new StaticCall(new Name\FullyQualified(MoveSetHelper::class), 'convertLevel',
-                                            [
-                                                new Arg(new ArrayDimFetch(
-                                                        new ArrayDimFetch(
-                                                            new Variable('move'),
-                                                            new String_('value')
-                                                        ),
-                                                        new LNumber($moveData['level'])
-                                                    )
-                                                )
-                                            ]
+            if ($type === MoveSetHelper::BULBAPEDIA_LEVEL_WIKI_TYPE) {
+                $nodes[] = new Expression(
+                    new MethodCall(
+                        new Variable($entityName),
+                        'setLevel',
+                        [
+                            new Arg(
+                                new StaticCall(new Name\FullyQualified(MoveSetHelper::class), 'convertLevel',
+                                    [
+                                        new Arg(new ArrayDimFetch(
+                                                new ArrayDimFetch(
+                                                    new Variable('move'),
+                                                    new String_('value')
+                                                ),
+                                                new LNumber($moveData['level'])
+                                            )
                                         )
-                                    )
-                                ]
+                                    ]
+                                )
                             )
-                        )
-                    ]
-                ]
-            );
+                        ]
+                    )
+                );
+            }
+
             $nodes[] = new Expression(new MethodCall(new Variable('em'), 'persist', [new Arg(new Variable($entityName))]));
             $i++;
         }

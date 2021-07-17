@@ -119,7 +119,7 @@ class MoveSetMapperBuilder
                 ),
                 [
                     'stmts' => [
-                        ...$this->getMoveNodesByFormatAndType($formattedMovesConfiguration['generation'], $formattedMovesConfiguration['format'], $formattedMovesConfiguration['datas']),
+                        ...$this->getMoveNodesByFormatAndType($formattedMovesConfiguration['generation'], $formattedMovesConfiguration['format'], $formattedMovesConfiguration['datas'],$formattedMovesConfiguration['type']),
                     ]
                 ],
 
@@ -152,10 +152,10 @@ class MoveSetMapperBuilder
         return $mappingsNodes;
     }
 
-    private function getMoveNodesByFormatAndType(int $generation, string $format, array $datas): array
+    private function getMoveNodesByFormatAndType(int $generation, string $format, array $datas,string $type): array
     {
         if ($format === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-            $nodes = $this->globalMoveNodeBuilder->getGlobalMoveNodes($generation, $datas);
+            $nodes = $this->globalMoveNodeBuilder->getGlobalMoveNodes($generation, $datas,$type);
         } elseif ($format === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_SPECIFIC) {
             $nodes = $this->specificalMoveNodeBuilder->getSpecificMoveNodes($datas);
         } else {

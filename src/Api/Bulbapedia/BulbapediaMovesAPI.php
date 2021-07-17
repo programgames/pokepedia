@@ -28,15 +28,16 @@ class BulbapediaMovesAPI
         $this->cache = new FilesystemAdapter();
     }
 
-    public function getTutorMoves(Pokemon $pokemon, string $generation)
+    public function getTutorMoves(Pokemon $pokemon, string $generation,bool $lgpe = false)
     {
         $moves = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE),
-            function (ItemInterface $item) use ($pokemon, $generation) {
+            function (ItemInterface $item) use ($pokemon, $generation,$lgpe) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $pokemon,
                     $generation,
-                    MoveSetHelper::BULBAPEDIA_LEVELING_UP_TYPE_LABEL
+                    MoveSetHelper::BULBAPEDIA_TUTORING_TYPE_LABEL,
+                    $lgpe
                 );
             }
         );
@@ -53,6 +54,23 @@ class BulbapediaMovesAPI
                     $pokemon,
                     $generation,
                     MoveSetHelper::BULBAPEDIA_LEVELING_UP_TYPE_LABEL,
+                    $lgpe
+                );
+            }
+        );
+
+        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation,MoveSetHelper::BULBAPEDIA_LEVEL_WIKI_TYPE);
+    }
+
+    public function getMachineMoves(Pokemon $pokemon, int $generation,bool $lgpe = false)
+    {
+        $moves = $this->cache->get(
+            sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::MACHINE_TYPE),
+            function (ItemInterface $item) use ($pokemon, $generation,$lgpe) {
+                return $this->moveClient->getMovesByPokemonGenerationAndType(
+                    $pokemon,
+                    $generation,
+                    MoveSetHelper::getBulbapediaMachineLabelByGeneration($generation),
                     $lgpe
                 );
             }

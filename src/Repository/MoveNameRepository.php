@@ -34,7 +34,7 @@ class MoveNameRepository extends ServiceEntityRepository
         return $moveName;
     }
 
-    public function findEnglishMoveNameByName(string $name, int $generation)
+    public function findEnglishMoveNameByName(string $name, int $generation): MoveName
     {
         $moveName =  $this->createQueryBuilder('move_name')
             ->where('move_name.language = 9')

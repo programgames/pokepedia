@@ -26,7 +26,11 @@ class BulbapediaMoveSatanizer
                 '====By [[Level|leveling up]]====',
                 '====By [[level|leveling up]]====',
                 '=====By [[Level|leveling up]]=====',
-                '====By [[Move Tutor|tutoring]]====']
+                '====By [[Move Tutor|tutoring]]====',
+                '=====By [[TM]]=====',
+                '====By [[TM]]/[[HM]]====',
+                '====By [[TM]]/[[TR]]===='
+                ]
         )) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         };

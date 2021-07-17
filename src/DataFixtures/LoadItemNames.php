@@ -16,7 +16,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadItemNames extends Fixture
+class LoadItemNames extends Fixture implements DependentFixtureInterface
 {
     private ItemNameApi $itemNameApi;
 
@@ -31,5 +31,10 @@ class LoadItemNames extends Fixture
             $manager->persist($itemName);
         }
         $manager->flush();
+    }
+
+    public function getDependencies()
+    {
+        return [LoadItem::class];
     }
 }

@@ -56,6 +56,9 @@ class ComparePokemonMoveCommand extends Command
         foreach ($pokemons as $pokemon) {
 
             foreach ($generations as $generation) {
+                if($generation->getGenerationIdentifier() === 8) {
+                    continue;
+                }
                 $generationNumber = GenerationHelper::genGenerationNumberByName($generation->getName());
                 $pokemongeneration = GenerationHelper::genGenerationNumberByName($pokemon->getPokemonSpecy()->getGeneration()->getName());
                 if($pokemongeneration > $generationNumber) {

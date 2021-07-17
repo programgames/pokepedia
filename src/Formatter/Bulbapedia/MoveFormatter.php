@@ -40,7 +40,8 @@ class MoveFormatter
 
     private function explodeMove(string $move)
     {
-        $template = true;
+        $move .= '|';
+        $template = false;
         $moveData = [];
         $temp = "";
         $newWord = false;
@@ -48,16 +49,16 @@ class MoveFormatter
 
         for ($i = 0; $i < $length; $i++) {
             if ($move[$i] === "|") {
-                if ($move[$i + 1] === "{") {
+                if (isset($move[$i + 1]) && $move[$i + 1] === "{") {
                     $template = true;
-                } elseif ($move[$i - 1] === "{" && $move[$i - 2] === "{") {
+                    $newWord = true;
+                } elseif ($move[$i - 1] === "}" && $move[$i - 2] === "}") {
                     $template = false;
                 }
                 if($template) {
                     $temp .= $move[$i];
                 } else {
-                    $newWord = !$newWord;
-                    continue;
+                    $newWord = true;
                 }
             }
             if($newWord) {

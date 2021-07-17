@@ -4,7 +4,7 @@
 namespace App\Command;
 
 
-use App\Api\Bulbapedia\BulbapediaMovesAPI;
+use App\Api\Bulbapedia\BulbapediaMachineAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
@@ -22,14 +22,14 @@ class ImportLGPEMoves extends Command
     protected static $defaultDescription = 'import bulbapedia lgpe movesets';
 
     private EntityManagerInterface $em;
-    private BulbapediaMovesAPI $api;
+    private BulbapediaMachineAPI $api;
 
     /**
      * ImportLGPEMoves constructor.
      * @param EntityManagerInterface $em
-     * @param BulbapediaMovesAPI $api
+     * @param BulbapediaMachineAPI $api
      */
-    public function __construct(EntityManagerInterface $em, BulbapediaMovesAPI $api)
+    public function __construct(EntityManagerInterface $em, BulbapediaMachineAPI $api)
     {
         parent::__construct();
 
@@ -49,7 +49,8 @@ class ImportLGPEMoves extends Command
 
         $pokemons = $this->em->getRepository(Pokemon::class)->findLGPEPokemons();
 
-        $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
+        $levelup = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
+        $machine = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'machine']);
 
         $generation = $this->em->getRepository(Generation::class)->findOneBy(
             [
@@ -57,17 +58,32 @@ class ImportLGPEMoves extends Command
             ]
         );
 
+//        foreach ($pokemons as $pokemon) {
+//
+//            $io->info(sprintf('import levelup moves for LGPE %s',$pokemon->getName()));
+//            $moves = $this->api->getLevelMoves($pokemon, 7, true);
+//            if (array_key_exists('noform', $moves)) {
+//                foreach ($moves['noform'] as $move) {
+//                    if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
+//                        $moveMapper->mapMoves($pokemon,$move,$generation,$this->em,$levelup);
+//                    }
+//                    else {
+//                        throw new \RuntimeException('Format roman');
+//                    }
+//                }
+//                $this->em->flush();
+//            }
+//
+//        }
+
         foreach ($pokemons as $pokemon) {
 
-            if($pokemon->getName() != 'venusaur') {
-                continue;
-            }
-            $io->info(sprintf('import tutoring move for LGPE %s',$pokemon->getName()));
-            $moves = $this->api->getLevelMoves($pokemon, 7, true);
+            $io->info(sprintf('import machine moves for LGPE %s',$pokemon->getName()));
+            $moves = $this->api->getMachineMoves($pokemon, 7, true);
             if (array_key_exists('noform', $moves)) {
                 foreach ($moves['noform'] as $move) {
                     if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-                        $moveMapper->mapMoves($pokemon,$move,$generation,$this->em,$learnmethod);
+                        $moveMapper->mapMoves($pokemon,$move,$generation,$this->em,$machine);
                     }
                     else {
                         throw new \RuntimeException('Format roman');
@@ -75,7 +91,6 @@ class ImportLGPEMoves extends Command
                 }
 //                $this->em->flush();
             }
-
         }
 
         return Command::SUCCESS;
