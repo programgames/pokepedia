@@ -6,6 +6,12 @@ moves:
           - learnlist
           - level
           - move
+    8:
+      global:
+        sword-shield:
+          - learnlist
+          - level
+          - move
   tutor:
     7:
       global:
