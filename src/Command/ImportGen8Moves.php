@@ -17,10 +17,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImportLGPEMoves extends Command
+class ImportGen8Moves extends Command
 {
-    protected static $defaultName = 'app:import:lgpe';
-    protected static $defaultDescription = 'import bulbapedia lgpe movesets';
+    protected static $defaultName = 'app:import:gen7';
+    protected static $defaultDescription = 'import bulbapedia gen8 movesets';
 
     private EntityManagerInterface $em;
     private BulbapediaMovesAPI $api;

@@ -76,6 +76,6 @@ class BulbapediaMovesAPI
             }
         );
 
-        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation,MoveSetHelper::BULBAPEDIA_LEVEL_WIKI_TYPE);
+        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation,MoveSetHelper::BULBAPEDIA_TM_WIKI_TYPE);
     }
 }

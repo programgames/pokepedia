@@ -12,7 +12,7 @@ moves:
         lets-go:
           - learnlist
           - move
-  machine:
+  tm:
     7:
       global:
         lets-go:

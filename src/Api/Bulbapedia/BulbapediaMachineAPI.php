@@ -4,7 +4,7 @@
 namespace App\Api\Bulbapedia;
 
 
-use App\Api\Bulbapedia\Client\BulbapediaMachineClient;
+use App\Api\Bulbapedia\Client\BulbapediaAvailabilityClient;
 use App\Satanizer\BulbapediaMachineSatanizer;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -12,10 +12,10 @@ use Symfony\Contracts\Cache\ItemInterface;
 class BulbapediaMachineAPI
 {
     private FilesystemAdapter $cache;
-    private BulbapediaMachineClient $machineClient;
+    private BulbapediaAvailabilityClient $machineClient;
     private BulbapediaMachineSatanizer $bulbapediaMachineSatanizer;
 
-    public function __construct(BulbapediaMachineClient $machineClient, BulbapediaMachineSatanizer $bulbapediaMachineSatanizer)
+    public function __construct(BulbapediaAvailabilityClient $machineClient, BulbapediaMachineSatanizer $bulbapediaMachineSatanizer)
     {
         $this->cache = new FilesystemAdapter();
 

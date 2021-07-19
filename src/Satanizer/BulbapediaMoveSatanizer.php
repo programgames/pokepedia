@@ -20,6 +20,7 @@ class BulbapediaMoveSatanizer
     {
         $formattedMoves = [];
 
+        $moves = $this->clearPadding($moves);
         $movesSize = count($moves);
 
         if (!in_array($moves[0], [
@@ -28,9 +29,10 @@ class BulbapediaMoveSatanizer
                 '=====By [[Level|leveling up]]=====',
                 '====By [[Move Tutor|tutoring]]====',
                 '=====By [[TM]]=====',
+                '====By [[TM]]====',
                 '====By [[TM]]/[[HM]]====',
                 '====By [[TM]]/[[TR]]===='
-                ]
+            ]
         )) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         };
@@ -43,8 +45,13 @@ class BulbapediaMoveSatanizer
         }
 
         for ($i = 2; $i < $movesSize - 1; $i++) {
+            if(preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])) {
+                $movesByForm['noform'] = $formattedMoves;
+
+                return $movesByForm;
+            }
             if (!preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i])
-                && !preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])
+                && !preg_match(sprintf('/learnlist\/tr.*/'), $moves[$i])
                 && !preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i])) {
                 throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[$i]));
             }
@@ -90,5 +97,18 @@ class BulbapediaMoveSatanizer
             }
         }
         return $movesByForms;
+    }
+
+    private function clearPadding(array $moves)
+    {
+        $size = count($moves);
+
+        for ($i = $size -1; $i > 0; $i--) {
+            if (!preg_match('/learnlist.*/', $moves[$i])) {
+                unset($moves[$i]);
+            } else {
+                return $moves;
+            }
+        }
     }
 }

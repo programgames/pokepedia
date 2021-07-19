@@ -65,9 +65,15 @@ class Pokemon
      */
     private $isGalar;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonAvailability::class, mappedBy="pokemon", orphanRemoval=true)
+     */
+    private $pokemonAvailabilities;
+
     public function __construct()
     {
         $this->pokemonMoves = new ArrayCollection();
+        $this->pokemonAvailabilities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -197,6 +203,36 @@ class Pokemon
     public function setIsGalar(bool $isGalar): self
     {
         $this->isGalar = $isGalar;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonAvailability[]
+     */
+    public function getPokemonAvailabilities(): Collection
+    {
+        return $this->pokemonAvailabilities;
+    }
+
+    public function addPokemonAvailability(PokemonAvailability $pokemonAvailability): self
+    {
+        if (!$this->pokemonAvailabilities->contains($pokemonAvailability)) {
+            $this->pokemonAvailabilities[] = $pokemonAvailability;
+            $pokemonAvailability->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonAvailability(PokemonAvailability $pokemonAvailability): self
+    {
+        if ($this->pokemonAvailabilities->removeElement($pokemonAvailability)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonAvailability->getPokemon() === $this) {
+                $pokemonAvailability->setPokemon(null);
+            }
+        }
 
         return $this;
     }

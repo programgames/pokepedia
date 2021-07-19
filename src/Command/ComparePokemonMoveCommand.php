@@ -71,9 +71,7 @@ class ComparePokemonMoveCommand extends Command
                     $pokemon = 2;
                 }
             }
-
         }
-
         return Command::SUCCESS;
     }
 }

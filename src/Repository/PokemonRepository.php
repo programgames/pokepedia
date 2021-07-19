@@ -43,15 +43,42 @@ class PokemonRepository extends ServiceEntityRepository
         return array_merge($gen1,$news);
     }
 
-    /*
-    public function findOneBySomeField($value): ?Pokemon
+    public function findOneByBPIndex(string $index): ?Pokemon
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+        $galar = false;
+        $alola = false;
+
+        if(preg_match('/[0-9]{3,3}G/',$index)) {
+            $galar = true;
+        } elseif (preg_match('/[0-9]{3,3}A/',$index)) {
+            $alola = true;
+        }
+
+        $pokemonIdentifier = (int)$index;
+
+        /** @var Pokemon $pokemon */
+        $pokemon = $this->createQueryBuilder('p')
+            ->andWhere('p.pokemonIdentifier = :identifier')
+            ->setParameter('identifier', $pokemonIdentifier)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
+
+        if ($galar) {
+            return $this->createQueryBuilder('p')
+                ->andWhere('p.name = :name')
+                ->setParameter('name', $pokemon->getName() .'-galar')
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+
+        if($alola) {
+            return $this->createQueryBuilder('p')
+                ->andWhere('p.name = :name')
+                ->setParameter('name', $pokemon->getName() .'-alola')
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+
+        return $pokemon;
     }
-    */
 }

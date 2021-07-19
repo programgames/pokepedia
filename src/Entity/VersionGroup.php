@@ -45,10 +45,16 @@ class VersionGroup
      */
     private $pokemonMoves;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonAvailability::class, mappedBy="versionGroup", orphanRemoval=true)
+     */
+    private $pokemonAvailabilities;
+
     public function __construct()
     {
         $this->machines = new ArrayCollection();
         $this->pokemonMoves = new ArrayCollection();
+        $this->pokemonAvailabilities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,6 +152,36 @@ class VersionGroup
             // set the owning side to null (unless already changed)
             if ($pokemonMove->getVersionGroup() === $this) {
                 $pokemonMove->setVersionGroup(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonAvailability[]
+     */
+    public function getPokemonAvailabilities(): Collection
+    {
+        return $this->pokemonAvailabilities;
+    }
+
+    public function addPokemonAvailability(PokemonAvailability $pokemonAvailability): self
+    {
+        if (!$this->pokemonAvailabilities->contains($pokemonAvailability)) {
+            $this->pokemonAvailabilities[] = $pokemonAvailability;
+            $pokemonAvailability->setVersionGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonAvailability(PokemonAvailability $pokemonAvailability): self
+    {
+        if ($this->pokemonAvailabilities->removeElement($pokemonAvailability)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonAvailability->getVersionGroup() === $this) {
+                $pokemonAvailability->setVersionGroup(null);
             }
         }
 

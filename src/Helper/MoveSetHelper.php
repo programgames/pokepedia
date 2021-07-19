@@ -13,6 +13,7 @@ class MoveSetHelper
     public const POKEPEDIA_LEVELING_UP_TYPE_LABEL = 'Par montée en niveau';
     public  const LEVELING_UP_TYPE = 'tutor';
     public  const MACHINE_TYPE = 'machine';
+    public  const BULBAPEDIA_TM_WIKI_TYPE = 'tm';
 
     /* bulbapedia title of sections*/
     public const BULBAPEDIA_TUTORING_TYPE_LABEL = 'By tutoring';
