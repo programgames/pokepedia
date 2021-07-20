@@ -168,13 +168,13 @@ class AvailabilityByGenerationHandler
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->lgpeVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[1]));
+            $avail->setAvailable($this->getAvailability($availabilities[1]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->swordShieldVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[1]));
+            $avail->setAvailable($this->getAvailability($availabilities[1]));
             $this->em->persist($avail);
             return;
         }
@@ -212,19 +212,19 @@ class AvailabilityByGenerationHandler
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->redBlueVg);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[3 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[3 - $index]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->yellowVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[6 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[6 - $index]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->lgpeVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[35 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[35 - $index]));
             $this->em->persist($avail);
         }
 
@@ -233,13 +233,13 @@ class AvailabilityByGenerationHandler
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->goldSilverVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[7 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[7 - $index]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->crystalVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[9 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[9 - $index]));
             $this->em->persist($avail);
         }
 
@@ -248,19 +248,19 @@ class AvailabilityByGenerationHandler
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->rubySapphirVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[10 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[10 - $index]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->fireRedLeafGreenVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[12 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[12 - $index]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->emeraldVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[14 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[14 - $index]));
             $this->em->persist($avail);
 
         }
@@ -270,19 +270,19 @@ class AvailabilityByGenerationHandler
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->diamondPearlVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[17 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[17 - $index]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->platinumVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[19 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[19 - $index]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->heartGoldSoulSilverVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[20 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[20 - $index]));
             $this->em->persist($avail);
 
         }
@@ -292,13 +292,13 @@ class AvailabilityByGenerationHandler
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->blackWhiteVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[23 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[23 - $index]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->black2White2VG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[25 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[25 - $index]));
             $this->em->persist($avail);
 
         }
@@ -308,13 +308,13 @@ class AvailabilityByGenerationHandler
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->xyVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[27 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[27 - $index]));
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->orasVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[29 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[29 - $index]));
             $this->em->persist($avail);
 
         }
@@ -325,16 +325,16 @@ class AvailabilityByGenerationHandler
             $avail->setVersionGroup($this->sunMoonVG);
             $avail->setPokemon($pokemon);
             if ($pokemon->getName() === ('meltan' || 'melmetal')) {
-                $avail->setAvailability($this->getAvailability(4));
+                $avail->setAvailable($this->getAvailability(4));
             } else {
-                $avail->setAvailability($this->getAvailability($availabilities[31 - $index]));
+                $avail->setAvailable($this->getAvailability($availabilities[31 - $index]));
             }
             $this->em->persist($avail);
 
             $avail = new PokemonAvailability();
             $avail->setVersionGroup($this->ultraSunUltraMoonVG);
             $avail->setPokemon($pokemon);
-            $avail->setAvailability($this->getAvailability($availabilities[33 - $index]));
+            $avail->setAvailable($this->getAvailability($availabilities[33 - $index]));
             $this->em->persist($avail);
         }
         if ($generation <= 8) {
@@ -345,9 +345,9 @@ class AvailabilityByGenerationHandler
             $avail->setVersionGroup($this->swordShieldVG);
             $avail->setPokemon($pokemon);
             if ($pokemon->getName() === 'meltan' || $pokemon->getName() === 'melmetal') {
-                $avail->setAvailability($this->getAvailability(6));
+                $avail->setAvailable($this->getAvailability(6));
             } else {
-                $avail->setAvailability($this->getAvailability($availabilities[37 - $index]));
+                $avail->setAvailable($this->getAvailability($availabilities[37 - $index]));
             }
             $this->em->persist($avail);
         }

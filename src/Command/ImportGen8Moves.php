@@ -58,12 +58,12 @@ class ImportGen8Moves extends Command
 
         $generation = $this->em->getRepository(Generation::class)->findOneBy(
             [
-                'generationIdentifier' => 7
+                'generationIdentifier' => 8
             ]
         );
 
         foreach ($availabilities as $availability) {
-            if(!$availability->getAvailability()) {
+            if(!$availability->isAvailable()) {
                 continue ;
             }
             $pokemon = $availability->getPokemon();
@@ -78,9 +78,8 @@ class ImportGen8Moves extends Command
                         throw new \RuntimeException('Format roman');
                     }
                 }
-                $this->em->flush();
+//                $this->em->flush();
             }
-
         }
 
 //        foreach ($pokemons as $pokemon) {
