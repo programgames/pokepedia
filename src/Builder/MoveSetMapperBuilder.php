@@ -25,6 +25,7 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Else_;
+use PhpParser\Node\Stmt\ElseIf_;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Throw_;
@@ -96,33 +97,57 @@ class MoveSetMapperBuilder
             }
         }
 
-        foreach ($formattedMovesConfigurations as $formattedMovesConfiguration) {
-            $mappingsNodes[] = new If_(
-                new BinaryOp\BooleanAnd(
+        foreach ($formattedMovesConfigurations as $key => $formattedMovesConfiguration) {
+            if ($key === 0) {
+                $mappingsNodes[] = new If_(
                     new BinaryOp\BooleanAnd(
-                        new BinaryOp\Identical(
-                            new ArrayDimFetch(new Variable('move'), new String_('type')),
-                            new String_($formattedMovesConfiguration['type'])
+                        new BinaryOp\BooleanAnd(
+                            new BinaryOp\Identical(
+                                new ArrayDimFetch(new Variable('move'), new String_('type')),
+                                new String_($formattedMovesConfiguration['type'])
+                            ),
+                            new BinaryOp\Identical(
+                                new MethodCall(new Variable('generation'), 'getGenerationIdentifier'), new LNumber($formattedMovesConfiguration['generation']),
+                            ),
                         ),
                         new BinaryOp\Identical(
-                            new MethodCall(new Variable('generation'), 'getGenerationIdentifier'), new LNumber($formattedMovesConfiguration['generation']),
-                        ),
+                            new ArrayDimFetch(
+                                new Variable('move'),
+                                new String_('format')
+                            ),
+                            new String_($formattedMovesConfiguration['format']),
+                        )
                     ),
-                    new BinaryOp\Identical(
-                        new ArrayDimFetch(
-                            new Variable('move'),
-                            new String_('format')
-                        ),
-                        new String_($formattedMovesConfiguration['format']),
-                    )
-                ),
-                [
-                    'stmts' => [
-                        ...$this->getMoveNodesByFormatAndType($formattedMovesConfiguration['generation'], $formattedMovesConfiguration['format'], $formattedMovesConfiguration['datas'],$formattedMovesConfiguration['type']),
-                    ]
-                ],
+                    [
+                        'stmts' => [
+                            ...$this->getMoveNodesByFormatAndType($formattedMovesConfiguration['generation'], $formattedMovesConfiguration['format'], $formattedMovesConfiguration['datas'], $formattedMovesConfiguration['type']),
+                        ]
+                    ],
 
-            );
+                );
+            } else {
+                $mappingsNodes[] = new ElseIf_(
+                    new BinaryOp\BooleanAnd(
+                        new BinaryOp\BooleanAnd(
+                            new BinaryOp\Identical(
+                                new ArrayDimFetch(new Variable('move'), new String_('type')),
+                                new String_($formattedMovesConfiguration['type'])
+                            ),
+                            new BinaryOp\Identical(
+                                new MethodCall(new Variable('generation'), 'getGenerationIdentifier'), new LNumber($formattedMovesConfiguration['generation']),
+                            ),
+                        ),
+                        new BinaryOp\Identical(
+                            new ArrayDimFetch(
+                                new Variable('move'),
+                                new String_('format')
+                            ),
+                            new String_($formattedMovesConfiguration['format']),
+                        )
+                    ),
+                    $this->getMoveNodesByFormatAndType($formattedMovesConfiguration['generation'], $formattedMovesConfiguration['format'], $formattedMovesConfiguration['datas'], $formattedMovesConfiguration['type']),
+                );
+            }
         }
         $mappingsNodes[] = new Else_(
             [
@@ -151,10 +176,10 @@ class MoveSetMapperBuilder
         return $mappingsNodes;
     }
 
-    private function getMoveNodesByFormatAndType(int $generation, string $format, array $datas,string $type): array
+    private function getMoveNodesByFormatAndType(int $generation, string $format, array $datas, string $type): array
     {
         if ($format === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-            $nodes = $this->globalMoveNodeBuilder->getGlobalMoveNodes($generation, $datas,$type);
+            $nodes = $this->globalMoveNodeBuilder->getGlobalMoveNodes($generation, $datas, $type);
         } elseif ($format === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_SPECIFIC) {
             $nodes = $this->specificalMoveNodeBuilder->getSpecificMoveNodes($datas);
         } else {
