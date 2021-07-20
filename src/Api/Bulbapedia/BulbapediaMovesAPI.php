@@ -8,31 +8,39 @@ use App\Api\Bulbapedia\Client\BulbapediaMoveClient;
 use App\Entity\Pokemon;
 use App\Helper\MoveSetHelper;
 use App\Satanizer\BulbapediaMoveSatanizer;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Driver\Connection;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class BulbapediaMovesAPI
 {
-    private EntityManagerInterface $entityManager;
-    private FilesystemAdapter $cache;
+    private AbstractAdapter $cache;
     private BulbapediaMoveSatanizer $moveSatanizer;
     private BulbapediaMoveClient $moveClient;
 
-    public function __construct(EntityManagerInterface $entityManager, BulbapediaMoveSatanizer $moveSatanizer, BulbapediaMoveClient $moveClient)
+    /**
+     * BulbapediaMovesAPI constructor.
+     * @param BulbapediaMoveSatanizer $moveSatanizer
+     * @param BulbapediaMoveClient $moveClient
+     * @param Connection $connection
+     */
+    public function __construct(BulbapediaMoveSatanizer $moveSatanizer, BulbapediaMoveClient $moveClient, Connection $connection)
     {
-        $this->entityManager = $entityManager;
         $this->moveSatanizer = $moveSatanizer;
         $this->moveClient = $moveClient;
 
-        $this->cache = new FilesystemAdapter();
+        $this->cache = new PdoAdapter(
+            $connection
+        );
     }
 
-    public function getTutorMoves(Pokemon $pokemon, string $generation,bool $lgpe = false)
+    public function getTutorMoves(Pokemon $pokemon, string $generation, bool $lgpe = false)
     {
         $moves = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE),
-            function (ItemInterface $item) use ($pokemon, $generation,$lgpe) {
+            function (ItemInterface $item) use ($pokemon, $generation, $lgpe) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $pokemon,
                     $generation,
@@ -42,14 +50,14 @@ class BulbapediaMovesAPI
             }
         );
 
-        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation,MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE);
+        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE);
     }
 
-    public function getLevelMoves(Pokemon $pokemon, int $generation,bool $lgpe = false)
+    public function getLevelMoves(Pokemon $pokemon, int $generation, bool $lgpe = false)
     {
         $moves = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::LEVELING_UP_TYPE),
-            function (ItemInterface $item) use ($pokemon, $generation,$lgpe) {
+            function (ItemInterface $item) use ($pokemon, $generation, $lgpe) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $pokemon,
                     $generation,
@@ -59,14 +67,14 @@ class BulbapediaMovesAPI
             }
         );
 
-        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation,MoveSetHelper::BULBAPEDIA_LEVEL_WIKI_TYPE);
+        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_LEVEL_WIKI_TYPE);
     }
 
-    public function getMachineMoves(Pokemon $pokemon, int $generation,bool $lgpe = false)
+    public function getMachineMoves(Pokemon $pokemon, int $generation, bool $lgpe = false)
     {
         $moves = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::MACHINE_TYPE),
-            function (ItemInterface $item) use ($pokemon, $generation,$lgpe) {
+            function (ItemInterface $item) use ($pokemon, $generation, $lgpe) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $pokemon,
                     $generation,
@@ -76,6 +84,6 @@ class BulbapediaMovesAPI
             }
         );
 
-        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation,MoveSetHelper::BULBAPEDIA_TM_WIKI_TYPE);
+        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_TM_WIKI_TYPE);
     }
 }
