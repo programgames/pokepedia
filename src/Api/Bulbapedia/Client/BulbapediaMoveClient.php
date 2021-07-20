@@ -38,10 +38,10 @@ class BulbapediaMoveClient
         $sections = $this->getMoveSections($pokemon, $generation);
 
         $url = strtr(
-            'https://bulbapedia.bulbagarden.net/w/api.php?action=parse&format=json&page=%pokemon%_(Pok%C3%A9mon)/Generation_%generation%_learnset&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
+            'https://bulbapedia.bulbagarden.net/w/api.php?action=parse&format=json&page=%pokemon%_(Pok%C3%A9mon)%generation%&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
             [
                 '%pokemon%' => str_replace('’', '%27', $pokemonName),
-                '%generation%' => GenerationHelper::convertGenerationToBulbapediaRomanNotation($generation),
+                '%generation%' => $generation === 8 ? '' : '/Generation_' . GenerationHelper::convertGenerationToBulbapediaRomanNotation($generation) . '_learnset',
                 '%section%' => $sections[$lgpe ? $moveType . '-2' : $moveType]
             ]
         );
@@ -74,10 +74,10 @@ class BulbapediaMoveClient
 
         $formattedSections = [];
         $sectionsUrl = strtr(
-            'https://bulbapedia.bulbagarden.net/w/api.php?action=parse&format=json&page=%pokemon%_(Pok%C3%A9mon)/Generation_%generation%_learnset&prop=sections&errorformat=wikitext&disabletoc=1',
+            'https://bulbapedia.bulbagarden.net/w/api.php?action=parse&format=json&page=%pokemon%_(Pok%C3%A9mon)%generation%&prop=sections&errorformat=wikitext&disabletoc=1',
             [
                 '%pokemon%' => str_replace('’', '%27', $pokemonName),
-                '%generation%' => GenerationHelper::convertGenerationToBulbapediaRomanNotation($generation),
+                '%generation%' => $generation === 8 ? '' : '/Generation_' . GenerationHelper::convertGenerationToBulbapediaRomanNotation($generation) . '_learnset',
             ]
         );
 
