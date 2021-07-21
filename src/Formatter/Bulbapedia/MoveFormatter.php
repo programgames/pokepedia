@@ -26,10 +26,20 @@ class MoveFormatter
                 'gen' => $generation
             ];
         }
+
+        if (preg_match('/learnlist\/tr\|.*/', $move)) {
+            return [
+                'type' => $type,
+                'format' => MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL,
+                'value' => $this->explodeMove( $move),
+                'gen' => $generation
+            ];
+        }
+
         if (preg_match(sprintf('/%s[XVI]+.*/', $type), $move)) {
             return [
                 'type' => $type,
-                'format' => 'roman',
+                'format' => MoveSetHelper::BULBAPEDIA_MOVE_TYPE_SPECIFIC,
                 'value' => $this->explodeMove( $move),
                 'gen' => $generation
             ];
