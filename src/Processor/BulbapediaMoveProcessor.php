@@ -46,24 +46,22 @@ class BulbapediaMoveProcessor
             ]
         );
 
-        $moveMapper = new MoveMapper();
-
         foreach ($this->em->getRepository(MoveLearnMethod::class)->findPokepediaLearnMethod() as $learnMethod) {
             foreach ($availabilities as $availability) {
                 if (!$availability->isAvailable()) {
                     continue;
                 }
                 $pokemon = $availability->getPokemon();
+                if($pokemon->getIsAlola() || $pokemon->getIsGalar())
+                {
+                    continue;
+                }
 
                 $io->info(sprintf('import levelup moves for GEN 8  %s', $pokemon->getName()));
                 $moves = $this->getMovesByLearnMethod($pokemon, $generationEntity, $learnMethod);
                 if (array_key_exists('noform', $moves)) {
                     foreach ($moves['noform'] as $move) {
-                        if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-                            $moveMapper->mapMoves($pokemon, $move, $generationEntity, $this->em, $learnMethod);
-                        } else {
-                            throw new \RuntimeException('Format roman');
-                        }
+                        $this->handleMoveByFormat($pokemon, $move, $generationEntity, $this->em, $learnMethod);
                     }
 //                $this->em->flush();
                 } else {
@@ -73,8 +71,12 @@ class BulbapediaMoveProcessor
         }
     }
 
-    private function getMovesByLearnMethod(Pokemon $pokemon, Generation $generation, MoveLearnMethod $learnMethod, bool $lgpe = false)
-    {
+    private function getMovesByLearnMethod(
+        Pokemon $pokemon,
+        Generation $generation,
+        MoveLearnMethod $learnMethod,
+        bool $lgpe = false
+    ) {
         if ($learnMethod->getName() === 'level-up') {
             return $this->api->getLevelMoves($pokemon, $generation->getGenerationIdentifier(), $lgpe);
         }
@@ -100,20 +102,55 @@ class BulbapediaMoveProcessor
         Generation $generationEntity,
         EntityManagerInterface $em,
         $learnMethod
-    )
-    {
-        $moveMapper = new MoveMapper();
-
+    ) {
         foreach ($moves as $form => $formMoves) {
-            if ($pokemon->getName() === strtolower($form)) {
+            $form = $this->formatForm($form);
+            if ($pokemon->getName() === $form) {
                 foreach ($formMoves as $move) {
-                    if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-                        $moveMapper->mapMoves($pokemon, $move, $generationEntity, $this->em, $learnMethod);
-                    } else {
-                        throw new \RuntimeException('Format roman');
-                    }
+                    $this->handleMoveByFormat($pokemon, $move, $generationEntity, $em, $learnMethod);
                 }
+            } elseif (false !== strpos($form, "alolan")) {
+                $pokemonForm = $this->em->getRepository(Pokemon::class)->findOneBy([
+                        'name' => $pokemon->getName() . '-alola'
+                    ]
+                );
+                foreach ($formMoves as $move) {
+                    $this->handleMoveByFormat($pokemonForm, $move, $generationEntity, $em, $learnMethod);
+                }
+            } elseif (false !== strpos($form, "galarian")) {
+                $pokemonForm = $this->em->getRepository(Pokemon::class)->findOneBy([
+                        'name' => $pokemon->getName() . '-galar'
+                    ]
+                );
+                foreach ($formMoves as $move) {
+                    $this->handleMoveByFormat($pokemonForm, $move, $generationEntity, $em, $learnMethod);
+                }
+            } else {
+                throw new \RuntimeException('Unknown form');
             }
         }
     }
+
+    private function handleMoveByFormat(
+        Pokemon $pokemon,
+        $move,
+        $generationEntity,
+        EntityManagerInterface $em,
+        $learnMethod
+    ) {
+        $moveMapper = new MoveMapper();
+
+        if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
+            $moveMapper->mapMoves($pokemon, $move, $generationEntity, $this->em, $learnMethod);
+        } else {
+            throw new \RuntimeException('Format roman');
+        }
+    }
+
+    private function formatForm(string $form)
+    {
+        $form = str_replace(array('\'', '. '), array('', '-'), strtolower($form));
+        return $form;
+    }
+
 }
