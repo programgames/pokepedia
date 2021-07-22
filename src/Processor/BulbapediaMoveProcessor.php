@@ -26,7 +26,7 @@ class BulbapediaMoveProcessor
         $this->api = $api;
     }
 
-    public function importMoveByGeneration(int $generation,SymfonyStyle $io, bool $lgpe = false)
+    public function importMoveByGeneration(int $generation, SymfonyStyle $io, bool $lgpe = false)
     {
         $generationEntity = $this->em->getRepository(Generation::class)->findOneBy(
             [
@@ -56,7 +56,7 @@ class BulbapediaMoveProcessor
                 $pokemon = $availability->getPokemon();
 
                 $io->info(sprintf('import levelup moves for GEN 8  %s', $pokemon->getName()));
-                $moves = $this->getMovesByLearnMethod($pokemon,$generationEntity,$learnMethod);
+                $moves = $this->getMovesByLearnMethod($pokemon, $generationEntity, $learnMethod);
                 if (array_key_exists('noform', $moves)) {
                     foreach ($moves['noform'] as $move) {
                         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
@@ -67,30 +67,53 @@ class BulbapediaMoveProcessor
                     }
 //                $this->em->flush();
                 } else {
-                    throw new \RuntimeException('Multiple form');
+                    $this->handleForms($pokemon, $moves, $generationEntity, $this->em, $learnMethod);
                 }
             }
         }
     }
 
-    private function getMovesByLearnMethod(Pokemon $pokemon,Generation $generation,MoveLearnMethod $learnMethod, bool $lgpe =  false)
+    private function getMovesByLearnMethod(Pokemon $pokemon, Generation $generation, MoveLearnMethod $learnMethod, bool $lgpe = false)
     {
         if ($learnMethod->getName() === 'level-up') {
-           return $this->api->getLevelMoves($pokemon, $generation->getGenerationIdentifier(),$lgpe);
+            return $this->api->getLevelMoves($pokemon, $generation->getGenerationIdentifier(), $lgpe);
         }
 
         if ($learnMethod->getName() === 'tutor') {
-            return $this->api->getTutorMoves($pokemon, $generation->getGenerationIdentifier(),$lgpe);
+            return $this->api->getTutorMoves($pokemon, $generation->getGenerationIdentifier(), $lgpe);
         }
 
         if ($learnMethod->getName() === 'machine') {
-            return  $this->api->getMachineMoves($pokemon, $generation->getGenerationIdentifier(),$lgpe);
+            return $this->api->getMachineMoves($pokemon, $generation->getGenerationIdentifier(), $lgpe);
         }
 
         if ($learnMethod->getName() === 'egg') {
-            return $this->api->getEggMoves($pokemon, $generation->getGenerationIdentifier(),$lgpe);
+            return $this->api->getEggMoves($pokemon, $generation->getGenerationIdentifier(), $lgpe);
         }
 
-        throw new \RuntimeException(sprintf('Unhandled learn method import %s',$learnMethod->getName()));
+        throw new \RuntimeException(sprintf('Unhandled learn method import %s', $learnMethod->getName()));
+    }
+
+    private function handleForms(
+        Pokemon $pokemon,
+        array $moves,
+        Generation $generationEntity,
+        EntityManagerInterface $em,
+        $learnMethod
+    )
+    {
+        $moveMapper = new MoveMapper();
+
+        foreach ($moves as $form => $formMoves) {
+            if ($pokemon->getName() === strtolower($form)) {
+                foreach ($formMoves as $move) {
+                    if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
+                        $moveMapper->mapMoves($pokemon, $move, $generationEntity, $this->em, $learnMethod);
+                    } else {
+                        throw new \RuntimeException('Format roman');
+                    }
+                }
+            }
+        }
     }
 }
