@@ -9,9 +9,7 @@ use App\Entity\ItemName;
 use App\Entity\Machine;
 use App\Entity\MoveName;
 use App\Entity\VersionGroup;
-use App\Repository\ItemNameRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 

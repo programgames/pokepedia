@@ -25,5 +25,12 @@ moves:
          - learnlist
          - machine
          - move
+    8:
+      global:
+        lets-go:
+         - learnlist
+         - machine
+         - move
+
 
 

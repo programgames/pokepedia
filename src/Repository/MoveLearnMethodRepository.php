@@ -18,6 +18,16 @@ class MoveLearnMethodRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, MoveLearnMethod::class);
     }
+    
+    public function findPokepediaLearnMethod()
+    {
+        return $this->createQueryBuilder('mlm')
+            ->andWhere('mlm.name IN (:mlms)')
+            ->setParameter('mlms', ['level-up','tutor','machine','egg'] )
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 
     // /**
     //  * @return MoveLearnMethod[] Returns an array of MoveLearnMethod objects

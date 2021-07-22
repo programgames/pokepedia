@@ -156,14 +156,15 @@ class MoveSetMapperBuilder
                         [
                             new Arg(
                                 new FuncCall(new Name('sprintf'), [
-                                        new Arg(new String_('Unknown mapping format : %s / gen : %s ')),
+                                        new Arg(new String_('Unknown mapping format : %s / gen : %s / learnmethod : %s')),
                                         new Arg(
                                             new ArrayDimFetch(
                                                 new Variable('move'),
-                                                new String_('format')
+                                                new String_('format'),
                                             ),
                                         ),
-                                        new Arg(new MethodCall(new Variable('generation'), 'getGenerationIdentifier'))
+                                        new Arg(new MethodCall(new Variable('generation'), 'getGenerationIdentifier')),
+                                        new Arg(new MethodCall(new Variable('learnMethod'),'getName')),
                                     ]
                                 )
                             )

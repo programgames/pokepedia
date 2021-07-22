@@ -11,6 +11,7 @@ use App\Entity\PokemonAvailability;
 use App\Entity\VersionGroup;
 use App\Helper\MoveSetHelper;
 use App\MoveMapper;
+use App\Processor\BulbapediaMoveProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,83 +23,20 @@ class ImportGen8Moves extends Command
     protected static $defaultName = 'app:import:gen8';
     protected static $defaultDescription = 'import bulbapedia gen8 movesets';
 
-    private EntityManagerInterface $em;
-    private BulbapediaMovesAPI $api;
+    private BulbapediaMoveProcessor $processor;
 
-    public function __construct(EntityManagerInterface $em, BulbapediaMovesAPI $api)
+    public function __construct(BulbapediaMoveProcessor $processor)
     {
         parent::__construct();
 
-        $this->em = $em;
-        $this->api = $api;
-    }
-
-
-    protected function configure(): void
-    {
+        $this->processor = $processor;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $moveMapper = new MoveMapper();
         $io = new SymfonyStyle($input, $output);
 
-        $swordShield = $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'sword-shield']);
-
-        $availabilities = $this->em->getRepository(PokemonAvailability::class)->findBy(
-            [
-                'versionGroup' => $swordShield,
-            ]
-        );
-
-        $levelup = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
-        $machine = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'machine']);
-
-        $generation = $this->em->getRepository(Generation::class)->findOneBy(
-            [
-                'generationIdentifier' => 8
-            ]
-        );
-
-//        foreach ($availabilities as $availability) {
-//            if(!$availability->isAvailable()) {
-//                continue ;
-//            }
-//            $pokemon = $availability->getPokemon();
-//
-//            $io->info(sprintf('import levelup moves for GEN 8  %s', $pokemon->getName()));
-//            $moves = $this->api->getLevelMoves($pokemon, 8);
-//            if (array_key_exists('noform', $moves)) {
-//                foreach ($moves['noform'] as $move) {
-//                    if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-//                        $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
-//                    } else {
-//                        throw new \RuntimeException('Format roman');
-//                    }
-//                }
-////                $this->em->flush();
-//            }
-//        }
-
-        foreach ($availabilities as $availability) {
-            if(!$availability->isAvailable()) {
-                continue ;
-            }
-            $pokemon = $availability->getPokemon();
-
-            $io->info(sprintf('import machine moves for GEN 8  %s', $pokemon->getName()));
-            $moves = $this->api->getMachineMoves($pokemon, 8);
-            if (array_key_exists('noform', $moves)) {
-                foreach ($moves['noform'] as $move) {
-                    if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-                        $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
-                    } else {
-                        throw new \RuntimeException('Format roman');
-                    }
-                }
-//                $this->em->flush();
-            }
-        }
+        $this->processor->importMoveByGeneration(8,$io);
 
         return Command::SUCCESS;
     }

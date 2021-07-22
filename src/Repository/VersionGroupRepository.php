@@ -19,22 +19,16 @@ class VersionGroupRepository extends ServiceEntityRepository
         parent::__construct($registry, VersionGroup::class);
     }
 
-    // /**
-    //  * @return VersionGroup[] Returns an array of VersionGroup objects
-    //  */
-    /*
-    public function findByExampleField($value)
+
+    public function findPokepediaVersionGroup()
     {
         return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('v.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('v.name = IN :val')
+            ->setParameter('vgs', [])
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?VersionGroup

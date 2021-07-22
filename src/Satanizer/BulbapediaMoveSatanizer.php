@@ -88,12 +88,13 @@ class BulbapediaMoveSatanizer
             }
             if ($form && (preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i])
                     || preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])
+                    || preg_match(sprintf('/learnlist\/tr.*/'), $moves[$i])
                     || preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i]))) {
                 $movesByForms[$form][] = $this->moveFormatter->formatLearnlist($moves[$i], $generation, $type);
             } elseif (preg_match(sprintf('/learnlist\/%sf.*/', $type), $moves[$i])) {
                 $form = null;
             } else {
-                throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[1]));
+                throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[$i]));
             }
         }
         return $movesByForms;

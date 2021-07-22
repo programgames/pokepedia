@@ -7,10 +7,9 @@ namespace App\DataFixtures;
 use App\Entity\Move;
 use App\Entity\MoveName;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadLetsGoMoves extends Fixture implements FixtureGroupInterface
+class LoadLetsGoMoves extends Fixture
 {
     public function load(ObjectManager $manager)
     {
@@ -42,10 +41,5 @@ class LoadLetsGoMoves extends Fixture implements FixtureGroupInterface
             $manager->persist($moveNameEntity);
         }
         $manager->flush();
-    }
-
-    public static function getGroups(): array
-    {
-        return ['LGPE'];
     }
 }
