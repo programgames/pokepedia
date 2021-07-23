@@ -35,7 +35,7 @@ class BulbapediaMachineClient
         $wikitext = preg_split('/$\R?^/m', $wikitext);
         return array_map(
             function ($value) {
-                return StringHelper::clearBraces($value);
+                return StringHelper::clearBracesAndBrs($value);
             },
             $wikitext
         );

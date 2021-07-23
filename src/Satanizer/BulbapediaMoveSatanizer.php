@@ -105,7 +105,7 @@ class BulbapediaMoveSatanizer
         return $movesByForms;
     }
 
-    private function clearPadding(array $moves)
+    private function clearPadding(array $moves): array
     {
         $size = count($moves);
 
