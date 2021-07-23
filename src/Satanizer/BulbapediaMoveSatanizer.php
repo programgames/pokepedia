@@ -31,7 +31,8 @@ class BulbapediaMoveSatanizer
                 '=====By [[TM]]=====',
                 '====By [[TM]]====',
                 '====By [[TM]]/[[HM]]====',
-                '====By [[TM]]/[[TR]]===='
+                '====By [[TM]]/[[TR]]====',
+                '====By {{pkmn|breeding}}===='
             ]
         )) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
@@ -86,8 +87,12 @@ class BulbapediaMoveSatanizer
                 $i++;
                 continue;
             }
+
+            if(preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])) {
+                $movesByForms[$form] = [];
+                continue;
+            }
             if ($form && (preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i])
-                    || preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])
                     || preg_match(sprintf('/learnlist\/tr.*/'), $moves[$i])
                     || preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i]))) {
                 $movesByForms[$form][] = $this->moveFormatter->formatLearnlist($moves[$i], $generation, $type);

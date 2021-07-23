@@ -11,13 +11,15 @@ use Doctrine\ORM\EntityManagerInterface;
 class MoveSetHelper
 {
     public const POKEPEDIA_LEVELING_UP_TYPE_LABEL = 'Par montée en niveau';
-    public  const LEVELING_UP_TYPE = 'tutor';
-    public  const MACHINE_TYPE = 'machine';
-    public  const BULBAPEDIA_TM_WIKI_TYPE = 'tm';
+    public const LEVELING_UP_TYPE = 'tutor';
+    public const MACHINE_TYPE = 'machine';
+    public const BULBAPEDIA_TM_WIKI_TYPE = 'tm';
+    public const EGG_TYPE = 'egg';
 
     /* bulbapedia title of sections*/
     public const BULBAPEDIA_TUTORING_TYPE_LABEL = 'By tutoring';
     public const BULBAPEDIA_LEVELING_UP_TYPE_LABEL = 'By leveling up';
+    public const BULBAPEDIA_BREEDING_TYPE_LABEL = 'By breeding';
     public const BULBAPEDIA_TMHM_TYPE_LABEL = 'By TM/HM';
     public const BULBAPEDIA_TM_TYPE_LABEL = 'By TM';
     public const BULBAPEDIA_TMTR_TYPE_LABEL = 'By TM/TR';
@@ -25,6 +27,7 @@ class MoveSetHelper
     /* used to parse type of learnlist in learnlist/tutorf for example */
     public const BULBAPEDIA_TUTOR_WIKI_TYPE = 'tutor';
     public const BULBAPEDIA_LEVEL_WIKI_TYPE = 'level';
+    public const BULBAPEDIA_BREEDING_WIKI_TYPE = 'breed';
     const BULBAPEDIA_MOVE_TYPE_GLOBAL = 'global';
     const BULBAPEDIA_MOVE_TYPE_SPECIFIC = 'specific';
 

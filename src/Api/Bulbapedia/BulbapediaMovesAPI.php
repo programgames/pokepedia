@@ -70,6 +70,23 @@ class BulbapediaMovesAPI
         return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_LEVEL_WIKI_TYPE);
     }
 
+    public function getEggMoves(Pokemon $pokemon, int $generation, bool $lgpe = false)
+    {
+        $moves = $this->cache->get(
+            sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::BULBAPEDIA_BREEDING_WIKI_TYPE),
+            function (ItemInterface $item) use ($pokemon, $generation, $lgpe) {
+                return $this->moveClient->getMovesByPokemonGenerationAndType(
+                    $pokemon,
+                    $generation,
+                    MoveSetHelper::BULBAPEDIA_BREEDING_TYPE_LABEL,
+                    $lgpe
+                );
+            }
+        );
+
+        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_BREEDING_WIKI_TYPE);
+    }
+
     public function getMachineMoves(Pokemon $pokemon, int $generation, bool $lgpe = false)
     {
         $moves = $this->cache->get(
