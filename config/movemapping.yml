@@ -27,9 +27,16 @@ moves:
          - move
     8:
       global:
-        lets-go:
+        sword-shield:
          - learnlist
          - machine
+         - move
+  breed:
+    8:
+      global:
+        sword-shield:
+         - learnlist
+         - parents
          - move
 
 
