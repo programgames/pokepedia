@@ -5,7 +5,6 @@ namespace App\DataFixtures;
 
 
 use App\Api\PokeAPI\EvolutionChainApi;
-use App\Entity\PokemonSpecy;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

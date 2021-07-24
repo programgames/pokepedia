@@ -4,15 +4,7 @@
 namespace App\Command;
 
 
-use App\Api\Bulbapedia\BulbapediaMovesAPI;
-use App\Entity\Generation;
-use App\Entity\MoveLearnMethod;
-use App\Entity\PokemonAvailability;
-use App\Entity\VersionGroup;
-use App\Helper\MoveSetHelper;
-use App\MoveMapper;
 use App\Processor\BulbapediaMoveProcessor;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

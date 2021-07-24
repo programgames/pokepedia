@@ -16,7 +16,7 @@ class BulbapediaMoveSatanizer
         $this->moveFormatter = $moveFormatter;
     }
 
-    public function checkAndSanitizeMoves(array $moves, int $generation, string $type)
+    public function checkAndSanitizeMoves(array $moves, int $generation, string $type): array
     {
         $formattedMoves = [];
 
@@ -36,7 +36,7 @@ class BulbapediaMoveSatanizer
             ]
         )) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
-        };
+        }
         if (preg_match('/=====.*=====/', $moves[1])) {
             return $this->handleFormMoves($moves, $generation, $type);
         }
@@ -70,12 +70,11 @@ class BulbapediaMoveSatanizer
     private function handleFormMoves(array $moves, int $generation, string $type): array
     {
         $movesByForms = [];
-        $size = count($moves);
         $form = null;
         array_shift($moves);
 
-        for ($i = 0; $i < $size; $i++) {
-            if (empty($moves[$i]) || $moves[$i] === ' ') {
+        foreach ($moves as $i => $iValue) {
+            if (empty($moves[$i]) || $iValue === ' ') {
                 continue;
             }
 
@@ -95,11 +94,11 @@ class BulbapediaMoveSatanizer
             if ($form && (preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i])
                     || preg_match(sprintf('/learnlist\/tr.*/'), $moves[$i])
                     || preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i]))) {
-                $movesByForms[$form][] = $this->moveFormatter->formatLearnlist($moves[$i], $generation, $type);
+                $movesByForms[$form][] = $this->moveFormatter->formatLearnlist($iValue, $generation, $type);
             } elseif (preg_match(sprintf('/learnlist\/%sf.*/', $type), $moves[$i])) {
                 $form = null;
             } else {
-                throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[$i]));
+                throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $iValue));
             }
         }
         return $movesByForms;
@@ -110,11 +109,11 @@ class BulbapediaMoveSatanizer
         $size = count($moves);
 
         for ($i = $size -1; $i > 0; $i--) {
-            if (!preg_match('/learnlist.*/', $moves[$i])) {
+            if (false === strpos($moves[$i], "learnlist")) {
                 unset($moves[$i]);
-            } else {
-                return $moves;
             }
         }
+
+        return $moves;
     }
 }

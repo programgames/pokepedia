@@ -8,7 +8,7 @@ use App\Helper\MoveSetHelper;
 
 class MoveFormatter
 {
-    public function formatLearnlist(string $move, int $generation, string $type)
+    public function formatLearnlist(string $move, int $generation, string $type): array
     {
         if (preg_match(sprintf('/%s\dnull/', $type), $move)) {
             return [
@@ -48,7 +48,7 @@ class MoveFormatter
         throw new WrongLearnListFormat('Invalid learnlist: ' . $move);
     }
 
-    private function explodeMove(string $move)
+    private function explodeMove(string $move): array
     {
         $move .= '|';
         $template = false;

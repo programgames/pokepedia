@@ -43,7 +43,7 @@ class BulbapediaAvailabilityClient
         );
     }
 
-    private function getSections()
+    private function getSections(): array
     {
 
         $formattedSections = [];

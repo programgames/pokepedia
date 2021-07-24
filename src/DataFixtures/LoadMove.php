@@ -4,11 +4,8 @@
 namespace App\DataFixtures;
 
 
-use App\Api\PokeAPI\GenerationApi;
 use App\Api\PokeAPI\MoveApi;
-use App\Entity\MoveLearnMethod;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class LoadMove extends Fixture

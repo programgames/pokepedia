@@ -5,7 +5,6 @@ namespace App\Builder;
 
 
 use App\Exception\UnknownMapping;
-use App\Helper\MoveSetHelper;
 use App\Helper\NumberHelper;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayDimFetch;
@@ -100,7 +99,7 @@ class SpecificalMoveNodeBuilder
         return $nodes;
     }
 
-    private function getComplexesMoves(array $propertiesDatas)
+    private function getComplexesMoves(array $propertiesDatas): int
     {
         $complexeMoves = 0;
         foreach ($propertiesDatas as $iValue) {

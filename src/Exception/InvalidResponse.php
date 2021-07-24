@@ -4,7 +4,9 @@
 namespace App\Exception;
 
 
-class InvalidResponse extends \RuntimeException
+use RuntimeException;
+
+class InvalidResponse extends RuntimeException
 {
 
 }

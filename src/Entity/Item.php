@@ -17,22 +17,22 @@ class Item
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\OneToMany(targetEntity=ItemName::class, mappedBy="item")
      */
-    private $itemNames;
+    private Collection $itemNames;
 
     /**
      * @ORM\OneToMany(targetEntity=Machine::class, mappedBy="item")
      */
-    private $machines;
+    private Collection $machines;
 
     public function __construct()
     {

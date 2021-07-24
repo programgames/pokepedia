@@ -4,7 +4,6 @@
 namespace App\Api\Pokepedia;
 
 
-use App\Entity\Pokemon;
 use App\Exception\InvalidResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
@@ -56,7 +55,7 @@ class PokepediaMoveApiClient
         return $wikitext;
     }
 
-    private function getMoveSections(string $name, int $generation)
+    private function getMoveSections(string $name, int $generation): array
     {
         $formattedSections = [];
 

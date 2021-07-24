@@ -17,38 +17,38 @@ class VersionGroup
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $versionGroupOrder;
+    private ?int $versionGroupOrder;
 
     /**
      * @ORM\ManyToOne(targetEntity=Generation::class, inversedBy="versionGroups")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $generation;
+    private ?Generation $generation;
 
     /**
      * @ORM\OneToMany(targetEntity=Machine::class, mappedBy="versionGroup", orphanRemoval=true)
      */
-    private $machines;
+    private Collection $machines;
 
     /**
      * @ORM\OneToMany(targetEntity=PokemonMove::class, mappedBy="versionGroup", orphanRemoval=true)
      */
-    private $pokemonMoves;
+    private Collection $pokemonMoves;
 
     /**
      * @ORM\OneToMany(targetEntity=PokemonAvailability::class, mappedBy="versionGroup", orphanRemoval=true)
      */
-    private $pokemonAvailabilities;
+    private Collection $pokemonAvailabilities;
 
     public function __construct()
     {

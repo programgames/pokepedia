@@ -1,7 +1,63 @@
-Create :
+gen 1 :
 
-Branch Poke
+tout les 151 premiers
 
-Alias :
+gen 2 : 251
 
-Vise Grip
+gen 3 : 386
+
+gen 4 : 493
+note =>
+Origin Forme Giratina, Sky Forme Shaymin, and all appliance forms of Rotom were introduced in Platinum and are
+also compatible with HeartGold and SoulSilver, but they are incompatible with Diamond and Pear
+
+gen5 : 649
+note => White Kyurem, Black Kyurem, the Therian Forms of the Forces of Nature (Tornadus, Thundurus, and Landorus),
+ and Resolute Form Keldeo were introduced in Black 2 and White 2, and are incompatible with Black and White.
+
+
+gen 6 : 721
+note => pas de set diff Deerling and Sawsbuck may only be found in the Spring Form
+
+gen 7 : 809
+les forme alola sont compatibles de partout
+ Meltan and Melmetal are incompatible with Sun, Moon, Ultra Sun, and Ultra Moon.
+The Dusk Mane, Dawn Wings and Ultra forms of Necrozma
+
+lets go :
+151 + forme alola
+
+gen 8 :
+ pas a faire
+
+
+pkm with forms :
+
+wormadam Cheniselle gen 4
+shaymin gen 4
+darmanitan gen 5
+kyurem gen 5
+lycanroc gen 5
+toxtricity gen 8
+indeedee Wimessir gen 8
+urshifu gen 8
+ calyrex gen 8
+ Hoopa gen 6
+
+ galar
+ alola
+
+
+  //        elseif ($pokemon['name'] === 'kyurem-black') {
+  //            $pokemonEntity->setSpecificName('Kyurem_Noir');
+  //        } elseif ($pokemon['name'] === 'kyurem-white') {
+  //            $pokemonEntity->setSpecificName('Kyurem_Blanc');
+  //        } elseif ($pokemon['name'] === 'necrozma-dusk') {
+  //            $pokemonEntity->setIsGalar(false);
+  //            $pokemonEntity->setIsAlola(false);
+  //            $pokemonEntity->setSpecificName('Necrozma_Crinière_du_Couchant');
+  //        } elseif ($pokemon['name'] === 'necrozma-dawn') {
+  //            $pokemonEntity->setSpecificName('Necrozma_Ailes_de_l\'Aurore');
+  //        } elseif ($pokemon['name'] === 'necrozma-ultra') {
+  //            $pokemonEntity->setSpecificName('Ultra-Necrozma');
+  //        }

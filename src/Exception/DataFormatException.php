@@ -4,7 +4,9 @@
 namespace App\Exception;
 
 
-class DataFormatException extends \RuntimeException
+use RuntimeException;
+
+class DataFormatException extends RuntimeException
 {
 
 }

@@ -9,7 +9,7 @@ use Symfony\Component\HttpClient\HttpOptions;
 
 class PokeAPIGraphQLClient
 {
-    public function sendRequest(string $endpoint, string $query)
+    public function sendRequest(string $endpoint, string $query): array
     {
         $options = (new HttpOptions())
             ->setJson(['query' => $query])

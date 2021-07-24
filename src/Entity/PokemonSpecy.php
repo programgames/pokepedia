@@ -16,43 +16,43 @@ class PokemonSpecy
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $pokemonSpeciesOrder;
+    private ?int $pokemonSpeciesOrder;
 
     /**
      * @ORM\ManyToMany(targetEntity=EggGroup::class, inversedBy="pokemonSpecies")
      */
-    private $eggGroups;
+    private Collection $eggGroups;
 
     /**
      * @ORM\OneToMany(targetEntity=Pokemon::class, mappedBy="pokemonSpecy", orphanRemoval=true)
      */
-    private $pokemons;
+    private Collection $pokemons;
 
     /**
      * @ORM\ManyToOne(targetEntity=EvolutionChain::class, inversedBy="pokemonSpecies")
      */
-    private $evolutionChain;
+    private ?EvolutionChain $evolutionChain;
 
     /**
      * @ORM\OneToMany(targetEntity=SpecyName::class, mappedBy="pokemonSpecy", orphanRemoval=true)
      */
-    private $names;
+    private Collection $names;
 
     /**
      * @ORM\ManyToOne(targetEntity=Generation::class, inversedBy="pokemonSpecies")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $generation;
+    private ?Generation $generation;
 
     public function __construct()
     {

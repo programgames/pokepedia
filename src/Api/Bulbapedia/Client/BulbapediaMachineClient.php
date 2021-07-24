@@ -9,13 +9,6 @@ use Symfony\Component\HttpClient\HttpClient;
 
 class BulbapediaMachineClient
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     public function getMachineInformation(string $itemName): array
     {
         $url = strtr(

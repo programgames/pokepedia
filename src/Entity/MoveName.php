@@ -15,62 +15,62 @@ class MoveName
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $language;
+    private ?int $language;
 
     /**
      * @ORM\ManyToOne(targetEntity=Move::class, inversedBy="moveNames")
      */
-    private $move;
+    private ?Move $move;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $gen1;
+    private ?string $gen1;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $gen2;
+    private ?string $gen2;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $gen3;
+    private ?string $gen3;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $gen4;
+    private ?string $gen4;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $gen5;
+    private ?string $gen5;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $gen6;
+    private ?string $gen6;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $gen7;
+    private ?string $gen7;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $gen8;
+    private ?string $gen8;
 
     public function getId(): ?int
     {

@@ -15,36 +15,36 @@ class PokemonMove
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $level;
+    private ?int $level;
 
     /**
      * @ORM\ManyToOne(targetEntity=Move::class, inversedBy="pokemonMoves")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $move;
+    private ?Move $move;
 
     /**
      * @ORM\ManyToOne(targetEntity=VersionGroup::class, inversedBy="pokemonMoves")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $versionGroup;
+    private ?VersionGroup $versionGroup;
 
     /**
      * @ORM\ManyToOne(targetEntity=MoveLearnMethod::class, inversedBy="pokemonMoves")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $learnMethod;
+    private ?MoveLearnMethod $learnMethod;
 
     /**
      * @ORM\ManyToOne(targetEntity=Pokemon::class, inversedBy="pokemonMoves")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $pokemon;
+    private ?pokemon $pokemon;
 
     public function getId(): ?int
     {

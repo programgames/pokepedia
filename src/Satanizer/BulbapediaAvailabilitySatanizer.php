@@ -8,7 +8,6 @@ class BulbapediaAvailabilitySatanizer
 {
     public function sanitizeAvailabilities(array $availabilitiesInformation) : array
     {
-        $matches = preg_grep("/Avail.*/",$availabilitiesInformation);
-        return $matches;
+        return preg_grep("/Avail.*/",$availabilitiesInformation);
     }
 }

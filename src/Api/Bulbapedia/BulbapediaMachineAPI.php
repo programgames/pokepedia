@@ -5,6 +5,7 @@ namespace App\Api\Bulbapedia;
 
 
 use App\Api\Bulbapedia\Client\BulbapediaAvailabilityClient;
+use App\Api\Bulbapedia\Client\BulbapediaMachineClient;
 use App\Satanizer\BulbapediaMachineSatanizer;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -12,10 +13,10 @@ use Symfony\Contracts\Cache\ItemInterface;
 class BulbapediaMachineAPI
 {
     private FilesystemAdapter $cache;
-    private BulbapediaAvailabilityClient $machineClient;
+    private BulbapediaMachineClient $machineClient;
     private BulbapediaMachineSatanizer $bulbapediaMachineSatanizer;
 
-    public function __construct(BulbapediaAvailabilityClient $machineClient, BulbapediaMachineSatanizer $bulbapediaMachineSatanizer)
+    public function __construct(BulbapediaMachineClient $machineClient, BulbapediaMachineSatanizer $bulbapediaMachineSatanizer)
     {
         $this->cache = new FilesystemAdapter();
 
@@ -23,7 +24,7 @@ class BulbapediaMachineAPI
         $this->bulbapediaMachineSatanizer = $bulbapediaMachineSatanizer;
     }
 
-    public function getMoveNameByItemAndGeneration(string $itemName, $generation)
+    public function getMoveNameByItemAndGeneration(string $itemName, $generation): string
     {
         $machineInfos = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s',$itemName),

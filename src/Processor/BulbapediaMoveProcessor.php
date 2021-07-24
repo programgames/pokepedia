@@ -13,6 +13,7 @@ use App\Entity\VersionGroup;
 use App\Helper\MoveSetHelper;
 use App\MoveMapper;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class BulbapediaMoveProcessor
@@ -26,7 +27,7 @@ class BulbapediaMoveProcessor
         $this->api = $api;
     }
 
-    public function importMoveByGeneration(int $generation, SymfonyStyle $io, bool $lgpe = false)
+    public function importMoveByGeneration(int $generation, SymfonyStyle $io, bool $lgpe = false): void
     {
         $generationEntity = $this->em->getRepository(Generation::class)->findOneBy(
             [
@@ -47,7 +48,7 @@ class BulbapediaMoveProcessor
         );
 
         foreach ($this->em->getRepository(MoveLearnMethod::class)->findPokepediaLearnMethod() as $learnMethod) {
-            if($learnMethod->getName() === 'level-up') {
+            if ($learnMethod->getName() === 'level-up') {
                 continue;
             }
             foreach ($availabilities as $availability) {
@@ -59,7 +60,7 @@ class BulbapediaMoveProcessor
                     continue;
                 }
 
-                $io->info(sprintf('import %s moves for GEN 8  %s',$learnMethod->getName(), $pokemon->getName()));
+                $io->info(sprintf('import %s moves for GEN 8  %s', $learnMethod->getName(), $pokemon->getName()));
                 $moves = $this->getMovesByLearnMethod($pokemon, $generationEntity, $learnMethod);
                 if (array_key_exists('noform', $moves)) {
                     foreach ($moves['noform'] as $move) {
@@ -78,7 +79,7 @@ class BulbapediaMoveProcessor
         Generation $generation,
         MoveLearnMethod $learnMethod,
         bool $lgpe = false
-    )
+    ): array
     {
         if ($learnMethod->getName() === 'level-up') {
             return $this->api->getLevelMoves($pokemon, $generation->getGenerationIdentifier(), $lgpe);
@@ -96,7 +97,7 @@ class BulbapediaMoveProcessor
             return $this->api->getEggMoves($pokemon, $generation->getGenerationIdentifier(), $lgpe);
         }
 
-        throw new \RuntimeException(sprintf('Unhandled learn method import %s', $learnMethod->getName()));
+        throw new RuntimeException(sprintf('Unhandled learn method import %s', $learnMethod->getName()));
     }
 
     private function handleForms(
@@ -105,7 +106,7 @@ class BulbapediaMoveProcessor
         Generation $generationEntity,
         EntityManagerInterface $em,
         $learnMethod
-    )
+    ): void
     {
         foreach ($moves as $form => $formMoves) {
             $form = $this->formatForm($form);
@@ -141,7 +142,7 @@ class BulbapediaMoveProcessor
                         $this->handleMoveByFormat($pokemonForm, $move, $generationEntity, $em, $learnMethod);
                     }
                 } else {
-                    throw new \RuntimeException('Unknown form');
+                    throw new RuntimeException('Unknown form');
                 }
             }
         }
@@ -153,14 +154,14 @@ class BulbapediaMoveProcessor
         $generationEntity,
         EntityManagerInterface $em,
         $learnMethod
-    )
+    ): void
     {
         $moveMapper = new MoveMapper();
 
         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
             $moveMapper->mapMoves($pokemon, $move, $generationEntity, $this->em, $learnMethod);
         } else {
-            throw new \RuntimeException('Format roman');
+            throw new RuntimeException('Format roman');
         }
     }
 
@@ -200,7 +201,7 @@ class BulbapediaMoveProcessor
             $form = 'urshifu-rapid-strike';
         } elseif ($form === 'ice rider calyrex') {
             $form = 'calyrex-ice-rider';
-        }elseif ($form === 'shadow rider calyrex') {
+        } elseif ($form === 'shadow rider calyrex') {
             $form = 'calyrex-shadow-rider';
         }
 //wormadam-plant;shaymin-land

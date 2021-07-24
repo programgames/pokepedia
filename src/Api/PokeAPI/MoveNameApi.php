@@ -5,10 +5,8 @@ namespace App\Api\PokeAPI;
 
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
-use App\Entity\Generation;
 use App\Entity\Move;
 use App\Entity\MoveName;
-use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;

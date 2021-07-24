@@ -6,6 +6,7 @@ use App\Entity\MoveName;
 use App\Entity\PokemonMove;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use RuntimeException;
 
 /**
  * @method MoveName|null find($id, $lockMode = null, $lockVersion = null)
@@ -29,7 +30,7 @@ class MoveNameRepository extends ServiceEntityRepository
             ->setParameter('moveId', $pokemonMove->getMove()->getId())
             ->getQuery()
             ->getOneOrNullResult();
-        ;
+
 
         return $moveName;
     }
@@ -54,7 +55,7 @@ class MoveNameRepository extends ServiceEntityRepository
                 ->getOneOrNullResult();
         }
         if(!$moveName) {
-            throw new \RuntimeException(sprintf('Missing moveName : %s',$name));
+            throw new RuntimeException(sprintf('Missing moveName : %s',$name));
         }
         return $moveName;
     }

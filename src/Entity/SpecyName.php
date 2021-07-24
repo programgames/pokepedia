@@ -15,23 +15,23 @@ class SpecyName
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $language;
+    private ?int $language;
 
     /**
      * @ORM\ManyToOne(targetEntity=PokemonSpecy::class, inversedBy="names")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $pokemonSpecy;
+    private ?PokemonSpecy $pokemonSpecy;
 
     public function getId(): ?int
     {

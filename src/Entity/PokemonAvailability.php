@@ -15,24 +15,24 @@ class PokemonAvailability
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Pokemon::class, inversedBy="pokemonAvailabilities")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $pokemon;
+    private ?Pokemon $pokemon;
 
     /**
      * @ORM\ManyToOne(targetEntity=Versiongroup::class, inversedBy="pokemonAvailabilities")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $versionGroup;
+    private ?Versiongroup $versionGroup;
 
     /**
      * @ORM\Column(type="boolean", name="availability")
      */
-    private $available;
+    private bool $available = false;
 
     public function getId(): ?int
     {

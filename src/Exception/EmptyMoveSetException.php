@@ -4,7 +4,9 @@
 namespace App\Exception;
 
 
-class EmptyMoveSetException extends \RuntimeException
+use RuntimeException;
+
+class EmptyMoveSetException extends RuntimeException
 {
 
 }

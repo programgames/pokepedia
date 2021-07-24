@@ -15,28 +15,28 @@ class Machine
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $machineNumber;
+    private ?int $machineNumber;
 
     /**
      * @ORM\ManyToOne(targetEntity=Move::class, inversedBy="machines")
      */
-    private $move;
+    private ?Move $move;
 
     /**
      * @ORM\ManyToOne(targetEntity=Item::class, inversedBy="machines")
      */
-    private $item;
+    private ?Item $item;
 
     /**
      * @ORM\ManyToOne(targetEntity=VersionGroup::class, inversedBy="machines")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $versionGroup;
+    private ?VersionGroup $versionGroup;
 
     public function getId(): ?int
     {

@@ -15,9 +15,9 @@ class LoadFrenchMovesAliases extends Fixture implements DependentFixtureInterfac
         $file = __DIR__ . '../data/french_move_alias.csv';
         $row = 1;
         $repository = $manager->getRepository(MoveName::class);
-        if (($handle = fopen($file, "r")) !== FALSE) {
+        if (($handle = fopen($file, 'rb')) !== FALSE) {
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                if ($row == 1) {
+                if ($row === 1) {
                     $row++;
                     continue;
                 }
@@ -45,7 +45,7 @@ class LoadFrenchMovesAliases extends Fixture implements DependentFixtureInterfac
         $manager->flush();
     }
 
-    private function replaceApostrophe(ObjectManager $manager)
+    private function replaceApostrophe(ObjectManager $manager): void
     {
         $moves = $manager->getRepository(MoveName::class)->findBy(['language' => 5]);
 

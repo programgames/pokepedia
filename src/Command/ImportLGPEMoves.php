@@ -4,7 +4,6 @@
 namespace App\Command;
 
 
-use App\Api\Bulbapedia\BulbapediaMachineAPI;
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
@@ -12,6 +11,7 @@ use App\Entity\Pokemon;
 use App\Helper\MoveSetHelper;
 use App\MoveMapper;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -63,7 +63,7 @@ class ImportLGPEMoves extends Command
                     if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
                         $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
                     } else {
-                        throw new \RuntimeException('Format roman');
+                        throw new RuntimeException('Format roman');
                     }
                 }
                 $this->em->flush();
@@ -82,7 +82,7 @@ class ImportLGPEMoves extends Command
                     if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
                         $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $machine);
                     } else {
-                        throw new \RuntimeException('Format roman');
+                        throw new RuntimeException('Format roman');
                     }
                 }
                 $this->em->flush();

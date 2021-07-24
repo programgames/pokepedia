@@ -10,7 +10,6 @@ use App\Helper\MoveSetHelper;
 use App\Satanizer\BulbapediaMoveSatanizer;
 use Doctrine\DBAL\Driver\Connection;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -36,7 +35,7 @@ class BulbapediaMovesAPI
         );
     }
 
-    public function getTutorMoves(Pokemon $pokemon, string $generation, bool $lgpe = false)
+    public function getTutorMoves(Pokemon $pokemon, string $generation, bool $lgpe = false): array
     {
         $moves = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE),
@@ -53,7 +52,7 @@ class BulbapediaMovesAPI
         return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE);
     }
 
-    public function getLevelMoves(Pokemon $pokemon, int $generation, bool $lgpe = false)
+    public function getLevelMoves(Pokemon $pokemon, int $generation, bool $lgpe = false): array
     {
         $moves = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::LEVELING_UP_TYPE),
@@ -70,7 +69,7 @@ class BulbapediaMovesAPI
         return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_LEVEL_WIKI_TYPE);
     }
 
-    public function getEggMoves(Pokemon $pokemon, int $generation, bool $lgpe = false)
+    public function getEggMoves(Pokemon $pokemon, int $generation, bool $lgpe = false): array
     {
         $moves = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::BULBAPEDIA_BREEDING_WIKI_TYPE),
@@ -87,7 +86,7 @@ class BulbapediaMovesAPI
         return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_BREEDING_WIKI_TYPE);
     }
 
-    public function getMachineMoves(Pokemon $pokemon, int $generation, bool $lgpe = false)
+    public function getMachineMoves(Pokemon $pokemon, int $generation, bool $lgpe = false): array
     {
         $moves = $this->cache->get(
             sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::MACHINE_TYPE),

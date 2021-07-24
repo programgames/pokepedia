@@ -86,12 +86,14 @@ class AvailabilityByGenerationHandler
      */
     private $swordShieldVG;
 
+    private array $formPokemons = [];
+
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }
 
-    private function init()
+    private function init(): void
     {
         $versiongroupRepository = $this->em->getRepository(VersionGroup::class);
 
@@ -152,240 +154,231 @@ class AvailabilityByGenerationHandler
 
     }
 
-    public function handleAvailablities(Pokemon $pokemon, string $generation, array $availabilities)
+    public function handleAvailablities(): void
     {
         if (!$this->initialized) {
             $this->init();
         }
 
-        $this->handleByGen($pokemon, $availabilities, $generation);
+        $this->handleByGen();
+        $this->em->flush();
+
     }
 
-    private function handleByGen(Pokemon $pokemon, array $availabilities, $generation)
+    private function handleByGen(): void
     {
+        $this->handleGen1();
+        $this->handleGen2();
+        $this->handleGen3();
+        $this->handleGen4();
+        $this->handleGen5();
+        $this->handleGen6();
+        $this->handleGen7();
+        $this->handleLGPE();
 
-        if ($generation === 'Unknown Origins Pokémon') {
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->lgpeVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[1]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->swordShieldVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[1]));
-            $this->em->persist($avail);
-            return;
-        }
-
-        $index = 0;
-        switch ($generation) {
-            case 'Generation I Pokémon':
-                $index = 0;
-                break;
-            case 'Generation II Pokémon':
-                $index = 4;
-                break;
-            case 'Generation III Pokémon':
-                $index = 7;
-                break;
-            case 'Generation IV Pokémon':
-                $index = 14;
-                break;
-            case 'Generation V Pokémon':
-                $index = 20;
-                break;
-            case 'Generation VI Pokémon':
-                $index = 24;
-                break;
-            case 'Generation VII Pokémon':
-                $index = 28;
-                break;
-            case 'Generation VIII Pokémon':
-                $index = 32;
-                break;
-        }
-        $generation = $this->convertGeneration($generation);
-
-        if ($generation <= 1) {
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->redBlueVg);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[3 - $index]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->yellowVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[6 - $index]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->lgpeVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[35 - $index]));
-            $this->em->persist($avail);
-        }
-
-        if ($generation <= 2) {
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->goldSilverVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[7 - $index]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->crystalVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[9 - $index]));
-            $this->em->persist($avail);
-        }
-
-        if ($generation <= 3) {
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->rubySapphirVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[10 - $index]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->fireRedLeafGreenVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[12 - $index]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->emeraldVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[14 - $index]));
-            $this->em->persist($avail);
-
-        }
-
-        if ($generation <= 4) {
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->diamondPearlVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[17 - $index]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->platinumVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[19 - $index]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->heartGoldSoulSilverVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[20 - $index]));
-            $this->em->persist($avail);
-
-        }
-
-        if ($generation <= 5) {
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->blackWhiteVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[23 - $index]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->black2White2VG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[25 - $index]));
-            $this->em->persist($avail);
-
-        }
-
-        if ($generation <= 6) {
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->xyVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[27 - $index]));
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->orasVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[29 - $index]));
-            $this->em->persist($avail);
-
-        }
-
-        if ($generation <= 7) {
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->sunMoonVG);
-            $avail->setPokemon($pokemon);
-            if ($pokemon->getName() === ('meltan' || 'melmetal')) {
-                $avail->setAvailable($this->getAvailability(4));
-            } else {
-                $avail->setAvailable($this->getAvailability($availabilities[31 - $index]));
-            }
-            $this->em->persist($avail);
-
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->ultraSunUltraMoonVG);
-            $avail->setPokemon($pokemon);
-            $avail->setAvailable($this->getAvailability($availabilities[33 - $index]));
-            $this->em->persist($avail);
-        }
-        if ($generation <= 8) {
-            if ($generation > 1) {
-                $index += 2;
-            }
-            $avail = new PokemonAvailability();
-            $avail->setVersionGroup($this->swordShieldVG);
-            $avail->setPokemon($pokemon);
-            if ($pokemon->getName() === 'meltan' || $pokemon->getName() === 'melmetal') {
-                $avail->setAvailable($this->getAvailability(6));
-            } else {
-                $avail->setAvailable($this->getAvailability($availabilities[37 - $index]));
-            }
-            $this->em->persist($avail);
-        }
     }
 
-    function getAvailability(string $flag)
+    private function handleGen1()
     {
-        $flag = trim($flag);
-        return !($flag === '—');
+        $versionGroups = [];
+        $versionGroups[] = $this->redBlueVg;
+        $versionGroups[] = $this->yellowVG;
+
+        $pokemons = $this->em->getRepository(Pokemon::class)
+            ->findDefaultPokemons(1, 151);
+
+        $this->saveAvailabilities($pokemons, $versionGroups);
     }
 
-    private function convertGeneration($generation)
+    private function handleGen2()
     {
-        switch ($generation) {
-            case 'Generation I Pokémon':
-                return 1;
-            case 'Generation II Pokémon':
-                return 2;
+        $versionGroups = [];
+        $versionGroups[] = $this->crystalVG;
+        $versionGroups[] = $this->goldSilverVG;
 
-            case 'Generation III Pokémon':
-                return 3;
+        $pokemons = $this->em->getRepository(Pokemon::class)
+            ->findDefaultPokemons(1, 251);
 
-            case 'Generation IV Pokémon':
-                return 4;
+        $this->saveAvailabilities($pokemons, $versionGroups);
 
-            case 'Generation V Pokémon':
-                return 5;
+    }
 
-            case 'Generation VI Pokémon':
-                return 6;
+    private function handleGen3()
+    {
+        $versionGroups = [];
+        $versionGroups[] = $this->emeraldVG;
+        $versionGroups[] = $this->rubySapphirVG;
+        $versionGroups[] = $this->fireRedLeafGreenVG;
 
-            case 'Generation VII Pokémon':
-                return 7;
+        $pokemons = $this->em->getRepository(Pokemon::class)
+            ->findDefaultPokemons(1, 386);
 
-            case 'Generation VIII Pokémon':
-                return 8;
+        $this->saveAvailabilities($pokemons, $versionGroups);
+    }
 
+    private function handleGen4()
+    {
+        $versionGroups = [];
+        $versionGroups[] = $this->diamondPearlVG;
+        $versionGroups[] = $this->platinumVG;
+        $versionGroups[] = $this->heartGoldSoulSilverVG;
+
+        $wormadan = $this->getPokemon('wormadam-plant');
+        $sandyWormadan = $this->getPokemon('wormadam-sandy');
+        $trashWormadan = $this->getPokemon('wormadam-trash');
+        $wormadan->setHasMoveForms(true);
+        $wormadan->addForm($sandyWormadan);
+        $wormadan->addForm($trashWormadan);
+        $this->em->persist($wormadan);
+        $pokemons = $this->em->getRepository(Pokemon::class)
+            ->findDefaultPokemons(1, 493);
+        array_push($this->formPokemons, $sandyWormadan, $trashWormadan);
+        array_push($pokemons, $sandyWormadan, $trashWormadan);
+        $this->saveAvailabilities($pokemons, $versionGroups);
+
+        $shaymin = $this->getPokemon('shaymin-land');
+        $shayminSky = $this->getPokemon('shaymin-sky');
+        $this->formPokemons[] = $shayminSky;
+
+        $shaymin->setHasMoveForms(true);
+        $shaymin->addForm($shayminSky);
+        $this->em->persist($shaymin);
+
+        $specificVg = [];
+        $specificVg[] = $this->platinumVG;
+        $specificVg[] = $this->heartGoldSoulSilverVG;
+
+        $this->saveAvailabilities([$shayminSky], $specificVg);
+    }
+
+    private function handleGen5()
+    {
+        $versionGroups = [];
+        $versionGroups[] = $this->blackWhiteVG;
+        $versionGroups[] = $this->black2White2VG;
+
+        $pokemons = $this->em->getRepository(Pokemon::class)
+            ->findDefaultPokemons(1, 649);
+
+        $darmatitan = $this->getPokemon('darmanitan-standard');
+        $darmanitanZen = $this->getPokemon('darmanitan-zen');
+        $this->formPokemons[] = $darmanitanZen;
+        $darmatitan->addForm($darmanitanZen);
+        $darmatitan->setHasMoveForms(true);
+        $this->em->persist($darmatitan);
+
+        $pokemons = array_merge($this->formPokemons, $pokemons);
+
+        $this->saveAvailabilities($pokemons, $versionGroups);
+
+        $kyurem = $this->getPokemon('kyurem');
+        $whiteKyurem = $this->getPokemon('kyurem-black');
+        $blackKyurem = $this->getPokemon('kyurem-white');
+        array_push($this->formPokemons, $whiteKyurem, $blackKyurem);
+
+        $kyurem->setHasMoveForms(true);
+        $kyurem->addForm($whiteKyurem);
+        $kyurem->addForm($blackKyurem);
+        $this->em->persist($kyurem);
+
+        $specificVg = [];
+        $specificVg[] = $this->black2White2VG;
+
+        $this->saveAvailabilities([$whiteKyurem, $blackKyurem], $specificVg);
+    }
+
+    private function handleGen6()
+    {
+        $versionGroups = [];
+        $versionGroups[] = $this->xyVG;
+        $versionGroups[] = $this->orasVG;
+
+        $hoopa = $this->getPokemon('hoopa');
+        $hoopaUnbound = $this->getPokemon('hoopa-unbound');
+        $this->formPokemons[] = $hoopaUnbound;
+        $hoopa->addForm($hoopaUnbound);
+        $hoopa->setHasMoveForms(true);
+        $this->em->persist($hoopa);
+
+        $pokemons = $this->em->getRepository(Pokemon::class)
+            ->findDefaultPokemons(1, 721);
+        $pokemons = array_merge($this->formPokemons, $pokemons);
+        $this->saveAvailabilities($pokemons, $versionGroups);
+    }
+
+    private function handleGen7()
+    {
+        $versionGroups = [];
+        $versionGroups[] = $this->sunMoonVG;
+        $versionGroups[] = $this->ultraSunUltraMoonVG;
+
+        $lycanroc = $this->getPokemon('lycanroc-midday');
+        $lycanrocMidnight = $this->getPokemon('lycanroc-midnight');
+        $lycanrocDusk = $this->getPokemon('lycanroc-dusk');
+        $this->formPokemons[] = $lycanrocMidnight;
+
+        $lycanroc->addForm($lycanrocMidnight);
+        $lycanroc->addForm($lycanrocDusk);
+        $lycanroc->setHasMoveForms(true);
+        $this->em->persist($lycanroc);
+
+        $pokemons = $this->em->getRepository(Pokemon::class)
+            ->findDefaultPokemons(1, 809);
+        $pokemons = array_merge($this->formPokemons, $pokemons);
+        $pokemons = array_merge($pokemons, $this->em->getRepository(Pokemon::class)->findAlolaPokemons());
+
+        $this->saveAvailabilities($pokemons, $versionGroups);
+
+        $this->formPokemons[] = $lycanrocDusk;
+
+        $necrozma = $this->getPokemon('necrozma');
+        $duskNecrozma = $this->getPokemon('necrozma-dusk');
+        $dawnNecrozma = $this->getPokemon('necrozma-dawn');
+        $ultraNecrozma = $this->getPokemon('necrozma-ultra');
+        array_push($this->formPokemons, $duskNecrozma, $dawnNecrozma, $ultraNecrozma, $lycanrocDusk);
+
+        $necrozma->setHasMoveForms(true);
+        $necrozma->addForm($duskNecrozma);
+        $necrozma->addForm($dawnNecrozma);
+        $necrozma->addForm($ultraNecrozma);
+
+        $specificVg = [];
+        $specificVg[] = $this->ultraSunUltraMoonVG;
+
+        $this->saveAvailabilities([$duskNecrozma,$dawnNecrozma,$ultraNecrozma,$lycanrocDusk],$specificVg);
+
+        $this->em->persist($necrozma);
+    }
+
+    private function handleLGPE()
+    {
+        $versionGroups = [];
+        $versionGroups[] = $this->lgpeVG;
+
+        $pokemons = $this->em->getRepository(Pokemon::class)
+            ->findDefaultPokemons(1, 151);
+        $pokemons = array_merge($pokemons, $this->em->getRepository(Pokemon::class)->findAlolaPokemons());
+        $pokemons[] = $this->getPokemon('meltan');
+        $pokemons[] = $this->getPokemon('melmetal');
+        $this->saveAvailabilities($pokemons, $versionGroups);
+
+    }
+
+    private function getPokemon(string $name): Pokemon
+    {
+        return $this->em->getRepository(Pokemon::class)->findOneBy(['name' => $name]);
+    }
+
+    private function saveAvailabilities(array $pokemons, array $versionGroups)
+    {
+        foreach ($pokemons as $pokemon) {
+            foreach ($versionGroups as $versionGroup) {
+                $pokemonAvailability = new PokemonAvailability();
+                $pokemonAvailability->setVersionGroup($versionGroup);
+                $pokemonAvailability->setPokemon($pokemon);
+                $pokemonAvailability->setAvailable(true);
+                $this->em->persist($pokemonAvailability);
+            }
         }
-
     }
 }

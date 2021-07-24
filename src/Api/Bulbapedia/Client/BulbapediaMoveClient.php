@@ -7,6 +7,7 @@ use App\Entity\SpecyName;
 use App\Helper\GenerationHelper;
 use App\Helper\StringHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -24,8 +25,8 @@ class BulbapediaMoveClient
         if ($lgpe && ($pokemon->getName() === 'meltan' || $pokemon->getName() === 'melmetal')) {
             $lgpe = false;
         }
-        if ($lgpe && $generation != 7) {
-            throw new \RuntimeException('Using lgpe flag is not possible without using gen 7');
+        if ($lgpe && $generation !== 7) {
+            throw new RuntimeException('Using lgpe flag is not possible without using gen 7');
         }
         $pokemonName = ($this->entityManager->getRepository(SpecyName::class)
             ->findOneBy(
@@ -62,7 +63,7 @@ class BulbapediaMoveClient
         );
     }
 
-    private function getMoveSections(Pokemon $pokemon, int $generation)
+    private function getMoveSections(Pokemon $pokemon, int $generation): array
     {
         $pokemonName = ($this->entityManager->getRepository(SpecyName::class)
             ->findOneBy(

@@ -8,7 +8,6 @@ use App\Api\Pokepedia\PokepediaMoveApi;
 use App\Comparator\LevelMoveComparator;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
-use App\Entity\Pokemon;
 use App\Formatter\PokeApi\PokeApiTutorMoveFormatter;
 use App\Helper\GenerationHelper;
 use App\Helper\MoveSetHelper;
@@ -44,10 +43,10 @@ class ComparePokemonMoveCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $pokemons = $this->em->getRepository(Pokemon::class)->findBy(
-            [
-                'toImport' => true,
-            ]);
+        $pokemons = [];
+//            $this->em->getRepository(Pokemon::class)->findBy(
+//            [
+//            ]);
 
         $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
 

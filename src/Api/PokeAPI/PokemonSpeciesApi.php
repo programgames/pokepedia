@@ -7,9 +7,7 @@ namespace App\Api\PokeAPI;
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\EggGroup;
 use App\Entity\Generation;
-use App\Entity\Pokemon;
 use App\Entity\PokemonSpecy;
-use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -35,8 +33,10 @@ class PokemonSpeciesApi
         $query = <<<GRAPHQL
 query MyQuery {
   pokemon_v2_pokemonspecies {
-    order
     name
+    pokemon_v2_pokemondexnumbers(where: {pokemon_v2_pokedex: {name: {_eq: "national"}}}) {
+      pokedex_number
+    }
     pokemon_v2_pokemonegggroups {
       pokemon_v2_egggroup {
         name
@@ -47,7 +47,6 @@ query MyQuery {
     }
   }
 }
-
 
 GRAPHQL;
 
@@ -63,7 +62,7 @@ GRAPHQL;
         foreach ($json['data']['pokemon_v2_pokemonspecies'] as $pokemonspecy) {
             $pokemonSpecyEntity = new PokemonSpecy();
             $pokemonSpecyEntity->setName($pokemonspecy['name']);
-            $pokemonSpecyEntity->setPokemonSpeciesOrder($pokemonspecy['order']);
+            $pokemonSpecyEntity->setPokemonSpeciesOrder($pokemonspecy['pokemon_v2_pokemondexnumbers'][0]['pokedex_number']);
             foreach ($pokemonspecy['pokemon_v2_pokemonegggroups'] as $eggGroup) {
                 $eggGroupEntity = $this->entityManager->getRepository(EggGroup::class)
                     ->findOneBy(

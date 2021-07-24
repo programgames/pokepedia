@@ -15,22 +15,22 @@ class ItemName
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $language;
+    private ?int $language;
 
     /**
      * @ORM\ManyToOne(targetEntity=Item::class, inversedBy="itemNames")
      */
-    private $item;
+    private ?Item $item;
 
     public function getId(): ?int
     {

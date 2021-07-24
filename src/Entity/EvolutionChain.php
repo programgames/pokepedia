@@ -17,12 +17,12 @@ class EvolutionChain
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\OneToMany(targetEntity=PokemonSpecy::class, mappedBy="evolutionChain")
      */
-    private $pokemonSpecies;
+    private Collection $pokemonSpecies;
 
     public function __construct()
     {
@@ -54,11 +54,9 @@ class EvolutionChain
 
     public function removePokemonSpecies(PokemonSpecy $pokemonSpecies): self
     {
-        if ($this->pokemonSpecies->removeElement($pokemonSpecies)) {
-            // set the owning side to null (unless already changed)
-            if ($pokemonSpecies->getEvolutionChain() === $this) {
-                $pokemonSpecies->setEvolutionChain(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->pokemonSpecies->removeElement($pokemonSpecies) && $pokemonSpecies->getEvolutionChain() === $this) {
+            $pokemonSpecies->setEvolutionChain(null);
         }
 
         return $this;

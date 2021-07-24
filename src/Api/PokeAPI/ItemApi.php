@@ -6,9 +6,6 @@ namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\Item;
-use App\Entity\Machine;
-use App\Entity\Move;
-use App\Entity\MoveName;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;

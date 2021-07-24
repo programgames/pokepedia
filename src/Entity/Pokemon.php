@@ -17,63 +17,64 @@ class Pokemon
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $pokemonOrder;
+    private ?string $name;
 
     /**
      * @ORM\ManyToOne(targetEntity=PokemonSpecy::class, inversedBy="pokemons")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $pokemonSpecy;
+    private ?PokemonSpecy $pokemonSpecy;
 
     /**
      * @ORM\OneToMany(targetEntity=PokemonMove::class, mappedBy="pokemon", orphanRemoval=true)
      */
-    private $pokemonMoves;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $pokemonIdentifier;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $toImport;
+    private Collection $pokemonMoves;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $specificName;
+    private ?string $specificName;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isAlola;
+    private ?bool $isAlola = false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isGalar;
+    private ?bool $isGalar = false;
 
     /**
      * @ORM\OneToMany(targetEntity=PokemonAvailability::class, mappedBy="pokemon", orphanRemoval=true)
      */
-    private $pokemonAvailabilities;
+    private Collection $pokemonAvailabilities;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private ?bool $isDefault;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private ?bool $hasMoveForms = false;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Pokemon::class)
+     */
+    private Collection $forms;
 
     public function __construct()
     {
         $this->pokemonMoves = new ArrayCollection();
         $this->pokemonAvailabilities = new ArrayCollection();
+        $this->forms = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -89,18 +90,6 @@ class Pokemon
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getPokemonOrder(): ?int
-    {
-        return $this->pokemonOrder;
-    }
-
-    public function setPokemonOrder(int $pokemonOrder): self
-    {
-        $this->pokemonOrder = $pokemonOrder;
 
         return $this;
     }
@@ -143,30 +132,6 @@ class Pokemon
                 $pokemonMove->setPokemon(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getPokemonIdentifier(): ?int
-    {
-        return $this->pokemonIdentifier;
-    }
-
-    public function setPokemonIdentifier(int $pokemonIdentifier): self
-    {
-        $this->pokemonIdentifier = $pokemonIdentifier;
-
-        return $this;
-    }
-
-    public function getToImport(): ?bool
-    {
-        return $this->toImport;
-    }
-
-    public function setToImport(bool $toImport): self
-    {
-        $this->toImport = $toImport;
 
         return $this;
     }
@@ -233,6 +198,54 @@ class Pokemon
                 $pokemonAvailability->setPokemon(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsDefault(): ?bool
+    {
+        return $this->isDefault;
+    }
+
+    public function setIsDefault(bool $isDefault): self
+    {
+        $this->isDefault = $isDefault;
+
+        return $this;
+    }
+
+    public function getHasMoveForms(): ?bool
+    {
+        return $this->hasMoveForms;
+    }
+
+    public function setHasMoveForms(bool $hasMoveForms): self
+    {
+        $this->hasMoveForms = $hasMoveForms;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getForms(): Collection
+    {
+        return $this->forms;
+    }
+
+    public function addForm(self $form): self
+    {
+        if (!$this->forms->contains($form)) {
+            $this->forms[] = $form;
+        }
+
+        return $this;
+    }
+
+    public function removeForm(self $form): self
+    {
+        $this->forms->removeElement($form);
 
         return $this;
     }

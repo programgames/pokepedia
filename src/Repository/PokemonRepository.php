@@ -19,66 +19,35 @@ class PokemonRepository extends ServiceEntityRepository
         parent::__construct($registry, Pokemon::class);
     }
 
-    public function findLGPEPokemons()
+    public function findDefaultPokemons(int $start,int $end)
     {
-        $gen1 =  $this->createQueryBuilder('p')
+        return $this->createQueryBuilder('p')
             ->leftJoin('p.pokemonSpecy','s')
-            ->andWhere('p.pokemonIdentifier >= 1 AND p.pokemonIdentifier <= 151')
-            ->andWhere('p.toImport = TRUE')
+            ->andWhere('s.pokemonSpeciesOrder >= :start AND s.pokemonSpeciesOrder <= :end')
+            ->andWhere('p.isDefault = true')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
             ->orderBy('s.pokemonSpeciesOrder', 'ASC')
             ->getQuery()
             ->getResult()
-        ;
-
-        $news = $this->createQueryBuilder('p')
-            ->leftJoin('p.pokemonSpecy','s')
-            ->andWhere('p.name = \'melmetal\'')
-            ->orWhere('p.name = \'meltan\'')
-            ->andWhere('p.toImport = \'TRUE\'')
-            ->orderBy('s.pokemonSpeciesOrder', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return array_merge($gen1,$news);
+            ;
     }
 
-    public function findOneByBPIndex(string $index): ?Pokemon
+    public function findAlolaPokemons()
     {
-        $galar = false;
-        $alola = false;
-
-        if(preg_match('/[0-9]{3,3}G/',$index)) {
-            $galar = true;
-        } elseif (preg_match('/[0-9]{3,3}A/',$index)) {
-            $alola = true;
-        }
-
-        $pokemonIdentifier = (int)$index;
-
-        /** @var Pokemon $pokemon */
-        $pokemon = $this->createQueryBuilder('p')
-            ->andWhere('p.pokemonIdentifier = :identifier')
-            ->setParameter('identifier', $pokemonIdentifier)
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.isAlola = true')
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult()
+            ;
+    }
 
-        if ($galar) {
-            return $this->createQueryBuilder('p')
-                ->andWhere('p.name = :name')
-                ->setParameter('name', $pokemon->getName() .'-galar')
-                ->getQuery()
-                ->getOneOrNullResult();
-        }
-
-        if($alola) {
-            return $this->createQueryBuilder('p')
-                ->andWhere('p.name = :name')
-                ->setParameter('name', $pokemon->getName() .'-alola')
-                ->getQuery()
-                ->getOneOrNullResult();
-        }
-
-        return $pokemon;
+    public function findGalarPokemon()
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.isGalar = true')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 }

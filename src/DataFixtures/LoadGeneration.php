@@ -5,7 +5,6 @@ namespace App\DataFixtures;
 
 
 use App\Api\PokeAPI\GenerationApi;
-use App\Entity\MoveLearnMethod;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 

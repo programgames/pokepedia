@@ -9,11 +9,11 @@ use App\Exception\WrongLearnMoveFormat;
 
 class TutorMoveSatanizer
 {
-    public function checkAndSanitizeMoves(array $moves)
+    public function checkAndSanitizeMoves(array $moves): array
     {
         if (!in_array($moves[0],['=== Par montée en [[niveau]] ===','==== [[Septième génération]] ====','==== [[Huitième génération]] ===='])) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
-        };
+        }
 
         unset($moves[0]);
         foreach ($moves as $key => $move) {

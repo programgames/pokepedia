@@ -25,7 +25,7 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface
         return [LoadMoveNames::class];
     }
 
-    private function loadViceGrip(ObjectManager $manager)
+    private function loadViceGrip(ObjectManager $manager): void
     {
         $move = $manager->getRepository(MoveName::class)->findOneBy(['name' => 'Vice Grip']);
         for ($i = 1; $i < 8; $i++) {
@@ -34,7 +34,7 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface
         $manager->persist($move);
     }
 
-    private function loadBranchPoke(ObjectManager $manager)
+    private function loadBranchPoke(ObjectManager $manager): void
     {
         $move = new Move();
         $move->setName('branch-poke');

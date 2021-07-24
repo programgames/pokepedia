@@ -40,7 +40,7 @@ class PokepediaMoveApi
 //        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE);
 //    }
 
-    public function getLevelMoves(string $name, int $generation)
+    public function getLevelMoves(string $name, int $generation): array
     {
         $moves = $this->cache->get(
             sprintf('pokepedia.wikitext.%s,%s.%s', $name, $generation, MoveSetHelper::LEVELING_UP_TYPE),

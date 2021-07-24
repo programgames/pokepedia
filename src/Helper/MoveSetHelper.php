@@ -7,6 +7,7 @@ namespace App\Helper;
 use App\Entity\Pokemon;
 use App\Entity\SpecyName;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 
 class MoveSetHelper
 {
@@ -28,8 +29,8 @@ class MoveSetHelper
     public const BULBAPEDIA_TUTOR_WIKI_TYPE = 'tutor';
     public const BULBAPEDIA_LEVEL_WIKI_TYPE = 'level';
     public const BULBAPEDIA_BREEDING_WIKI_TYPE = 'breed';
-    const BULBAPEDIA_MOVE_TYPE_GLOBAL = 'global';
-    const BULBAPEDIA_MOVE_TYPE_SPECIFIC = 'specific';
+    public const BULBAPEDIA_MOVE_TYPE_GLOBAL = 'global';
+    public const BULBAPEDIA_MOVE_TYPE_SPECIFIC = 'specific';
 
     private EntityManagerInterface $em;
 
@@ -48,7 +49,7 @@ class MoveSetHelper
                 ]
             );
         if(!$specyName) {
-            throw new \RuntimeException(sprintf('SpecyName not found for pokemon:  %s',$pokemon->getName()));
+            throw new RuntimeException(sprintf('SpecyName not found for pokemon:  %s',$pokemon->getName()));
         }
         if ($pokemon->getIsAlola()) {
             $name = strtr('%specyName%_%markup%',
@@ -94,10 +95,10 @@ class MoveSetHelper
             return (int)$number;
         }
 
-        throw new \RuntimeException('Invalid number : ' . $number);
+        throw new RuntimeException('Invalid number : ' . $number);
     }
 
-    public static function getBulbapediaMachineLabelByGeneration($generation)
+    public static function getBulbapediaMachineLabelByGeneration($generation): string
     {
         if ($generation < 7) {
             return self::BULBAPEDIA_TMHM_TYPE_LABEL;

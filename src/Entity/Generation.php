@@ -17,27 +17,27 @@ class Generation
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\OneToMany(targetEntity=VersionGroup::class, mappedBy="generation", orphanRemoval=true)
      */
-    private $versionGroups;
+    private Collection $versionGroups;
 
     /**
      * @ORM\OneToMany(targetEntity=PokemonSpecy::class, mappedBy="generation", orphanRemoval=true)
      */
-    private $pokemonSpecies;
+    private Collection $pokemonSpecies;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $generationIdentifier;
+    private ?int $generationIdentifier;
 
     public function __construct()
     {
