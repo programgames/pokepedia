@@ -8,15 +8,27 @@ use RuntimeException;
 
 class LevelMoveComparator
 {
+    /**
+     * @throws RuntimeException
+     */
     public function levelMoveComparator(array $pokepediaMoves, array $pokeApiMoves): bool
     {
+        $pokepediaMoves = array_map(function ($item) {
+            return str_replace(['N.',', ','<br>'], ['',' ',' '], $item);
+        }, $pokepediaMoves);
 
-        $numberOfMoves = count($pokeApiMoves);
-        for($i = 0;$i < $numberOfMoves;$i++) {
-            if($pokepediaMoves[$i] !== $pokeApiMoves[$i]) {
-                if (($i > 1 && $pokepediaMoves[$i] !== $pokeApiMoves[$i-1]) && ($i < $numberOfMoves && $pokepediaMoves[$i] !== $pokeApiMoves[$i+1]) ) {
-                    throw new RuntimeException(sprintf('Different move %s ---- %s',$pokepediaMoves[$i],$pokeApiMoves[$i]));
-                }
+        $pokeApiMoves = array_map(function ($item) {
+            return str_replace(['N.',', ','<br>'], ['',' ',' '], $item);
+        }, $pokeApiMoves);
+
+        $diff = count($pokeApiMoves) !== count($pokepediaMoves);
+        if ($diff) {
+            throw new RuntimeException('Different move number');
+        }
+
+        foreach ($pokeApiMoves as $pokeApiMove) {
+            if (!in_array($pokeApiMove, $pokepediaMoves, true)) {
+                throw new RuntimeException(sprintf('Different move %s', $pokeApiMove));
             }
         }
 

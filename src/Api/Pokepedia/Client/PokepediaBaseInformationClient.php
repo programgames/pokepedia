@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Api\Pokepedia;
+namespace App\Api\Pokepedia\Client;
 
 
 use App\Exception\InvalidResponse;
@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient;
 
-class PokepediaMoveApiClient
+class PokepediaBaseInformationClient
 {
     private EntityManagerInterface $entityManager;
 
@@ -18,29 +18,15 @@ class PokepediaMoveApiClient
         $this->entityManager = $entityManager;
     }
 
-    public function getMovesByPokemonGenerationAndType(string $name, int $generation, string $moveType): array
+    public function getBasePokemonInformations(string $name): array
     {
-        $sections = $this->getMoveSections($name, $generation);
 
-        if ($generation < 7) {
-            $url = strtr(
-                'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%/G%C3%A9n%C3%A9ration_%generation%&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
-                [
-                    '%pokemon%' => str_replace('’', '%27', $name),
-                    '%generation%' => $generation,
-                    '%section%' => $sections[$moveType]
-                ]
-            );
-        } else {
-            $url = strtr(
-                'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
-                [
-                    '%pokemon%' => str_replace('’', '%27', $name),
-                    '%generation%' => $generation,
-                    '%section%' => $sections[$moveType] + ($generation === 7 ? 1 : 2)
-                ]
-            );
-        }
+        $url = strtr(
+            'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%&prop=wikitext&errorformat=wikitext&section=0&disabletoc=1',
+            [
+                '%pokemon%' => str_replace('’', '%27', $name),
+            ]
+        );
 
         $browser = new HttpBrowser(HttpClient::create());
         $browser->request('GET', $url);
@@ -48,7 +34,7 @@ class PokepediaMoveApiClient
         $response = $browser->getResponse();
         $json = json_decode($response->getContent(), true);
         if (!array_key_exists('parse', $json)) {
-            throw new InvalidResponse(sprintf('Invalid response from pokepedia for pokemon %s generation %s', $name, $generation));
+            throw new InvalidResponse(sprintf('Invalid response from pokepedia for pokemon %s', $name));
         }
         $wikitext = reset($json['parse']['wikitext']);
         $wikitext = preg_split('/$\R?^/m', $wikitext);

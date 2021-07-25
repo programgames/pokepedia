@@ -70,11 +70,12 @@ class BulbapediaMoveSatanizer
     private function handleFormMoves(array $moves, int $generation, string $type): array
     {
         $movesByForms = [];
+        $size = count($moves);
         $form = null;
         array_shift($moves);
 
-        foreach ($moves as $i => $iValue) {
-            if (empty($moves[$i]) || $iValue === ' ') {
+        for ($i = 0; $i < $size; $i++) {
+            if (empty($moves[$i]) || $moves[$i] === ' ') {
                 continue;
             }
 
@@ -94,11 +95,11 @@ class BulbapediaMoveSatanizer
             if ($form && (preg_match(sprintf('/learnlist\/%s\d+.*/', $type), $moves[$i])
                     || preg_match(sprintf('/learnlist\/tr.*/'), $moves[$i])
                     || preg_match(sprintf('/learnlist\/%s[XVI]+.*/', $type), $moves[$i]))) {
-                $movesByForms[$form][] = $this->moveFormatter->formatLearnlist($iValue, $generation, $type);
+                $movesByForms[$form][] = $this->moveFormatter->formatLearnlist($moves[$i], $generation, $type);
             } elseif (preg_match(sprintf('/learnlist\/%sf.*/', $type), $moves[$i])) {
                 $form = null;
             } else {
-                throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $iValue));
+                throw new WrongLearnListFormat(sprintf('Invalid learnlist: %s', $moves[$i]));
             }
         }
         return $movesByForms;
@@ -109,11 +110,11 @@ class BulbapediaMoveSatanizer
         $size = count($moves);
 
         for ($i = $size -1; $i > 0; $i--) {
-            if (false === strpos($moves[$i], "learnlist")) {
+            if (false === strpos($moves[$i], "learnlist") &&  false === strpos($moves[$i], "====")) {
                 unset($moves[$i]);
             }
         }
 
-        return $moves;
+        return array_values($moves);
     }
 }

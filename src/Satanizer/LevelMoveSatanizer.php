@@ -7,7 +7,7 @@ namespace App\Satanizer;
 use App\Exception\WrongHeaderException;
 use App\Exception\WrongLearnMoveFormat;
 
-class TutorMoveSatanizer
+class LevelMoveSatanizer
 {
     public function checkAndSanitizeMoves(array $moves): array
     {

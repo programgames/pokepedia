@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Pokemon;
 use App\Entity\PokemonAvailability;
+use App\Entity\VersionGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,22 +21,16 @@ class PokemonAvailabilityRepository extends ServiceEntityRepository
         parent::__construct($registry, PokemonAvailability::class);
     }
 
-    // /**
-    //  * @return PokemonAvailability[] Returns an array of PokemonAvailability objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function isPokemonAvailableInVersionGroups(Pokemon $pokemon,array $versionGroups)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder('a')
+            ->leftJoin('a.versionGroup','vg')
+            ->andWhere('vg.name IN (:names)')
+            ->setParameter('names', $versionGroups)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?PokemonAvailability

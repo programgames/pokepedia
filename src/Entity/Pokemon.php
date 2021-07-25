@@ -70,6 +70,11 @@ class Pokemon
      */
     private Collection $forms;
 
+    /**
+     * @ORM\OneToOne(targetEntity=BaseInformation::class, inversedBy="pokemon", cascade={"persist", "remove"})
+     */
+    private $baseInformation;
+
     public function __construct()
     {
         $this->pokemonMoves = new ArrayCollection();
@@ -246,6 +251,18 @@ class Pokemon
     public function removeForm(self $form): self
     {
         $this->forms->removeElement($form);
+
+        return $this;
+    }
+
+    public function getBaseInformation(): ?BaseInformation
+    {
+        return $this->baseInformation;
+    }
+
+    public function setBaseInformation(?BaseInformation $baseInformation): self
+    {
+        $this->baseInformation = $baseInformation;
 
         return $this;
     }

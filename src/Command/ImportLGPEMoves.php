@@ -8,6 +8,8 @@ use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
+use App\Entity\PokemonAvailability;
+use App\Entity\VersionGroup;
 use App\Helper\MoveSetHelper;
 use App\MoveMapper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,7 +45,9 @@ class ImportLGPEMoves extends Command
         $moveMapper = new MoveMapper();
         $io = new SymfonyStyle($input, $output);
 
-        $pokemons = $this->em->getRepository(Pokemon::class)->findLGPEPokemons();
+        $lgpe =  $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
+
+        $pokemonAvailabilities = $this->em->getRepository(PokemonAvailability::class)->findBy(['versionGroup' => $lgpe]);
 
         $levelup = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
         $machine = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'machine']);
@@ -54,8 +58,9 @@ class ImportLGPEMoves extends Command
             ]
         );
 
-        foreach ($pokemons as $pokemon) {
+        foreach ($pokemonAvailabilities as $pokemonAvailability) {
 
+            $pokemon = $pokemonAvailability->getPokemon();
             $io->info(sprintf('import levelup moves for LGPE %s', $pokemon->getName()));
             $moves = $this->api->getLevelMoves($pokemon, 7, true);
             if (array_key_exists('noform', $moves)) {
@@ -71,7 +76,8 @@ class ImportLGPEMoves extends Command
 
         }
 
-        foreach ($pokemons as $pokemon) {
+        foreach ($pokemonAvailabilities as $pokemonAvailability) {
+            $pokemon = $pokemonAvailability->getPokemon();
             if ($pokemon->getName() === 'mew') {
                 continue;
             }

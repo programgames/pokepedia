@@ -33,6 +33,17 @@ class PokemonRepository extends ServiceEntityRepository
             ;
     }
 
+    public function findDefaultAndAlolaPokemons()
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.pokemonSpecy','s')
+            ->andWhere('p.isDefault = true OR p.isAlola = true')
+            ->orderBy('s.pokemonSpeciesOrder', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     public function findAlolaPokemons()
     {
         return $this->createQueryBuilder('p')

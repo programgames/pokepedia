@@ -12,7 +12,7 @@ use RuntimeException;
 class MoveSetHelper
 {
     public const POKEPEDIA_LEVELING_UP_TYPE_LABEL = 'Par montée en niveau';
-    public const LEVELING_UP_TYPE = 'tutor';
+    public const LEVELING_UP_TYPE = 'level';
     public const MACHINE_TYPE = 'machine';
     public const BULBAPEDIA_TM_WIKI_TYPE = 'tm';
     public const EGG_TYPE = 'egg';

@@ -175,7 +175,6 @@ class AvailabilityByGenerationHandler
         $this->handleGen6();
         $this->handleGen7();
         $this->handleLGPE();
-
     }
 
     private function handleGen1()

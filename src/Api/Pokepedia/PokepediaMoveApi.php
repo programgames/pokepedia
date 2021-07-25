@@ -5,22 +5,25 @@ namespace App\Api\Pokepedia;
 
 
 use App\Helper\MoveSetHelper;
-use App\Satanizer\TutorMoveSatanizer;
+use App\Satanizer\LevelMoveSatanizer;
+use Doctrine\DBAL\Connection;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class PokepediaMoveApi
 {
-    private FilesystemAdapter $cache;
-    private TutorMoveSatanizer $moveSatanizer;
+    private AbstractAdapter $cache;
+    private LevelMoveSatanizer $moveSatanizer;
     private PokepediaMoveApiClient $moveClient;
 
-    public function __construct(TutorMoveSatanizer $moveSatanizer, PokepediaMoveApiClient $moveClient)
+    public function __construct(LevelMoveSatanizer $moveSatanizer, PokepediaMoveApiClient $moveClient, Connection $connection)
     {
         $this->moveSatanizer = $moveSatanizer;
         $this->moveClient = $moveClient;
 
-        $this->cache = new FilesystemAdapter();
+        $this->cache = new PdoAdapter($connection);
 
     }
 
