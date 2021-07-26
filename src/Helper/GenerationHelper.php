@@ -4,6 +4,9 @@
 namespace App\Helper;
 
 
+use App\Entity\Generation;
+use App\Entity\Pokemon;
+use App\Entity\PokemonAvailability;
 use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -93,6 +96,46 @@ class GenerationHelper
     ];
 
         return $mapping[(string)$number];
+    }
+
+    public function isPokemonAvailableInGeneration(Pokemon $pokemon, Generation $generation)
+    {
+        $availabilityRepository = $this->em->getRepository(PokemonAvailability::class);
+
+        $available = false;
+        $gen = $generation->getGenerationIdentifier();
+        switch ($gen) {
+            case 1:
+                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
+                    ['red-blue', 'yellow']);
+                break;
+            case 2:
+                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
+                    ['gold-silver', 'crystal']);
+                break;
+            case 3:
+                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
+                    ['ruby-sapphire', 'emerald', 'firered-leafgreen']);
+                break;
+            case 4:
+                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
+                    ['diamond-pearl', 'platinum', 'heartgold-soulsilver']);
+                break;
+            case 5:
+                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
+                    ['black-white', 'black-2-white-2']);
+                break;
+            case 6:
+                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
+                    ['x-y', 'omega-ruby-alpha-sapphire']);
+                break;
+            case 7:
+                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
+                    ['sun-moon', 'ultra-sun-ultra-moon', 'lets-go']);
+                break;
+
+        }
+        return !empty($available);
     }
 
 }

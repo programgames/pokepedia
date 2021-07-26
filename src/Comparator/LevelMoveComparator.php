@@ -14,11 +14,11 @@ class LevelMoveComparator
     public function levelMoveComparator(array $pokepediaMoves, array $pokeApiMoves): bool
     {
         $pokepediaMoves = array_map(function ($item) {
-            return str_replace(['N.',', ','<br>'], ['',' ',' '], $item);
+            return str_replace(['N.', ', ', '<br>'], ['', ' ', ' '], $item);
         }, $pokepediaMoves);
 
         $pokeApiMoves = array_map(function ($item) {
-            return str_replace(['N.',', ','<br>'], ['',' ',' '], $item);
+            return str_replace(['N.', ', ', '<br>'], ['', ' ', ' '], $item);
         }, $pokeApiMoves);
 
         $diff = count($pokeApiMoves) !== count($pokepediaMoves);
@@ -28,7 +28,7 @@ class LevelMoveComparator
 
         foreach ($pokeApiMoves as $pokeApiMove) {
             if (!in_array($pokeApiMove, $pokepediaMoves, true)) {
-                throw new RuntimeException(sprintf('Different move %s', $pokeApiMove));
+                return false;
             }
         }
 

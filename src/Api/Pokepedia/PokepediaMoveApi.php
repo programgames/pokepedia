@@ -43,9 +43,9 @@ class PokepediaMoveApi
 //        return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE);
 //    }
 
-    public function getLevelMoves(string $name, int $generation): array
+    private function getLevelMovesFromCache(string $name, int $generation)
     {
-        $moves = $this->cache->get(
+        return $this->cache->get(
             sprintf('pokepedia.wikitext.%s,%s.%s', $name, $generation, MoveSetHelper::LEVELING_UP_TYPE),
             function (ItemInterface $item) use ($name, $generation) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
@@ -55,7 +55,19 @@ class PokepediaMoveApi
                 );
             }
         );
+    }
+
+    public function getLevelMoves(string $name, int $generation): array
+    {
+        $moves = $this->getLevelMovesFromCache($name,$generation);
 
         return $this->moveSatanizer->checkAndSanitizeMoves($moves);
+    }
+
+    public function getRawWikitext(string $name, int $generation)
+    {
+        $formmatted = $this->getLevelMovesFromCache($name,$generation);
+        array_shift($formmatted);
+        return implode(PHP_EOL,$formmatted);
     }
 }

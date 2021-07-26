@@ -31,25 +31,32 @@ class ComparePokemonMoveCommand extends Command
     private PokeApiTutorMoveFormatter $pokeApiFormatter;
     private LevelMoveComparator $levelMoveComparator;
     private PokepediaMoveGenerator $generator;
+    private GenerationHelper $helper;
 
-    public function __construct(
-        EntityManagerInterface $em,
-        PokepediaMoveApi $api,
-        MoveSetHelper $moveSetHelper,
-        PokeApiTutorMoveFormatter $pokeApiFormatter,
-        LevelMoveComparator $levelMoveComparator,
-        PokepediaMoveGenerator $generator
-    )
+    /**
+     * ComparePokemonMoveCommand constructor.
+     * @param EntityManagerInterface $em
+     * @param PokepediaMoveApi $api
+     * @param MoveSetHelper $moveSetHelper
+     * @param PokeApiTutorMoveFormatter $pokeApiFormatter
+     * @param LevelMoveComparator $levelMoveComparator
+     * @param PokepediaMoveGenerator $generator
+     * @param GenerationHelper $helper
+     */
+    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper, PokeApiTutorMoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator, PokepediaMoveGenerator $generator, GenerationHelper $helper)
     {
-        parent::__construct();
-
         $this->em = $em;
         $this->api = $api;
         $this->moveSetHelper = $moveSetHelper;
         $this->pokeApiFormatter = $pokeApiFormatter;
         $this->levelMoveComparator = $levelMoveComparator;
         $this->generator = $generator;
+        $this->helper = $helper;
+
+        parent::__construct();
+
     }
+
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -65,7 +72,7 @@ class ComparePokemonMoveCommand extends Command
 
             foreach ($generations as $generation) {
                 $gen = $generation->getGenerationIdentifier();
-                if (!$this->isPokemonAvailableInGeneration($pokemon, $generation)) {
+                if (!$this->helper->isPokemonAvailableInGeneration($pokemon, $generation)) {
                     continue;
                 }
 
@@ -79,57 +86,28 @@ class ComparePokemonMoveCommand extends Command
                     $gen,
                     $learnmethod
                 );
-                try {
-                    $this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves);
-                } catch (\RuntimeException $exception) {
-                    $io->error($exception->getMessage());
-                    $wikiText = $this->generator->generateMoveWikiText($learnmethod,$pokemon,$gen,$pokeApiMoves);
-                    $output->write($wikiText);
-                    $io->confirm('Press any character and enter to continue');
+                if (!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
+                    $this->handleErrror($learnmethod, $pokemon, $gen, $pokeApiMoves, $io);
                 }
             }
         }
         return Command::SUCCESS;
     }
 
-    private function isPokemonAvailableInGeneration(Pokemon $pokemon, Generation $generation)
+    private function handleErrror(?MoveLearnMethod $learnmethod, $pokemon, $gen, array $pokeApiMoves, SymfonyStyle $io)
     {
-        $availabilityRepository = $this->em->getRepository(PokemonAvailability::class);
+        $generated = $this->generator->generateMoveWikiText($learnmethod, $pokemon, $gen, $pokeApiMoves);
+        $raw = $this->api->getRawWikitext(
+            $this->moveSetHelper->getPokepediaPokemonName($pokemon),
+            $gen
+        );
+        $io->block($generated);
+        file_put_contents('output/generated.txt', $generated);
+        file_put_contents('output/raw.txt', $raw);
+        // not rly proud of this but this is working :)
+        passthru('phpstorm64.exe diff .\output\generated.txt .\output\raw.txt');
 
-        $available = false;
-        $gen = $generation->getGenerationIdentifier();
-        switch ($gen) {
-            case 1:
-                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
-                    ['red-blue', 'yellow']);
-                break;
-            case 2:
-                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
-                    ['gold-silver', 'crystal']);
-                break;
-            case 3:
-                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
-                    ['ruby-sapphire', 'emerald', 'firered-leafgreen']);
-                break;
-            case 4:
-                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
-                    ['diamond-pearl', 'platinum', 'heartgold-soulsilver']);
-                break;
-            case 5:
-                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
-                    ['black-white', 'black-2-white-2']);
-                break;
-            case 6:
-                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
-                    ['x-y', 'omega-ruby-alpha-sapphire']);
-                break;
-            case 7:
-                $available = $availabilityRepository->isPokemonAvailableInVersionGroups($pokemon,
-                    ['sun-moon', 'ultra-sun-ultra-moon', 'lets-go']);
-                break;
-
-        }
-        return !empty($available);
-
+        $io->confirm('\n\nPress any character and enter to continue');
     }
+
 }
