@@ -12,7 +12,7 @@ class LoadFrenchMovesAliases extends Fixture implements DependentFixtureInterfac
     public function load(ObjectManager $manager)
     {
         $this->replaceApostrophe($manager);
-        $file = __DIR__ . '../data/french_move_alias.csv';
+        $file = __DIR__ . '/data/french_move_alias.csv';
         $row = 1;
         $repository = $manager->getRepository(MoveName::class);
         if (($handle = fopen($file, 'rb')) !== FALSE) {
@@ -32,7 +32,7 @@ class LoadFrenchMovesAliases extends Fixture implements DependentFixtureInterfac
                         'language' => 5
                     ]
                 );
-                for ($i = $gen1; $i < $gen2; $i++) {
+                for ($i = $gen1; $i <= $gen2; $i++) {
                     $func = sprintf('%s%s', 'setGen', $i);
 
                     $name->$func($data[1]);

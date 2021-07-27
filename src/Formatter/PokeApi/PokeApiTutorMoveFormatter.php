@@ -10,6 +10,7 @@ use App\Entity\Pokemon;
 use App\Entity\PokemonMove;
 use App\Formatter\MoveFullFiller;
 use App\Helper\GenerationHelper;
+use App\Helper\MoveSetHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Formatter\DTO;
 
@@ -23,7 +24,8 @@ class PokeApiTutorMoveFormatter
         EntityManagerInterface $em,
         MoveFullFiller $moveFullFiller,
         GenerationHelper $generationHelper
-    ) {
+    )
+    {
         $this->em = $em;
         $this->moveFullFiller = $moveFullFiller;
         $this->generationHelper = $generationHelper;
@@ -33,14 +35,16 @@ class PokeApiTutorMoveFormatter
         Pokemon $pokemon,
         int $generation,
         MoveLearnMethod $learnMethod
-    ): array {
+    ): array
+    {
         $preFormatteds = $this->getPreFormattedLevelPokeApiMoves($pokemon, $generation, $learnMethod);
-        $formatted = [];
+        $formatteds = [];
         if (in_array($generation, [1, 2, 5, 6, 8])) {
             foreach ($preFormatteds as $name => $move) {
-                $first = $this->formatLevel($move, 1,0);
+                $first = $this->formatLevel($move, 1, 0);
                 $second = $this->formatLevel($move, 2, $first['weight']);
-                $formatted[max([$first['weight'], $second['weight']])] =
+                $totalWeight = $this->calculateTotalWeight([$first, $second], $formatteds);
+                $formatteds[strval($totalWeight)] =
                     strtr('%name% / %firstLevel% / %secondLevel%',
                         [
                             '%name%' => $name,
@@ -51,14 +55,11 @@ class PokeApiTutorMoveFormatter
             }
         } else {
             foreach ($preFormatteds as $name => $move) {
-                $first = $this->formatLevel($move, 1,0);
+                $first = $this->formatLevel($move, 1, 0);
                 $second = $this->formatLevel($move, 2, $first['weight']);
                 $third = $this->formatLevel($move, 3, $second['weight']);
-                $formatted[max([
-                    $first['weight'],
-                    $second['weight'],
-                    $third['weight']
-                ])] = strtr('%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
+                $totalWeight = $this->calculateTotalWeight([$first, $second],$formatteds);
+                $formatteds[$totalWeight] = strtr('%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
                     [
                         '%name%' => $name,
                         '%firstLevel%' => $first['level'],
@@ -68,14 +69,16 @@ class PokeApiTutorMoveFormatter
                 );
             }
         }
-        return $formatted;
+        ksort($formatteds);
+        return $formatteds;
     }
 
     private function getPreFormattedLevelPokeApiMoves(
         Pokemon $pokemon,
         int $generation,
         MoveLearnMethod $learnMethod
-    ): array {
+    ): array
+    {
         $preformatteds = [];
         $columns = in_array($generation, [3, 4, 7]) ? 3 : 2;
 
@@ -91,18 +94,19 @@ class PokeApiTutorMoveFormatter
                 $nameEntity = $this->em->getRepository(MoveName::class)
                     ->findFrenchMoveNameByPokemonMove($pokemonMoveEntity);
 
-                if (array_key_exists($nameEntity->getName(), $preformatteds)) {
-                    $move = $preformatteds[$nameEntity->getName()];
+                $name = MoveSetHelper::getNameByGeneration($nameEntity,$generation);
+                if (array_key_exists($name, $preformatteds)) {
+                    $move = $preformatteds[$name];
                 } else {
                     $move = new DTO\LevelUpMove();
                 }
 
                 $move = $this->moveFullFiller->fullFillTutorMove($move,
                     $column,
-                    $nameEntity->getName(),
+                    $name,
                     $pokemonMoveEntity);
 
-                $preformatteds[$nameEntity->getName()] = $move;
+                $preformatteds[$name] = $move;
             }
         }
         return $preformatteds;
@@ -130,17 +134,19 @@ class PokeApiTutorMoveFormatter
             $weight = 0;
         }
 
-        if ($move->{'level' . $column} && ($move->{'onStart' . $column} || $move->{'onEvolution' . $column} || $move->{'level' . $column . 'Extra'})) {
-            if (empty($level)) {
-                $level .= 'N.' . $move->{'level' . $column};
-                $weight = $move->{'level' . $column};
+        if ($move->{'level' . $column}) {
+            if(($move->{'onStart' . $column} || $move->{'onEvolution' . $column} || $move->{'level' . $column . 'Extra'})) {
+                if (empty($level)) {
+                    $level .= 'N.' . $move->{'level' . $column};
+                    $weight = $move->{'level' . $column};
+                } else {
+                    $level .= ', N.' . $move->{'level' . $column};
+                    $weight = $move->{'level' . $column};
+                }
             } else {
-                $level .= ', N.' . $move->{'level' . $column};
+                $level .= $move->{'level' . $column};
                 $weight = $move->{'level' . $column};
             }
-        } else {
-            $level .= $move->{'level' . $column};
-            $weight = $move->{'level' . $column};
         }
 
         if ($move->{'level' . $column . 'Extra'}) {
@@ -151,7 +157,25 @@ class PokeApiTutorMoveFormatter
 
         return [
             'level' => $level,
-            'weight' => max([$previousWeight,$weight])
+            'weight' => max([$previousWeight, $weight])
         ];
+    }
+
+    private function calculateTotalWeight(array $weights, array $formatteds)
+    {
+        $total = 0;
+        foreach ($weights as $weight) {
+            if ($total === 0 || $weight['weight'] < $total) {
+                $total = $weight['weight'];
+            }
+        }
+
+        while (true) {
+            if (array_key_exists((string)$total, $formatteds)) {
+                $total += 0.1;
+            } else {
+                return (string)$total;
+            }
+        }
     }
 }

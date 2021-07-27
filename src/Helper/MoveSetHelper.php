@@ -4,6 +4,7 @@
 namespace App\Helper;
 
 
+use App\Entity\MoveName;
 use App\Entity\Pokemon;
 use App\Entity\SpecyName;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,6 +38,11 @@ class MoveSetHelper
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+    }
+
+    public static function getNameByGeneration(MoveName $name,int $generation)
+    {
+        return $name->{ 'getGen'.$generation}()  ?? $name->getName();
     }
 
     public function getPokepediaPokemonName(Pokemon $pokemon)

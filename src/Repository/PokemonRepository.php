@@ -33,12 +33,14 @@ class PokemonRepository extends ServiceEntityRepository
             ;
     }
 
-    public function findDefaultAndAlolaPokemons()
+    public function findDefaultAndAlolaPokemons($startAt = null)
     {
         return $this->createQueryBuilder('p')
             ->leftJoin('p.pokemonSpecy','s')
             ->andWhere('p.isDefault = true OR p.isAlola = true')
+            ->andWhere('s.pokemonSpeciesOrder >= :startAt')
             ->orderBy('s.pokemonSpeciesOrder', 'ASC')
+            ->setParameter('startAt', $startAt ?? 1)
             ->getQuery()
             ->getResult()
             ;

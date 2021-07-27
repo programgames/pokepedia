@@ -21,11 +21,6 @@ class LevelMoveComparator
             return str_replace(['N.', ', ', '<br>'], ['', ' ', ' '], $item);
         }, $pokeApiMoves);
 
-        $diff = count($pokeApiMoves) !== count($pokepediaMoves);
-        if ($diff) {
-            throw new RuntimeException('Different move number');
-        }
-
         foreach ($pokeApiMoves as $pokeApiMove) {
             if (!in_array($pokeApiMove, $pokepediaMoves, true)) {
                 return false;

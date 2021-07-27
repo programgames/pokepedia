@@ -33,16 +33,6 @@ class ComparePokemonMoveCommand extends Command
     private PokepediaMoveGenerator $generator;
     private GenerationHelper $helper;
 
-    /**
-     * ComparePokemonMoveCommand constructor.
-     * @param EntityManagerInterface $em
-     * @param PokepediaMoveApi $api
-     * @param MoveSetHelper $moveSetHelper
-     * @param PokeApiTutorMoveFormatter $pokeApiFormatter
-     * @param LevelMoveComparator $levelMoveComparator
-     * @param PokepediaMoveGenerator $generator
-     * @param GenerationHelper $helper
-     */
     public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper, PokeApiTutorMoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator, PokepediaMoveGenerator $generator, GenerationHelper $helper)
     {
         $this->em = $em;
@@ -54,7 +44,6 @@ class ComparePokemonMoveCommand extends Command
         $this->helper = $helper;
 
         parent::__construct();
-
     }
 
 
@@ -62,7 +51,7 @@ class ComparePokemonMoveCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $pokemons = $this->em->getRepository(Pokemon::class)->findDefaultAndAlolaPokemons();
+        $pokemons = $this->em->getRepository(Pokemon::class)->findDefaultAndAlolaPokemons(3);
 
         $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
 
@@ -87,14 +76,14 @@ class ComparePokemonMoveCommand extends Command
                     $learnmethod
                 );
                 if (!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
-                    $this->handleErrror($learnmethod, $pokemon, $gen, $pokeApiMoves, $io);
+                    $this->handleError($learnmethod, $pokemon, $gen, $pokeApiMoves, $io);
                 }
             }
         }
         return Command::SUCCESS;
     }
 
-    private function handleErrror(?MoveLearnMethod $learnmethod, $pokemon, $gen, array $pokeApiMoves, SymfonyStyle $io)
+    private function handleError(?MoveLearnMethod $learnmethod, $pokemon, $gen, array $pokeApiMoves, SymfonyStyle $io)
     {
         $generated = $this->generator->generateMoveWikiText($learnmethod, $pokemon, $gen, $pokeApiMoves);
         $raw = $this->api->getRawWikitext(
@@ -105,7 +94,11 @@ class ComparePokemonMoveCommand extends Command
         file_put_contents('output/raw.txt', $raw);
 
         passthru('icdiff --strip-trailing-cr -W output/generated.txt output/raw.txt');
-        $io->confirm('\n\nPress any character and enter to continue');
+        echo PHP_EOL . $generated . PHP_EOL;
+        $io->confirm(sprintf('\n\nSkip %s? for generation %s',
+            $this->moveSetHelper->getPokepediaPokemonName($pokemon),
+        $gen
+        ));
     }
 
 }
