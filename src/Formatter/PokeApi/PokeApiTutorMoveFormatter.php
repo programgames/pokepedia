@@ -19,36 +19,51 @@ class PokeApiTutorMoveFormatter
     private MoveFullFiller $moveFullFiller;
     private GenerationHelper $generationHelper;
 
-    public function __construct(EntityManagerInterface $em, MoveFullFiller $moveFullFiller, GenerationHelper $generationHelper)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        MoveFullFiller $moveFullFiller,
+        GenerationHelper $generationHelper
+    ) {
         $this->em = $em;
         $this->moveFullFiller = $moveFullFiller;
         $this->generationHelper = $generationHelper;
     }
 
-    public function getFormattedLevelPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod): array
-    {
+    public function getFormattedLevelPokeApiMoves(
+        Pokemon $pokemon,
+        int $generation,
+        MoveLearnMethod $learnMethod
+    ): array {
         $preFormatteds = $this->getPreFormattedLevelPokeApiMoves($pokemon, $generation, $learnMethod);
         $formatted = [];
         if (in_array($generation, [1, 2, 5, 6, 8])) {
             foreach ($preFormatteds as $name => $move) {
-                $formatted[] = strtr('%name% / %firstLevel% / %secondLevel%',
-                    [
-                        '%name%' => $name,
-                        '%firstLevel%' => $this->formatLevel($move, 1),
-                        '%secondLevel%' => $this->formatLevel($move, 2),
-                    ]
-                );
+                $first = $this->formatLevel($move, 1,0);
+                $second = $this->formatLevel($move, 2, $first['weight']);
+                $formatted[max([$first['weight'], $second['weight']])] =
+                    strtr('%name% / %firstLevel% / %secondLevel%',
+                        [
+                            '%name%' => $name,
+                            '%firstLevel%' => $first['level'],
+                            '%secondLevel%' => $second['level'],
+                        ]
+                    );
             }
-
         } else {
             foreach ($preFormatteds as $name => $move) {
-                $formatted[] = strtr('%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
+                $first = $this->formatLevel($move, 1,0);
+                $second = $this->formatLevel($move, 2, $first['weight']);
+                $third = $this->formatLevel($move, 3, $second['weight']);
+                $formatted[max([
+                    $first['weight'],
+                    $second['weight'],
+                    $third['weight']
+                ])] = strtr('%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
                     [
                         '%name%' => $name,
-                        '%firstLevel%' => $this->formatLevel($move, 1),
-                        '%secondLevel%' => $this->formatLevel($move, 2),
-                        '%thirdLevel%' => $this->formatLevel($move, 3),
+                        '%firstLevel%' => $first['level'],
+                        '%secondLevel%' => $second['level'],
+                        '%thirdLevel%' => $third['level'],
                     ]
                 );
             }
@@ -56,8 +71,11 @@ class PokeApiTutorMoveFormatter
         return $formatted;
     }
 
-    private function getPreFormattedLevelPokeApiMoves(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod): array
-    {
+    private function getPreFormattedLevelPokeApiMoves(
+        Pokemon $pokemon,
+        int $generation,
+        MoveLearnMethod $learnMethod
+    ): array {
         $preformatteds = [];
         $columns = in_array($generation, [3, 4, 7]) ? 3 : 2;
 
@@ -79,7 +97,10 @@ class PokeApiTutorMoveFormatter
                     $move = new DTO\LevelUpMove();
                 }
 
-                $move = $this->moveFullFiller->fullFillTutorMove($move, $column, $nameEntity->getName(), $pokemonMoveEntity);
+                $move = $this->moveFullFiller->fullFillTutorMove($move,
+                    $column,
+                    $nameEntity->getName(),
+                    $pokemonMoveEntity);
 
                 $preformatteds[$nameEntity->getName()] = $move;
             }
@@ -87,37 +108,50 @@ class PokeApiTutorMoveFormatter
         return $preformatteds;
     }
 
-    private function formatLevel($move, $column): string
+    private function formatLevel($move, $column, $previousWeight): array
     {
         $level = '';
+        $weight = 0;
 
         if ($move->{'level' . $column} === null && $move->{'onEvolution' . $column} === null && $move->{'onStart' . $column} === null) {
-            return '—';
+            return [
+                'level' => '—',
+                'weight' => $previousWeight
+            ];
         }
 
         if ($move->{'onStart' . $column}) {
-
             $level .= 'Départ';
+            $weight = 0;
         }
 
         if ($move->{'onEvolution' . $column}) {
             empty($level) ? $level = 'Évolution' : $level .= ', ' . 'Évolution';
+            $weight = 0;
         }
 
         if ($move->{'level' . $column} && ($move->{'onStart' . $column} || $move->{'onEvolution' . $column} || $move->{'level' . $column . 'Extra'})) {
-            if(empty($level)) {
+            if (empty($level)) {
                 $level .= 'N.' . $move->{'level' . $column};
+                $weight = $move->{'level' . $column};
             } else {
-                    $level .= ', N.' . $move->{'level' . $column};
+                $level .= ', N.' . $move->{'level' . $column};
+                $weight = $move->{'level' . $column};
             }
         } else {
             $level .= $move->{'level' . $column};
+            $weight = $move->{'level' . $column};
         }
 
         if ($move->{'level' . $column . 'Extra'}) {
             $level .= ', N.' . $move->{'level' . $column . 'Extra'};
+            $weight =
+                $move->{'level' . $column . 'Extra'} > $move->{'level' . $column} ? $move->{'level' . $column . 'Extra'} : $move->{'level' . $column};
         }
 
-        return $level;
+        return [
+            'level' => $level,
+            'weight' => max([$previousWeight,$weight])
+        ];
     }
 }

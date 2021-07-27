@@ -101,12 +101,10 @@ class ComparePokemonMoveCommand extends Command
             $this->moveSetHelper->getPokepediaPokemonName($pokemon),
             $gen
         );
-        $io->block($generated);
         file_put_contents('output/generated.txt', $generated);
         file_put_contents('output/raw.txt', $raw);
-        // not rly proud of this but this is working :)
-        passthru('phpstorm64.exe diff .\output\generated.txt .\output\raw.txt');
 
+        passthru('icdiff --strip-trailing-cr -W output/generated.txt output/raw.txt');
         $io->confirm('\n\nPress any character and enter to continue');
     }
 
