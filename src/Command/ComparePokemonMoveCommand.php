@@ -14,7 +14,9 @@ use App\Formatter\PokeApi\PokeApiTutorMoveFormatter;
 use App\Generator\PokepediaMoveGenerator;
 use App\Helper\GenerationHelper;
 use App\Helper\MoveSetHelper;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,8 +34,12 @@ class ComparePokemonMoveCommand extends Command
     private LevelMoveComparator $levelMoveComparator;
     private PokepediaMoveGenerator $generator;
     private GenerationHelper $helper;
+    private PdoAdapter $cache;
 
-    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper, PokeApiTutorMoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator, PokepediaMoveGenerator $generator, GenerationHelper $helper)
+    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper,
+                                PokeApiTutorMoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator,
+                                PokepediaMoveGenerator $generator, GenerationHelper $helper, Connection $connection
+    )
     {
         $this->em = $em;
         $this->api = $api;
@@ -42,6 +48,7 @@ class ComparePokemonMoveCommand extends Command
         $this->levelMoveComparator = $levelMoveComparator;
         $this->generator = $generator;
         $this->helper = $helper;
+        $this->cache = new PdoAdapter($connection);
 
         parent::__construct();
     }
@@ -51,14 +58,13 @@ class ComparePokemonMoveCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $pokemons = $this->em->getRepository(Pokemon::class)->findDefaultAndAlolaPokemons(3);
+        $pokemons = $this->em->getRepository(Pokemon::class)->findDefaultAndAlolaPokemons(5);
 
         $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
 
         $generations = $this->em->getRepository(Generation::class)->findAll();
 
         foreach ($pokemons as $pokemon) {
-
             foreach ($generations as $generation) {
                 $gen = $generation->getGenerationIdentifier();
                 if (!$this->helper->isPokemonAvailableInGeneration($pokemon, $generation)) {
@@ -76,14 +82,24 @@ class ComparePokemonMoveCommand extends Command
                     $learnmethod
                 );
                 if (!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
-                    $this->handleError($learnmethod, $pokemon, $gen, $pokeApiMoves, $io);
+                    //retry one time by deleting cache
+                    $this->cache->delete(
+                        sprintf('pokepedia.wikitext.%s,%s.%s', $this->moveSetHelper->getPokepediaPokemonName($pokemon), $gen, MoveSetHelper::LEVELING_UP_TYPE));
+                    $pokepediaMoves = $this->api->getLevelMoves(
+                        $this->moveSetHelper->getPokepediaPokemonName($pokemon),
+                        $gen
+                    );
+                    if (!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
+                        $this->handleError($learnmethod, $pokemon, $gen, $pokeApiMoves, $io);
+                    }
                 }
             }
         }
         return Command::SUCCESS;
     }
 
-    private function handleError(?MoveLearnMethod $learnmethod, $pokemon, $gen, array $pokeApiMoves, SymfonyStyle $io)
+    private
+    function handleError(?MoveLearnMethod $learnmethod, $pokemon, $gen, array $pokeApiMoves, SymfonyStyle $io)
     {
         $generated = $this->generator->generateMoveWikiText($learnmethod, $pokemon, $gen, $pokeApiMoves);
         $raw = $this->api->getRawWikitext(
@@ -97,7 +113,7 @@ class ComparePokemonMoveCommand extends Command
         echo PHP_EOL . $generated . PHP_EOL;
         $io->confirm(sprintf('\n\nSkip %s? for generation %s',
             $this->moveSetHelper->getPokepediaPokemonName($pokemon),
-        $gen
+            $gen
         ));
     }
 

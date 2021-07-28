@@ -58,7 +58,7 @@ class PokeApiTutorMoveFormatter
                 $first = $this->formatLevel($move, 1, 0);
                 $second = $this->formatLevel($move, 2, $first['weight']);
                 $third = $this->formatLevel($move, 3, $second['weight']);
-                $totalWeight = $this->calculateTotalWeight([$first, $second],$formatteds);
+                $totalWeight = $this->calculateTotalWeight([$first, $second,$third],$formatteds);
                 $formatteds[$totalWeight] = strtr('%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
                     [
                         '%name%' => $name,
