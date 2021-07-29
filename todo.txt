@@ -14,8 +14,26 @@
   //            $pokemonEntity->setSpecificName('Ultra-Necrozma');
   //        }
 
+wormadam Cheniselle gen 4
+shaymin gen 4
+darmanitan gen 5
+kyurem gen 5
+lycanroc gen 5
+ Hoopa gen 6
+
+toxtricity gen 8
+indeedee Wimessir gen 8
+urshifu gen 8
+ calyrex gen 8
+
 
   la gen 8 le form des niveaux est diff
+
+SELECT pkm.name, specy_name.name, has_move_forms
+FROM pokemon pkm
+INNER JOIN specy_name
+    ON pkm.pokemon_specy_id = specy_name.pokemon_specy_id AND specy_name.language = 5
+WHERE pkm.is_default OR pkm.has_move_forms
 
 
 Zamazenta

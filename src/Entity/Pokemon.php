@@ -153,7 +153,7 @@ class Pokemon
         return $this;
     }
 
-    public function getIsAlola(): ?bool
+    public function isAlola(): ?bool
     {
         return $this->isAlola;
     }

@@ -25,8 +25,11 @@ class PokemonAvailabilityRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->leftJoin('a.versionGroup','vg')
+            ->leftJoin('a.pokemon','p')
             ->andWhere('vg.name IN (:names)')
+            ->andWhere('p.id = :pkm')
             ->setParameter('names', $versionGroups)
+            ->setParameter('pkm', $pokemon->getId())
             ->getQuery()
             ->getResult()
         ;

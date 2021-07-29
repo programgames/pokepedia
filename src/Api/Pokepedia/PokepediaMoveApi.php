@@ -4,11 +4,11 @@
 namespace App\Api\Pokepedia;
 
 
+use App\Api\Pokepedia\Client\PokepediaMoveApiClient;
 use App\Helper\MoveSetHelper;
 use App\Satanizer\LevelMoveSatanizer;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 

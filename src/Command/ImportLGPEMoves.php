@@ -45,7 +45,7 @@ class ImportLGPEMoves extends Command
         $moveMapper = new MoveMapper();
         $io = new SymfonyStyle($input, $output);
 
-        $lgpe =  $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
+        $lgpe = $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
 
         $pokemonAvailabilities = $this->em->getRepository(PokemonAvailability::class)->findBy(['versionGroup' => $lgpe]);
 
@@ -61,6 +61,9 @@ class ImportLGPEMoves extends Command
         foreach ($pokemonAvailabilities as $pokemonAvailability) {
 
             $pokemon = $pokemonAvailability->getPokemon();
+            if (!$pokemon->isAlola()) {
+                continue;
+            }
             $io->info(sprintf('import levelup moves for LGPE %s', $pokemon->getName()));
             $moves = $this->api->getLevelMoves($pokemon, 7, true);
             if (array_key_exists('noform', $moves)) {
@@ -69,6 +72,19 @@ class ImportLGPEMoves extends Command
                         $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
                     } else {
                         throw new RuntimeException('Format roman');
+                    }
+                }
+                $this->em->flush();
+            } else {
+                foreach ($moves as $form => $formMoves) {
+                    $pokemon = $this->findPokemon($pokemon,$form);
+                    foreach ($formMoves as $move) {
+                        $pokemon = $this->findPokemon($pokemon);
+                        if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
+                            $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
+                        } else {
+                            throw new RuntimeException('Format roman');
+                        }
                     }
                 }
                 $this->em->flush();
@@ -92,9 +108,28 @@ class ImportLGPEMoves extends Command
                     }
                 }
                 $this->em->flush();
+            } else {
+                foreach ($moves as $form => $formMoves) {
+                    $pokemon = $this->findPokemon($pokemon, $form);
+                    foreach ($formMoves as $move) {
+                        if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
+                            $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
+                        } else {
+                            throw new RuntimeException('Format roman');
+                        }
+                    }
+                }
+                $this->em->flush();
             }
         }
 
         return Command::SUCCESS;
+    }
+
+    private function findPokemon(Pokemon $pokemonEntity, string $name): Pokemon
+    {
+        $pokemon = $this->em->getRepository(Pokemon::class);
+
+//        return
     }
 }
