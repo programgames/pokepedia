@@ -6,6 +6,7 @@ namespace App\Formatter\Bulbapedia;
 use App\Exception\WrongLearnListFormat;
 use App\Helper\MoveSetHelper;
 
+// format bulbapedia moves into normed arrays
 class MoveFormatter
 {
     public function formatLearnlist(string $move, int $generation, string $type): array

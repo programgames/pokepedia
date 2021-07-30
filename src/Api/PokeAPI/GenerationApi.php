@@ -9,6 +9,7 @@ use App\Entity\Generation;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//extract and transform generation information into entities from pokeapi
 class GenerationApi
 {
     private PokeAPIGraphQLClient $client;

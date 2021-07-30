@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//extract and transform pokemon species information into entities from pokeapi
 class PokemonSpeciesApi
 {
     private PokeAPIGraphQLClient $client;

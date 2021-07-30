@@ -10,7 +10,7 @@ use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
 use App\Entity\PokemonAvailability;
-use App\Formatter\PokeApi\PokeApiTutorMoveFormatter;
+use App\Formatter\PokeApi\MoveFormatter;
 use App\Generator\PokepediaMoveGenerator;
 use App\Helper\GenerationHelper;
 use App\Helper\MoveSetHelper;
@@ -30,14 +30,14 @@ class ComparePokemonMoveCommand extends Command
     private EntityManagerInterface $em;
     private PokepediaMoveApi $api;
     private MoveSetHelper $moveSetHelper;
-    private PokeApiTutorMoveFormatter $pokeApiFormatter;
+    private MoveFormatter $pokeApiFormatter;
     private LevelMoveComparator $levelMoveComparator;
     private PokepediaMoveGenerator $generator;
     private GenerationHelper $helper;
     private PdoAdapter $cache;
 
     public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper,
-                                PokeApiTutorMoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator,
+                                MoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator,
                                 PokepediaMoveGenerator $generator, GenerationHelper $helper, Connection $connection
     )
     {

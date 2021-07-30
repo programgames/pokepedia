@@ -2,9 +2,11 @@
 
 namespace App\Formatter;
 
+
+/** Helper class */
 class MoveFullFiller
 {
-    public function fullFillTutorMove(DTO\LevelUpMove $move,int $column, $name, $pokemonMoveEntity): DTO\LevelUpMove
+    public function fullLevelingMove(DTO\LevelUpMove $move,int $column, $name, $pokemonMoveEntity): DTO\LevelUpMove
     {
         $move->{'name'.$column} = $name;
         $level = $pokemonMoveEntity->getLevel();

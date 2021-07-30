@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Command;
+namespace App\Command\Installation;
 
 
 use App\Api\Pokepedia\PokepediaBasePokemonInformationApi;
@@ -34,6 +34,8 @@ class ImportPokepediaPokemonType extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input,$output);
+
+        $io->info('Importing Pokepedia type 1 ( for future mapping)');
         $pokemons = $this->em->getRepository(Pokemon::class)->findDefaultAndAlolaPokemons();
 
         /** @var Pokemon $pokemon */
@@ -46,6 +48,8 @@ class ImportPokepediaPokemonType extends Command
             $this->em->persist($pokemon);
         }
         $this->em->flush();
+
+        $io->info('Pokepedia pokemon types imported');
 
         return Command::SUCCESS;
     }

@@ -9,6 +9,7 @@ use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//extract and transform pokemon base informations into entities from pokepedia
 class PokepediaBasePokemonInformationApi
 {
     private AbstractAdapter $cache;

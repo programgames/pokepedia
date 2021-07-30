@@ -14,7 +14,10 @@ use App\Helper\MoveSetHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Formatter\DTO;
 
-class PokeApiTutorMoveFormatter
+/**
+ * Transform database move into dto to prepare for comparison
+ */
+class MoveFormatter
 {
     private EntityManagerInterface $em;
     private MoveFullFiller $moveFullFiller;
@@ -101,7 +104,7 @@ class PokeApiTutorMoveFormatter
                     $move = new DTO\LevelUpMove();
                 }
 
-                $move = $this->moveFullFiller->fullFillTutorMove($move,
+                $move = $this->moveFullFiller->fullLevelingMove($move,
                     $column,
                     $name,
                     $pokemonMoveEntity);

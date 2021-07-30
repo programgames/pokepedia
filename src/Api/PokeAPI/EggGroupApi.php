@@ -9,6 +9,7 @@ use App\Entity\EggGroup;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//extract and transform egg information into entities from pokeapi
 class EggGroupApi
 {
     private PokeAPIGraphQLClient $client;

@@ -7,11 +7,16 @@ namespace App\Satanizer;
 use App\Exception\WrongHeaderException;
 use App\Exception\WrongLearnMoveFormat;
 
-class LevelMoveSatanizer
+// Extract level moves from
+class PokepediaLevelMoveSatanizer
 {
     public function checkAndSanitizeMoves(array $moves): array
     {
-        if (!in_array($moves[0],['=== Par montée en [[niveau]] ===','==== [[Septième génération]] ====','==== [[Huitième génération]] ===='])) {
+        if (!in_array($moves[0], [
+            '=== Par montée en [[niveau]] ===',
+            '==== [[Septième génération]] ====',
+            '==== [[Huitième génération]] ===='
+        ])) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         }
 

@@ -9,6 +9,7 @@ use App\Entity\PokemonAvailability;
 use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 
+/** class generating in which version pokemon are available */
 class AvailabilityByGenerationHandler
 {
     private bool $initialized = false;

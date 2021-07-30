@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Command;
+namespace App\Command\Installation;
 
 
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
@@ -44,6 +44,8 @@ class ImportLGPEMoves extends Command
     {
         $moveMapper = new MoveMapper();
         $io = new SymfonyStyle($input, $output);
+
+        $io->info("Importing Bulbapedia LGPE moves");
 
         $lgpe =  $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
 
@@ -94,6 +96,8 @@ class ImportLGPEMoves extends Command
                 $this->em->flush();
             }
         }
+
+        $io->info("Bulbapedia LGPE moves imported");
 
         return Command::SUCCESS;
     }

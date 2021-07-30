@@ -6,6 +6,9 @@ namespace App\Comparator;
 
 use RuntimeException;
 
+/**
+ * Compare level moves between database and pokepedia
+ */
 class LevelMoveComparator
 {
     /**

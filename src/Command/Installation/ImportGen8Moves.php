@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Command;
+namespace App\Command\Installation;
 
 
 use App\Processor\BulbapediaMoveProcessor;

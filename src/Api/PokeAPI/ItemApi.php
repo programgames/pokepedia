@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//extract and transform item information into entities from pokeapi
 class ItemApi
 {
     private PokeAPIGraphQLClient $client;

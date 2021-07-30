@@ -8,11 +8,12 @@ use App\Api\Bulbapedia\Client\BulbapediaMoveClient;
 use App\Entity\Pokemon;
 use App\Helper\MoveSetHelper;
 use App\Satanizer\BulbapediaMoveSatanizer;
-use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Connection;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+// Api class to manipulate pokemon moves easily from bulbapedia
 class BulbapediaMovesAPI
 {
     private AbstractAdapter $cache;

@@ -10,15 +10,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//extract and transform move move information into entities from pokeapi
 class MoveApi
 {
     private PokeAPIGraphQLClient $client;
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(PokeAPIGraphQLClient $client, EntityManagerInterface $entityManager)
+    public function __construct(PokeAPIGraphQLClient $client)
     {
         $this->client = $client;
-        $this->entityManager = $entityManager;
     }
 
     public function getMoves(): array

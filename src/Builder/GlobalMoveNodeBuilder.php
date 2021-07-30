@@ -24,6 +24,7 @@ use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
 
+// part of MoveMapper.php generation , handle moves available for every version group in the same generation
 class GlobalMoveNodeBuilder
 {
 

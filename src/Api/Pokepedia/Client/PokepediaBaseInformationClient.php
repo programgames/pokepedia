@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient;
 
+// Get wiki text from pokemon https://www.pokepedia.fr/index.php?title=Mewtwo&action=edit&section=0
 class PokepediaBaseInformationClient
 {
     private EntityManagerInterface $entityManager;

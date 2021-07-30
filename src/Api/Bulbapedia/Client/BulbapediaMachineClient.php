@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient;
 
+// Get wiki text from item https://bulbapedia.bulbagarden.net/wiki/TM01
 class BulbapediaMachineClient
 {
     public function getMachineInformation(string $itemName): array

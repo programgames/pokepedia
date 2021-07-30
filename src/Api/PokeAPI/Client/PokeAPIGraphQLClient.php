@@ -7,6 +7,7 @@ namespace App\Api\PokeAPI\Client;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\HttpOptions;
 
+//Very lightweight graphQL client
 class PokeAPIGraphQLClient
 {
     public function sendRequest(string $endpoint, string $query): array

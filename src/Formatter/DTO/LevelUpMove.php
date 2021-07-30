@@ -3,7 +3,7 @@
 
 namespace App\Formatter\DTO;
 
-
+// Intermediate class to manipulate level-up moves
 class LevelUpMove
 {
     public ?string $name1 = null;

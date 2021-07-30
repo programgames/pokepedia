@@ -4,12 +4,12 @@
 namespace App\Api\Bulbapedia;
 
 
-use App\Api\Bulbapedia\Client\BulbapediaAvailabilityClient;
 use App\Api\Bulbapedia\Client\BulbapediaMachineClient;
 use App\Satanizer\BulbapediaMachineSatanizer;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+// Api class to manipulate machine information easily from bulbapedia
 class BulbapediaMachineAPI
 {
     private FilesystemAdapter $cache;

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Api\Pokepedia;
+namespace App\Api\Pokepedia\Client;
 
 
 use App\Exception\InvalidResponse;
@@ -9,15 +9,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient;
 
+// Get wiki text from pokemon by move learn method and generation https://www.pokepedia.fr/Mewtwo#Par_mont.C3.A9e_en_niveau
 class PokepediaMoveApiClient
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     public function getMovesByPokemonGenerationAndType(string $name, int $generation, string $moveType): array
     {
         $sections = $this->getMoveSections($name, $generation);

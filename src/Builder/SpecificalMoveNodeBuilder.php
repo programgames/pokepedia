@@ -17,9 +17,9 @@ use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
 
+// part of MoveMapper.php generation to handle moves specific by version group //NOT functionnal ATM
 class SpecificalMoveNodeBuilder
 {
-
     public function getSpecificMoveNodes(array $propertiesData): array
     {
         $nodes = [];

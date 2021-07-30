@@ -31,6 +31,7 @@ use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Throw_;
 use PhpParser\PrettyPrinter\Standard;
 
+// Central system of MoveMapper.php generation
 class MoveSetMapperBuilder
 {
     private SpecificalMoveNodeBuilder $specificalMoveNodeBuilder;

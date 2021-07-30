@@ -7,6 +7,7 @@ use App\Exception\WrongHeaderException;
 use App\Exception\WrongLearnListFormat;
 use App\Formatter\Bulbapedia\MoveFormatter;
 
+// Extract pokemon moves from bulbapedia
 class BulbapediaMoveSatanizer
 {
     private MoveFormatter $moveFormatter;

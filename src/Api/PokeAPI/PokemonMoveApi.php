@@ -15,6 +15,7 @@ use Generator;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//extract and transform pokemon moves information into entities from pokeapi
 class PokemonMoveApi
 {
     private PokeAPIGraphQLClient $client;

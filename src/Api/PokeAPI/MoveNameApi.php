@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//extract and transform move names information into entities from pokeapi
 class MoveNameApi
 {
     private PokeAPIGraphQLClient $client;

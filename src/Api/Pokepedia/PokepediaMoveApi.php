@@ -4,21 +4,22 @@
 namespace App\Api\Pokepedia;
 
 
+use App\Api\Pokepedia\Client\PokepediaMoveApiClient;
 use App\Helper\MoveSetHelper;
-use App\Satanizer\LevelMoveSatanizer;
+use App\Satanizer\PokepediaLevelMoveSatanizer;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//extract and transform pokemon move informations into entities from pokepedia
 class PokepediaMoveApi
 {
     private AbstractAdapter $cache;
-    private LevelMoveSatanizer $moveSatanizer;
+    private PokepediaLevelMoveSatanizer $moveSatanizer;
     private PokepediaMoveApiClient $moveClient;
 
-    public function __construct(LevelMoveSatanizer $moveSatanizer, PokepediaMoveApiClient $moveClient, Connection $connection)
+    public function __construct(PokepediaLevelMoveSatanizer $moveSatanizer, PokepediaMoveApiClient $moveClient, Connection $connection)
     {
         $this->moveSatanizer = $moveSatanizer;
         $this->moveClient = $moveClient;

@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/** Class responsible of importing bulbapedia pokemon moves */
 class BulbapediaMoveProcessor
 {
     private EntityManagerInterface $em;

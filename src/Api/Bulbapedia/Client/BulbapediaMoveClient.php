@@ -11,6 +11,7 @@ use RuntimeException;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient;
 
+// Get wiki text from pokemon by move learn method and generation https://bulbapedia.bulbagarden.net/wiki/Mewtwo_(Pok%C3%A9mon)#By_leveling_up
 class BulbapediaMoveClient
 {
     private EntityManagerInterface $entityManager;

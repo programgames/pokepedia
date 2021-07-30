@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Command;
+namespace App\Command\Installation;
 
 
 use App\Api\PokeAPI\PokemonMoveApi;
@@ -37,6 +37,9 @@ class ImportPokeapiPokemonMoves extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
+        $io->info("Importing Pokeapi pokemon moves (1~2 hours");
         $flush = 1000;
         foreach ( $this->api->getMovesByPokemon() as $pokemonMove) {
             $this->em->persist($pokemonMove);
@@ -48,6 +51,7 @@ class ImportPokeapiPokemonMoves extends Command
         }
         $this->em->flush();
 
+        $io->info("Pokeapi moves imported");
 
         return Command::SUCCESS;
     }
