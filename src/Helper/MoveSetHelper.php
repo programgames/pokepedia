@@ -57,7 +57,7 @@ class MoveSetHelper
         if(!$specyName) {
             throw new RuntimeException(sprintf('SpecyName not found for pokemon:  %s',$pokemon->getName()));
         }
-        if ($pokemon->getIsAlola()) {
+        if ($pokemon->isAlola()) {
             $name = strtr('%specyName%_%markup%',
                 [
                     '%specyName%' => $specyName->getName(),

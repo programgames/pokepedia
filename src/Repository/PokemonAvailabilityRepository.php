@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Pokemon;
 use App\Entity\PokemonAvailability;
-use App\Entity\VersionGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -25,8 +24,11 @@ class PokemonAvailabilityRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->leftJoin('a.versionGroup','vg')
+            ->leftJoin('a.pokemon','p')
             ->andWhere('vg.name IN (:names)')
+            ->andWhere('p.id = :pkm')
             ->setParameter('names', $versionGroups)
+            ->setParameter('pkm', $pokemon->getId())
             ->getQuery()
             ->getResult()
         ;

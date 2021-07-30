@@ -58,7 +58,7 @@ class ComparePokemonMoveCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $pokemons = $this->em->getRepository(Pokemon::class)->findDefaultAndAlolaPokemons(5);
+        $pokemons = $this->em->getRepository(Pokemon::class)->findDefaultAndAlolaPokemons(18);
 
         $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
 
@@ -109,7 +109,7 @@ class ComparePokemonMoveCommand extends Command
         file_put_contents('output/generated.txt', $generated);
         file_put_contents('output/raw.txt', $raw);
 
-        passthru('icdiff --strip-trailing-cr -W output/generated.txt output/raw.txt');
+        passthru('python icdiff.py --strip-trailing-cr -W output/generated.txt output/raw.txt');
         echo PHP_EOL . $generated . PHP_EOL;
         $io->confirm(sprintf('\n\nSkip %s? for generation %s',
             $this->moveSetHelper->getPokepediaPokemonName($pokemon),

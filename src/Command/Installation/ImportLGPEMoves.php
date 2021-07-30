@@ -7,7 +7,6 @@ namespace App\Command\Installation;
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
-use App\Entity\Pokemon;
 use App\Entity\PokemonAvailability;
 use App\Entity\VersionGroup;
 use App\Helper\MoveSetHelper;
@@ -45,6 +44,7 @@ class ImportLGPEMoves extends Command
         $moveMapper = new MoveMapper();
         $io = new SymfonyStyle($input, $output);
 
+        $lgpe = $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
         $io->info("Importing Bulbapedia LGPE moves");
 
         $lgpe =  $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
@@ -63,6 +63,9 @@ class ImportLGPEMoves extends Command
         foreach ($pokemonAvailabilities as $pokemonAvailability) {
 
             $pokemon = $pokemonAvailability->getPokemon();
+            if (!$pokemon->isAlola()) {
+                continue;
+            }
             $io->info(sprintf('import levelup moves for LGPE %s', $pokemon->getName()));
             $moves = $this->api->getLevelMoves($pokemon, 7, true);
             if (array_key_exists('noform', $moves)) {
@@ -71,6 +74,19 @@ class ImportLGPEMoves extends Command
                         $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
                     } else {
                         throw new RuntimeException('Format roman');
+                    }
+                }
+                $this->em->flush();
+            } else {
+                foreach ($moves as $form => $formMoves) {
+                    $pokemon = $this->findPokemon($pokemon,$form);
+                    foreach ($formMoves as $move) {
+                        $pokemon = $this->findPokemon($pokemon);
+                        if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
+                            $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
+                        } else {
+                            throw new RuntimeException('Format roman');
+                        }
                     }
                 }
                 $this->em->flush();
@@ -94,11 +110,30 @@ class ImportLGPEMoves extends Command
                     }
                 }
                 $this->em->flush();
+            } else {
+                foreach ($moves as $form => $formMoves) {
+                    $pokemon = $this->findPokemon($pokemon, $form);
+                    foreach ($formMoves as $move) {
+                        if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
+                            $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
+                        } else {
+                            throw new RuntimeException('Format roman');
+                        }
+                    }
+                }
+                $this->em->flush();
             }
         }
 
         $io->info("Bulbapedia LGPE moves imported");
 
         return Command::SUCCESS;
+    }
+
+    private function findPokemon(Pokemon $pokemonEntity, string $name): Pokemon
+    {
+        $pokemon = $this->em->getRepository(Pokemon::class);
+
+//        return
     }
 }

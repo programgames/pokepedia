@@ -20,7 +20,7 @@ class PokepediaMoveApiClient
             $url = strtr(
                 'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%/G%C3%A9n%C3%A9ration_%generation%&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
                 [
-                    '%pokemon%' => str_replace('’', '%27', $name),
+                    '%pokemon%' => str_replace(['’','\''], '%27', $name),
                     '%generation%' => $generation,
                     '%section%' => $sections[$moveType]
                 ]
@@ -57,7 +57,7 @@ class PokepediaMoveApiClient
             $sectionsUrl = strtr(
                 'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%/G%C3%A9n%C3%A9ration_%generation%&prop=sections&errorformat=wikitext&disabletoc=1',
                 [
-                    '%pokemon%' => str_replace('’', '%27', $name),
+                    '%pokemon%' => str_replace(['’','\''], '%27', $name),
                     '%generation%' => $generation,
                 ]
             );
@@ -65,7 +65,7 @@ class PokepediaMoveApiClient
             $sectionsUrl = strtr(
                 'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%&prop=sections&errorformat=wikitext',
                 [
-                    '%pokemon%' => str_replace('’', '%27', $name),
+                    '%pokemon%' => str_replace(['’','\''], '%27', $name),
                     '%generation%' => $generation,
                 ]
             );
