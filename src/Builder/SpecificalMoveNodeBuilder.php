@@ -3,7 +3,6 @@
 
 namespace App\Builder;
 
-
 use App\Exception\UnknownMapping;
 use App\Helper\NumberHelper;
 use PhpParser\Node\Arg;
@@ -30,10 +29,11 @@ class SpecificalMoveNodeBuilder
                 $complexeMoveType = key($property);
                 $propertyName = $property[$complexeMoveType];
                 if ($complexeMoveType === 'integer') {
-                    $nodes[] = new Expression(new MethodCall(
-                            new Variable('propertyAccessor'),
-                            new Name('setValue'),
-                            [
+                    $nodes[] = new Expression(
+                        new MethodCall(
+                        new Variable('propertyAccessor'),
+                        new Name('setValue'),
+                        [
                                 new Arg(new Variable('moveEntity')),
                                 new Arg(new String_($propertyName)),
                                 new Arg(
@@ -53,40 +53,43 @@ class SpecificalMoveNodeBuilder
                                     )
                                 )
                             ]
-                        )
+                    )
                     );
                 } elseif ($complexeMoveType === 'string') {
-                    $nodes[] = new Expression(new MethodCall(
-                            new Variable('propertyAccessor'),
-                            new Name('setValue'),
-                            [
+                    $nodes[] = new Expression(
+                        new MethodCall(
+                        new Variable('propertyAccessor'),
+                        new Name('setValue'),
+                        [
                                 new Arg(new Variable('moveEntity')),
                                 new Arg(new String_($propertyName)),
                                 new Arg(
                                     new ArrayDimFetch(
                                         new ArrayDimFetch(
-                                            new Variable('move'), new String_('value')
+                                            new Variable('move'),
+                                            new String_('value')
                                         ),
                                         new LNumber($i)
                                     )
                                 )
                             ]
-                        )
+                    )
                     );
                 } elseif ($complexeMoveType === 'complex') {
                     $games = $propertyName['games'];
                     $fields = $propertyName['fields'];
 
                     foreach ($games as $game) {
-                        $nodes[] = new Expression(new MethodCall(
-                                new Variable('propertyAccessor'),
-                                new Name('setValue'),
-                                [
+                        $nodes[] = new Expression(
+                            new MethodCall(
+                            new Variable('propertyAccessor'),
+                            new Name('setValue'),
+                            [
                                     new Arg(new Variable('moveEntity')),
                                     new Arg(new String_($game)),
                                     new Arg(new ConstFetch(new Name('true')))
                                 ]
-                            )
+                        )
                         );
                     }
                 } else {

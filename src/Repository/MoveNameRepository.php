@@ -24,7 +24,7 @@ class MoveNameRepository extends ServiceEntityRepository
     public function findFrenchMoveNameByPokemonMove(PokemonMove $pokemonMove)
     {
         $moveName =  $this->createQueryBuilder('move_name')
-            ->leftJoin('move_name.move','move' )
+            ->leftJoin('move_name.move', 'move')
             ->andWhere('move_name.language = 5')
             ->andWhere('move.id = :moveId')
             ->setParameter('moveId', $pokemonMove->getMove()->getId())
@@ -40,22 +40,22 @@ class MoveNameRepository extends ServiceEntityRepository
         $moveName =  $this->createQueryBuilder('move_name')
             ->where('move_name.language = 9')
             ->andWhere('move_name.name = :name')
-            ->orWhere(sprintf('move_name.gen%s = :name',$generation))
-            ->setParameter('name',$name)
+            ->orWhere(sprintf('move_name.gen%s = :name', $generation))
+            ->setParameter('name', $name)
             ->getQuery()
             ->getOneOrNullResult();
-        if(!$moveName) {
-            $name = str_replace('\'','’',$name);
+        if (!$moveName) {
+            $name = str_replace('\'', '’', $name);
             $moveName =  $this->createQueryBuilder('move_name')
                 ->where('move_name.language = 9')
                 ->andWhere('move_name.name = :name')
-                ->orWhere(sprintf('move_name.gen%s = :name',$generation))
-                ->setParameter('name',$name)
+                ->orWhere(sprintf('move_name.gen%s = :name', $generation))
+                ->setParameter('name', $name)
                 ->getQuery()
                 ->getOneOrNullResult();
         }
-        if(!$moveName) {
-            throw new RuntimeException(sprintf('Missing moveName : %s',$name));
+        if (!$moveName) {
+            throw new RuntimeException(sprintf('Missing moveName : %s', $name));
         }
         return $moveName;
     }

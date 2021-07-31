@@ -3,7 +3,6 @@
 
 namespace App\Comparator;
 
-
 use RuntimeException;
 
 /**

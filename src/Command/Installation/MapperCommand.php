@@ -27,7 +27,7 @@ class MapperCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input,$output);
+        $io = new SymfonyStyle($input, $output);
         $io->info('Generation mapper class');
 
         $config = Yaml::parseFile($this->parameterBag->get('kernel.project_dir') . '/config/movemapping.yml');
@@ -38,6 +38,4 @@ class MapperCommand extends Command
 
         return Command::SUCCESS;
     }
-
-
 }

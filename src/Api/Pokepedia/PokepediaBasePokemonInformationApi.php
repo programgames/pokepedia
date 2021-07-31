@@ -22,13 +22,12 @@ class PokepediaBasePokemonInformationApi
         $this->client = $client;
 
         $this->cache = new PdoAdapter($connection);
-
     }
 
     public function getPokepediaTypeOneName(string $name): string
     {
         $infos = $this->cache->get(
-            sprintf('pokepedia.wikitext.%s,%s', str_replace(':','',$name), 'family'),
+            sprintf('pokepedia.wikitext.%s,%s', str_replace(':', '', $name), 'family'),
             function (ItemInterface $item) use ($name) {
                 return $this->client->getBasePokemonInformations(
                     $name,

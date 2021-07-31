@@ -11,7 +11,6 @@ use Doctrine\Persistence\ObjectManager;
 
 class LoadExceptionData extends Fixture implements DependentFixtureInterface
 {
-
     public function load(ObjectManager $manager)
     {
         $this->loadViceGrip($manager);

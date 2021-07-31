@@ -92,7 +92,6 @@ class BulbapediaMoveClient
         foreach ($json['parse']['sections'] as $section) {
             if (array_key_exists($section['line'], $formattedSections)) {
                 $formattedSections[$section['line'] . '-2'] = $section['index'];
-
             } else {
                 $formattedSections[$section['line']] = $section['index'];
             }

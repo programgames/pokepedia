@@ -108,7 +108,8 @@ class MoveSetMapperBuilder
                                 new String_($formattedMovesConfiguration['type'])
                             ),
                             new BinaryOp\Identical(
-                                new MethodCall(new Variable('generation'), 'getGenerationIdentifier'), new LNumber($formattedMovesConfiguration['generation']),
+                                new MethodCall(new Variable('generation'), 'getGenerationIdentifier'),
+                                new LNumber($formattedMovesConfiguration['generation']),
                             ),
                         ),
                         new BinaryOp\Identical(
@@ -124,7 +125,6 @@ class MoveSetMapperBuilder
                             ...$this->getMoveNodesByFormatAndType($formattedMovesConfiguration['generation'], $formattedMovesConfiguration['format'], $formattedMovesConfiguration['datas'], $formattedMovesConfiguration['type']),
                         ]
                     ],
-
                 );
             } else {
                 $mappingsNodes[] = new ElseIf_(
@@ -135,7 +135,8 @@ class MoveSetMapperBuilder
                                 new String_($formattedMovesConfiguration['type'])
                             ),
                             new BinaryOp\Identical(
-                                new MethodCall(new Variable('generation'), 'getGenerationIdentifier'), new LNumber($formattedMovesConfiguration['generation']),
+                                new MethodCall(new Variable('generation'), 'getGenerationIdentifier'),
+                                new LNumber($formattedMovesConfiguration['generation']),
                             ),
                         ),
                         new BinaryOp\Identical(
@@ -153,10 +154,13 @@ class MoveSetMapperBuilder
         $mappingsNodes[] = new Else_(
             [
                 new Throw_(
-                    new New_(new Name\FullyQualified(UnknownMapping::class),
+                    new New_(
+                        new Name\FullyQualified(UnknownMapping::class),
                         [
                             new Arg(
-                                new FuncCall(new Name('sprintf'), [
+                                new FuncCall(
+                                    new Name('sprintf'),
+                                    [
                                         new Arg(new String_('Unknown mapping format : %s / gen : %s / learnmethod : %s')),
                                         new Arg(
                                             new ArrayDimFetch(
@@ -165,7 +169,7 @@ class MoveSetMapperBuilder
                                             ),
                                         ),
                                         new Arg(new MethodCall(new Variable('generation'), 'getGenerationIdentifier')),
-                                        new Arg(new MethodCall(new Variable('learnMethod'),'getName')),
+                                        new Arg(new MethodCall(new Variable('learnMethod'), 'getName')),
                                     ]
                                 )
                             )

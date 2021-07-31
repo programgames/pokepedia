@@ -3,7 +3,6 @@
 
 namespace App\Command\Installation;
 
-
 use App\Handler\AvailabilityByGenerationHandler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

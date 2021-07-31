@@ -3,7 +3,6 @@
 
 namespace App\Command\Installation;
 
-
 use App\Processor\BulbapediaMoveProcessor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,7 +27,7 @@ class ImportGen8Moves extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->processor->importMoveByGeneration(8,$io);
+        $this->processor->importMoveByGeneration(8, $io);
 
         return Command::SUCCESS;
     }

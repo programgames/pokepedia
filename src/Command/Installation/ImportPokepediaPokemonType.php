@@ -3,7 +3,6 @@
 
 namespace App\Command\Installation;
 
-
 use App\Api\Pokepedia\PokepediaBasePokemonInformationApi;
 use App\Entity\BaseInformation;
 use App\Entity\Pokemon;
@@ -23,7 +22,7 @@ class ImportPokepediaPokemonType extends Command
     private EntityManagerInterface $em;
     private MoveSetHelper $moveSetHelper;
 
-    public function __construct(PokepediaBasePokemonInformationApi $api, EntityManagerInterface $em,MoveSetHelper $helper)
+    public function __construct(PokepediaBasePokemonInformationApi $api, EntityManagerInterface $em, MoveSetHelper $helper)
     {
         parent::__construct();
         $this->api = $api;
@@ -33,14 +32,14 @@ class ImportPokepediaPokemonType extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input,$output);
+        $io = new SymfonyStyle($input, $output);
 
         $io->info('Importing Pokepedia type 1 ( for future mapping)');
         $pokemons = $this->em->getRepository(Pokemon::class)->findDefaultAndAlolaPokemons();
 
         /** @var Pokemon $pokemon */
         foreach ($pokemons as $pokemon) {
-            $io->info(sprintf('Importing type 1 for pokemon %s',$pokemon->getName()));
+            $io->info(sprintf('Importing type 1 for pokemon %s', $pokemon->getName()));
             $info = $pokemon->getBaseInformation() ?? new BaseInformation();
             $info->setType1($this->api->getPokepediaTypeOneName($this->moveSetHelper->getPokepediaPokemonName($pokemon)));
             $pokemon->setBaseInformation($info);
@@ -53,6 +52,4 @@ class ImportPokepediaPokemonType extends Command
 
         return Command::SUCCESS;
     }
-
-
 }

@@ -24,7 +24,9 @@ class BulbapediaMoveSatanizer
         $moves = $this->clearPadding($moves);
         $movesSize = count($moves);
 
-        if (!in_array($moves[0], [
+        if (!in_array(
+            $moves[0],
+            [
                 '====By [[Level|leveling up]]====',
                 '====By [[level|leveling up]]====',
                 '=====By [[Level|leveling up]]=====',
@@ -47,7 +49,7 @@ class BulbapediaMoveSatanizer
         }
 
         for ($i = 2; $i < $movesSize - 1; $i++) {
-            if(preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])) {
+            if (preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])) {
                 $movesByForm['noform'] = $formattedMoves;
 
                 return $movesByForm;
@@ -89,7 +91,7 @@ class BulbapediaMoveSatanizer
                 continue;
             }
 
-            if(preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])) {
+            if (preg_match(sprintf('/learnlist\/%s\dnull/', $type), $moves[$i])) {
                 $movesByForms[$form] = [];
                 continue;
             }

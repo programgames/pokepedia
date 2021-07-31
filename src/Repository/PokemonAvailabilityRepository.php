@@ -20,11 +20,11 @@ class PokemonAvailabilityRepository extends ServiceEntityRepository
         parent::__construct($registry, PokemonAvailability::class);
     }
 
-    public function isPokemonAvailableInVersionGroups(Pokemon $pokemon,array $versionGroups)
+    public function isPokemonAvailableInVersionGroups(Pokemon $pokemon, array $versionGroups)
     {
         return $this->createQueryBuilder('a')
-            ->leftJoin('a.versionGroup','vg')
-            ->leftJoin('a.pokemon','p')
+            ->leftJoin('a.versionGroup', 'vg')
+            ->leftJoin('a.pokemon', 'p')
             ->andWhere('vg.name IN (:names)')
             ->andWhere('p.id = :pkm')
             ->setParameter('names', $versionGroups)

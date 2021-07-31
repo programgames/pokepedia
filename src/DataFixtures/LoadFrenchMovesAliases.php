@@ -15,8 +15,8 @@ class LoadFrenchMovesAliases extends Fixture implements DependentFixtureInterfac
         $file = __DIR__ . '/data/french_move_alias.csv';
         $row = 1;
         $repository = $manager->getRepository(MoveName::class);
-        if (($handle = fopen($file, 'rb')) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        if (($handle = fopen($file, 'rb')) !== false) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 if ($row === 1) {
                     $row++;
                     continue;

@@ -3,7 +3,6 @@
 
 namespace App\Api\PokeAPI;
 
-
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\Pokemon;
 use App\Entity\PokemonSpecy;
@@ -81,5 +80,4 @@ GRAPHQL;
         }
         return $pokemonEntity;
     }
-
 }

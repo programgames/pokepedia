@@ -3,7 +3,6 @@
 
 namespace App\Api\PokeAPI\Client;
 
-
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\HttpOptions;
 

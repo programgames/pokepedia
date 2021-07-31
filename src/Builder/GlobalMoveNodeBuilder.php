@@ -3,7 +3,6 @@
 
 namespace App\Builder;
 
-
 use App\Entity\MoveName;
 use App\Entity\PokemonMove;
 use App\Entity\VersionGroup;
@@ -27,7 +26,6 @@ use PhpParser\Node\Stmt\Expression;
 // part of MoveMapper.php generation , handle moves available for every version group in the same generation
 class GlobalMoveNodeBuilder
 {
-
     public function getGlobalMoveNodes(int $generation, array $datas, string $type): array
     {
         $nodes = [];
@@ -58,7 +56,8 @@ class GlobalMoveNodeBuilder
                             new Arg(
                                 new ArrayDimFetch(
                                     new ArrayDimFetch(
-                                        new Variable('move'), new String_('value')
+                                        new Variable('move'),
+                                        new String_('value')
                                     ),
                                     new LNumber($moveData['move'])
                                 )
@@ -86,14 +85,15 @@ class GlobalMoveNodeBuilder
                         ),
                         'findOneBy',
                         [
-                            new Arg(new Array_(
-                                    [
+                            new Arg(
+                                new Array_(
+                                [
                                         new ArrayItem(
                                             new String_($versionGroupName),
                                             new String_('name')
                                         )
                                     ]
-                                )
+                            )
                             )
                         ]
                     )
@@ -113,15 +113,18 @@ class GlobalMoveNodeBuilder
                         'setLevel',
                         [
                             new Arg(
-                                new StaticCall(new Name\FullyQualified(MoveSetHelper::class), 'convertLevel',
+                                new StaticCall(
+                                    new Name\FullyQualified(MoveSetHelper::class),
+                                    'convertLevel',
                                     [
-                                        new Arg(new ArrayDimFetch(
-                                                new ArrayDimFetch(
+                                        new Arg(
+                                            new ArrayDimFetch(
+                                            new ArrayDimFetch(
                                                     new Variable('move'),
                                                     new String_('value')
                                                 ),
-                                                new LNumber($moveData['level'])
-                                            )
+                                            new LNumber($moveData['level'])
+                                        )
                                         )
                                     ]
                                 )
@@ -136,5 +139,4 @@ class GlobalMoveNodeBuilder
         }
         return $nodes;
     }
-
 }

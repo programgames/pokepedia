@@ -3,7 +3,6 @@
 
 namespace App\DataFixtures;
 
-
 use App\Entity\Move;
 use App\Entity\MoveName;
 use Doctrine\Bundle\FixturesBundle\Fixture;

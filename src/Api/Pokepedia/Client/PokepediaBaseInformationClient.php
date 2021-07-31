@@ -3,7 +3,6 @@
 
 namespace App\Api\Pokepedia\Client;
 
-
 use App\Exception\InvalidResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
@@ -21,7 +20,6 @@ class PokepediaBaseInformationClient
 
     public function getBasePokemonInformations(string $name): array
     {
-
         $url = strtr(
             'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%&prop=wikitext&errorformat=wikitext&section=0&disabletoc=1',
             [

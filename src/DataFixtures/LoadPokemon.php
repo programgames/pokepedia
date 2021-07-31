@@ -7,7 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadPokemon  extends Fixture implements DependentFixtureInterface
+class LoadPokemon extends Fixture implements DependentFixtureInterface
 {
     private PokemonApi $pokemonApi;
 
@@ -26,6 +26,6 @@ class LoadPokemon  extends Fixture implements DependentFixtureInterface
 
     public function getDependencies()
     {
-       return [LoadPokemonSpecies::class];
+        return [LoadPokemonSpecies::class];
     }
 }

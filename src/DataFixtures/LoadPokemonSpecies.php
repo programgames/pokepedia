@@ -3,7 +3,6 @@
 
 namespace App\DataFixtures;
 
-
 use App\Api\PokeAPI\PokemonSpeciesApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -28,6 +27,6 @@ class LoadPokemonSpecies extends Fixture implements DependentFixtureInterface
 
     public function getDependencies()
     {
-       return [LoadEggGroup::class];
+        return [LoadEggGroup::class];
     }
 }

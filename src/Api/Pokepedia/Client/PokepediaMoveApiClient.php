@@ -3,7 +3,6 @@
 
 namespace App\Api\Pokepedia\Client;
 
-
 use App\Exception\InvalidResponse;
 use App\Exception\SectionNotFoundException;
 use Symfony\Component\BrowserKit\HttpBrowser;
@@ -17,9 +16,13 @@ class PokepediaMoveApiClient
         $sections = $this->getMoveSections($name, $generation);
 
         if (!array_key_exists($moveType, $sections)) {
-            throw  new SectionNotFoundException(sprintf("Section %s not found for pokemon %s , generation %s",
-                    $moveType, $name, $generation
-                )
+            throw  new SectionNotFoundException(
+                sprintf(
+                "Section %s not found for pokemon %s , generation %s",
+                $moveType,
+                $name,
+                $generation
+            )
             );
         }
         if ($generation < 7) {

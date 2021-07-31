@@ -3,7 +3,6 @@
 
 namespace App\Helper;
 
-
 use App\Entity\MoveName;
 use App\Entity\Pokemon;
 use App\Entity\SpecyName;
@@ -40,7 +39,7 @@ class MoveSetHelper
         $this->em = $em;
     }
 
-    public static function getNameByGeneration(MoveName $name,int $generation)
+    public static function getNameByGeneration(MoveName $name, int $generation)
     {
         return $name->{ 'getGen'.$generation}()  ?? $name->getName();
     }
@@ -54,18 +53,20 @@ class MoveSetHelper
                     'language' => 5
                 ]
             );
-        if(!$specyName) {
-            throw new RuntimeException(sprintf('SpecyName not found for pokemon:  %s',$pokemon->getName()));
+        if (!$specyName) {
+            throw new RuntimeException(sprintf('SpecyName not found for pokemon:  %s', $pokemon->getName()));
         }
         if ($pokemon->isAlola()) {
-            $name = strtr('%specyName%_%markup%',
+            $name = strtr(
+                '%specyName%_%markup%',
                 [
                     '%specyName%' => $specyName->getName(),
                     '%markup%' => 'd\'Alola'
                 ]
             );
         } elseif ($pokemon->getIsGalar()) {
-            $name = strtr('%specyName%_%markup%',
+            $name = strtr(
+                '%specyName%_%markup%',
                 [
                     '%specyName%' => $specyName->getName(),
                     '%markup%' => 'de_Galar'
@@ -80,13 +81,14 @@ class MoveSetHelper
         return $name;
     }
 
-    public static function convertLevel($level) {
+    public static function convertLevel($level)
+    {
         $number = trim($level);
         if (is_numeric($number)) {
             return $number;
         }
 
-        if($number === '{{tt||Evo.||Learned upon evolving}}') {
+        if ($number === '{{tt||Evo.||Learned upon evolving}}') {
             return 0;
         }
         if ($number === '—') {
@@ -97,7 +99,7 @@ class MoveSetHelper
             return null;
         }
 
-        if(preg_match('/\d\*/',$number)) {
+        if (preg_match('/\d\*/', $number)) {
             return (int)$number;
         }
 
@@ -110,7 +112,7 @@ class MoveSetHelper
             return self::BULBAPEDIA_TMHM_TYPE_LABEL;
         }
 
-        if($generation === 7) {
+        if ($generation === 7) {
             return  self::BULBAPEDIA_TM_TYPE_LABEL;
         }
 

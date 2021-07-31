@@ -3,7 +3,6 @@
 
 namespace App\Handler;
 
-
 use App\Entity\Pokemon;
 use App\Entity\PokemonAvailability;
 use App\Entity\VersionGroup;
@@ -152,7 +151,6 @@ class AvailabilityByGenerationHandler
         $this->swordShieldVG = $versiongroupRepository->findOneBy([
             'name' => 'sword-shield'
         ]);
-
     }
 
     public function handleAvailablities(): void
@@ -163,7 +161,6 @@ class AvailabilityByGenerationHandler
 
         $this->handleByGen();
         $this->em->flush();
-
     }
 
     private function handleByGen(): void
@@ -200,7 +197,6 @@ class AvailabilityByGenerationHandler
             ->findDefaultPokemons(1, 251);
 
         $this->saveAvailabilities($pokemons, $versionGroups);
-
     }
 
     private function handleGen3()
@@ -394,7 +390,6 @@ class AvailabilityByGenerationHandler
 
         /** @var Pokemon $alolaPokemon */
         foreach ($alolaPokemons as $alolaPokemon) {
-
             $originalName = str_replace('-alola', '', $alolaPokemon->getName());
 
             if ($alolaPokemon->getName() === 'raticate-totem-alola') {

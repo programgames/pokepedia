@@ -3,7 +3,6 @@
 
 namespace App\Api\PokeAPI;
 
-
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\MoveLearnMethod;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;

@@ -3,7 +3,6 @@
 
 namespace App\Command\Installation;
 
-
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
@@ -57,7 +56,6 @@ class ImportLGPEMoves extends Command
         );
 
         foreach ($pokemonAvailabilities as $pokemonAvailability) {
-
             $pokemon = $pokemonAvailability->getPokemon();
             if ($pokemon->isAlola()) {
                 continue;
@@ -77,7 +75,7 @@ class ImportLGPEMoves extends Command
                 foreach ($moves as $form => $formMoves) {
                     $pokemon = $this->findPokemon($pokemon, $form);
                     foreach ($formMoves as $move) {
-                        $pokemon = $this->findPokemon($pokemon,$form);
+                        $pokemon = $this->findPokemon($pokemon, $form);
                         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
                             $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
                         } else {
@@ -87,7 +85,6 @@ class ImportLGPEMoves extends Command
                 }
                 $this->em->flush();
             }
-
         }
 
         foreach ($pokemonAvailabilities as $pokemonAvailability) {

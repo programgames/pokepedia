@@ -3,7 +3,6 @@
 
 namespace App\DataFixtures;
 
-
 use App\Api\Bulbapedia\BulbapediaMachineAPI;
 use App\Entity\ItemName;
 use App\Entity\Machine;
@@ -32,7 +31,8 @@ class LoadGen8Machine extends Fixture implements DependentFixtureInterface
         foreach ($this->getItemNames() as $itemName) {
             $moveName = $this->api->getMoveNameByItemAndGeneration($itemName, $generation);
             $moveNameEntity = $moveNameRepository->findEnglishMoveNameByName($moveName, 7);
-            $itemNameEntity = $itemNameRepository->findOneBy([
+            $itemNameEntity = $itemNameRepository->findOneBy(
+                [
                     'name' => $itemName,
                     'language' => 9
                 ]

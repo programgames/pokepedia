@@ -3,7 +3,6 @@
 
 namespace App\Command\Installation;
 
-
 use App\Api\PokeAPI\PokemonMoveApi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -41,10 +40,10 @@ class ImportPokeapiPokemonMoves extends Command
 
         $io->info("Importing Pokeapi pokemon moves (1~2 hours");
         $flush = 1000;
-        foreach ( $this->api->getMovesByPokemon() as $pokemonMove) {
+        foreach ($this->api->getMovesByPokemon() as $pokemonMove) {
             $this->em->persist($pokemonMove);
             $flush--;
-            if($flush === 0) {
+            if ($flush === 0) {
                 $this->em->flush();
                 $flush = 1000;
             }

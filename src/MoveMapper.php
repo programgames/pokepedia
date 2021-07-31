@@ -4,7 +4,7 @@ namespace App;
 
 class MoveMapper
 {
-    function mapMoves(\App\Entity\Pokemon $pokemon, array $move, \App\Entity\Generation $generation, \Doctrine\Persistence\ObjectManager $em, \App\Entity\MoveLearnMethod $learnMethod)
+    public function mapMoves(\App\Entity\Pokemon $pokemon, array $move, \App\Entity\Generation $generation, \Doctrine\Persistence\ObjectManager $em, \App\Entity\MoveLearnMethod $learnMethod)
     {
         if ($move['type'] === 'level' && $generation->getGenerationIdentifier() === 7 && $move['format'] === 'global') {
             $moveName = $em->getRepository(\App\Entity\MoveName::class)->findEnglishMoveNameByName($move['value'][2], 7);
@@ -17,8 +17,7 @@ class MoveMapper
             $pokemonMoveEntity0->setVersionGroup($versionGroupEntity);
             $pokemonMoveEntity0->setLevel(\App\Helper\MoveSetHelper::convertLevel($move['value'][1]));
             $em->persist($pokemonMoveEntity0);
-        }
-        elseif ($move['type'] === 'level' && $generation->getGenerationIdentifier() === 8 && $move['format'] === 'global') {
+        } elseif ($move['type'] === 'level' && $generation->getGenerationIdentifier() === 8 && $move['format'] === 'global') {
             $moveName = $em->getRepository(\App\Entity\MoveName::class)->findEnglishMoveNameByName($move['value'][2], 8);
             $versionGroupEntity = $em->getRepository(\App\Entity\VersionGroup::class)->findOneBy(array('name' => 'sword-shield'));
             $moveEntity = $moveName->getMove();
@@ -29,8 +28,7 @@ class MoveMapper
             $pokemonMoveEntity0->setVersionGroup($versionGroupEntity);
             $pokemonMoveEntity0->setLevel(\App\Helper\MoveSetHelper::convertLevel($move['value'][1]));
             $em->persist($pokemonMoveEntity0);
-        }
-        elseif ($move['type'] === 'tutor' && $generation->getGenerationIdentifier() === 7 && $move['format'] === 'global') {
+        } elseif ($move['type'] === 'tutor' && $generation->getGenerationIdentifier() === 7 && $move['format'] === 'global') {
             $moveName = $em->getRepository(\App\Entity\MoveName::class)->findEnglishMoveNameByName($move['value'][1], 7);
             $versionGroupEntity = $em->getRepository(\App\Entity\VersionGroup::class)->findOneBy(array('name' => 'lets-go'));
             $moveEntity = $moveName->getMove();
@@ -40,8 +38,7 @@ class MoveMapper
             $pokemonMoveEntity0->setMove($moveEntity);
             $pokemonMoveEntity0->setVersionGroup($versionGroupEntity);
             $em->persist($pokemonMoveEntity0);
-        }
-        elseif ($move['type'] === 'tm' && $generation->getGenerationIdentifier() === 7 && $move['format'] === 'global') {
+        } elseif ($move['type'] === 'tm' && $generation->getGenerationIdentifier() === 7 && $move['format'] === 'global') {
             $moveName = $em->getRepository(\App\Entity\MoveName::class)->findEnglishMoveNameByName($move['value'][2], 7);
             $versionGroupEntity = $em->getRepository(\App\Entity\VersionGroup::class)->findOneBy(array('name' => 'lets-go'));
             $moveEntity = $moveName->getMove();
@@ -51,8 +48,7 @@ class MoveMapper
             $pokemonMoveEntity0->setMove($moveEntity);
             $pokemonMoveEntity0->setVersionGroup($versionGroupEntity);
             $em->persist($pokemonMoveEntity0);
-        }
-        elseif ($move['type'] === 'tm' && $generation->getGenerationIdentifier() === 8 && $move['format'] === 'global') {
+        } elseif ($move['type'] === 'tm' && $generation->getGenerationIdentifier() === 8 && $move['format'] === 'global') {
             $moveName = $em->getRepository(\App\Entity\MoveName::class)->findEnglishMoveNameByName($move['value'][2], 8);
             $versionGroupEntity = $em->getRepository(\App\Entity\VersionGroup::class)->findOneBy(array('name' => 'sword-shield'));
             $moveEntity = $moveName->getMove();
@@ -62,8 +58,7 @@ class MoveMapper
             $pokemonMoveEntity0->setMove($moveEntity);
             $pokemonMoveEntity0->setVersionGroup($versionGroupEntity);
             $em->persist($pokemonMoveEntity0);
-        }
-        elseif ($move['type'] === 'breed' && $generation->getGenerationIdentifier() === 8 && $move['format'] === 'global') {
+        } elseif ($move['type'] === 'breed' && $generation->getGenerationIdentifier() === 8 && $move['format'] === 'global') {
             $moveName = $em->getRepository(\App\Entity\MoveName::class)->findEnglishMoveNameByName($move['value'][2], 8);
             $versionGroupEntity = $em->getRepository(\App\Entity\VersionGroup::class)->findOneBy(array('name' => 'sword-shield'));
             $moveEntity = $moveName->getMove();
@@ -73,8 +68,7 @@ class MoveMapper
             $pokemonMoveEntity0->setMove($moveEntity);
             $pokemonMoveEntity0->setVersionGroup($versionGroupEntity);
             $em->persist($pokemonMoveEntity0);
-        }
-        else {
+        } else {
             throw new \App\Exception\UnknownMapping(sprintf('Unknown mapping format : %s / gen : %s / learnmethod : %s', $move['format'], $generation->getGenerationIdentifier(), $learnMethod->getName()));
         }
     }

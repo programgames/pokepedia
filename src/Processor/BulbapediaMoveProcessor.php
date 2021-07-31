@@ -3,7 +3,6 @@
 
 namespace App\Processor;
 
-
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
@@ -80,8 +79,7 @@ class BulbapediaMoveProcessor
         Generation $generation,
         MoveLearnMethod $learnMethod,
         bool $lgpe = false
-    ): array
-    {
+    ): array {
         if ($learnMethod->getName() === 'level-up') {
             return $this->api->getLevelMoves($pokemon, $generation->getGenerationIdentifier(), $lgpe);
         }
@@ -107,8 +105,7 @@ class BulbapediaMoveProcessor
         Generation $generationEntity,
         EntityManagerInterface $em,
         $learnMethod
-    ): void
-    {
+    ): void {
         foreach ($moves as $form => $formMoves) {
             $form = $this->formatForm($form);
             if ($pokemon->getName() === $form) {
@@ -125,7 +122,8 @@ class BulbapediaMoveProcessor
                     $this->handleMoveByFormat($pokemonForm, $move, $generationEntity, $em, $learnMethod);
                 }
             } elseif (false !== strpos($form, "galarian")) {
-                $pokemonForm = $this->em->getRepository(Pokemon::class)->findOneBy([
+                $pokemonForm = $this->em->getRepository(Pokemon::class)->findOneBy(
+                    [
                         'name' => $pokemon->getName() . '-galar'
                     ]
                 );
@@ -155,8 +153,7 @@ class BulbapediaMoveProcessor
         $generationEntity,
         EntityManagerInterface $em,
         $learnMethod
-    ): void
-    {
+    ): void {
         $moveMapper = new MoveMapper();
 
         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
@@ -205,7 +202,7 @@ class BulbapediaMoveProcessor
         } elseif ($form === 'shadow rider calyrex') {
             $form = 'calyrex-shadow-rider';
         }
-//wormadam-plant;shaymin-land
+        //wormadam-plant;shaymin-land
         return $form;
     }
 }

@@ -23,12 +23,12 @@ class PokemonMoveRepository extends ServiceEntityRepository
     }
 
 
-    public function findMovesByPokemonLearnMethodAndVersionGroup(Pokemon $pokemon,MoveLearnMethod $learnMethod,VersionGroup $versionGroup)
+    public function findMovesByPokemonLearnMethodAndVersionGroup(Pokemon $pokemon, MoveLearnMethod $learnMethod, VersionGroup $versionGroup)
     {
         return $this->createQueryBuilder('m')
-            ->leftJoin('m.pokemon','p')
-            ->leftJoin('m.learnMethod','l')
-            ->leftJoin('m.versionGroup','v')
+            ->leftJoin('m.pokemon', 'p')
+            ->leftJoin('m.learnMethod', 'l')
+            ->leftJoin('m.versionGroup', 'v')
             ->andWhere('p.id = :pid')
             ->andWhere('l.id = :lid')
             ->andWhere('v.id = :vid')

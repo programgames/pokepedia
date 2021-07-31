@@ -2,7 +2,6 @@
 
 namespace App\Formatter\Bulbapedia;
 
-
 use App\Exception\WrongLearnListFormat;
 use App\Helper\MoveSetHelper;
 
@@ -23,7 +22,7 @@ class MoveFormatter
             return [
                 'type' => $type,
                 'format' => MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL,
-                'value' => $this->explodeMove( $move),
+                'value' => $this->explodeMove($move),
                 'gen' => $generation
             ];
         }
@@ -32,7 +31,7 @@ class MoveFormatter
             return [
                 'type' => $type,
                 'format' => MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL,
-                'value' => $this->explodeMove( $move),
+                'value' => $this->explodeMove($move),
                 'gen' => $generation
             ];
         }
@@ -41,7 +40,7 @@ class MoveFormatter
             return [
                 'type' => $type,
                 'format' => MoveSetHelper::BULBAPEDIA_MOVE_TYPE_SPECIFIC,
-                'value' => $this->explodeMove( $move),
+                'value' => $this->explodeMove($move),
                 'gen' => $generation
             ];
         }
@@ -66,13 +65,13 @@ class MoveFormatter
                 } elseif ($move[$i - 1] === "}" && $move[$i - 2] === "}") {
                     $template = false;
                 }
-                if($template) {
+                if ($template) {
                     $temp .= $move[$i];
                 } else {
                     $newWord = true;
                 }
             }
-            if($newWord) {
+            if ($newWord) {
                 $moveData[] = $temp;
                 $temp = "";
                 $newWord = false;

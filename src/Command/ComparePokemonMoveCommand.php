@@ -3,7 +3,6 @@
 
 namespace App\Command;
 
-
 use App\Api\Pokepedia\PokepediaMoveApi;
 use App\Comparator\LevelMoveComparator;
 use App\Entity\Generation;
@@ -36,11 +35,16 @@ class ComparePokemonMoveCommand extends Command
     private GenerationHelper $helper;
     private PdoAdapter $cache;
 
-    public function __construct(EntityManagerInterface $em, PokepediaMoveApi $api, MoveSetHelper $moveSetHelper,
-                                MoveFormatter $pokeApiFormatter, LevelMoveComparator $levelMoveComparator,
-                                PokepediaMoveGenerator $generator, GenerationHelper $helper, Connection $connection
-    )
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        PokepediaMoveApi $api,
+        MoveSetHelper $moveSetHelper,
+        MoveFormatter $pokeApiFormatter,
+        LevelMoveComparator $levelMoveComparator,
+        PokepediaMoveGenerator $generator,
+        GenerationHelper $helper,
+        Connection $connection
+    ) {
         $this->em = $em;
         $this->api = $api;
         $this->moveSetHelper = $moveSetHelper;
@@ -86,7 +90,8 @@ class ComparePokemonMoveCommand extends Command
                 if (!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
                     //retry one time by deleting cache
                     $this->cache->delete(
-                        sprintf('pokepedia.wikitext.%s,%s.%s', $this->moveSetHelper->getPokepediaPokemonName($pokemon), $gen, MoveSetHelper::LEVELING_UP_TYPE));
+                        sprintf('pokepedia.wikitext.%s,%s.%s', $this->moveSetHelper->getPokepediaPokemonName($pokemon), $gen, MoveSetHelper::LEVELING_UP_TYPE)
+                    );
                     $pokepediaMoves = $this->api->getLevelMoves(
                         $this->moveSetHelper->getPokepediaPokemonName($pokemon),
                         $gen
@@ -112,10 +117,10 @@ class ComparePokemonMoveCommand extends Command
 
         passthru('python icdiff.py --strip-trailing-cr -W output/generated.txt output/raw.txt');
         echo PHP_EOL . $generated . PHP_EOL;
-        $io->confirm(sprintf('\n\nSkip %s? for generation %s',
+        $io->confirm(sprintf(
+            '\n\nSkip %s? for generation %s',
             $this->moveSetHelper->getPokepediaPokemonName($pokemon),
             $gen
         ));
     }
-
 }

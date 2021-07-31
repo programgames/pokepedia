@@ -10,14 +10,13 @@ use Doctrine\Persistence\ObjectManager;
 
 class LoadPokemonNames extends Fixture implements DependentFixtureInterface
 {
-
     public function load(ObjectManager $manager)
     {
         $file = __DIR__ . '/data/pokemon_names.csv';
         $row = 1;
         $repository = $manager->getRepository(Pokemon::class);
-        if (($handle = fopen($file, 'rb')) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+        if (($handle = fopen($file, 'rb')) !== false) {
+            while (($data = fgetcsv($handle, 1000, ";")) !== false) {
                 if ($row === 1) {
                     $row++;
                     continue;

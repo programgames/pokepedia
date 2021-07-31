@@ -23,7 +23,7 @@ class MoveLearnMethodRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('mlm')
             ->andWhere('mlm.name IN (:mlms)')
-            ->setParameter('mlms', ['level-up','tutor','machine','egg'] )
+            ->setParameter('mlms', ['level-up','tutor','machine','egg'])
             ->getQuery()
             ->getResult()
             ;

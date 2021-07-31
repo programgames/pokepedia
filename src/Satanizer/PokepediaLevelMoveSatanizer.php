@@ -3,7 +3,6 @@
 
 namespace App\Satanizer;
 
-
 use App\Exception\WrongHeaderException;
 use App\Exception\WrongLearnMoveFormat;
 

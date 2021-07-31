@@ -3,7 +3,6 @@
 
 namespace App\Api\Pokepedia;
 
-
 use App\Api\Pokepedia\Client\PokepediaMoveApiClient;
 use App\Helper\MoveSetHelper;
 use App\Satanizer\PokepediaLevelMoveSatanizer;
@@ -25,7 +24,6 @@ class PokepediaMoveApi
         $this->moveClient = $moveClient;
 
         $this->cache = new PdoAdapter($connection);
-
     }
 
 //    public function getTutorMoves(Pokemon $pokemon, string $generation)
@@ -60,15 +58,15 @@ class PokepediaMoveApi
 
     public function getLevelMoves(string $name, int $generation): array
     {
-        $moves = $this->getLevelMovesFromCache($name,$generation);
+        $moves = $this->getLevelMovesFromCache($name, $generation);
 
         return $this->moveSatanizer->checkAndSanitizeMoves($moves);
     }
 
     public function getRawWikitext(string $name, int $generation)
     {
-        $formmatted = $this->getLevelMovesFromCache($name,$generation);
+        $formmatted = $this->getLevelMovesFromCache($name, $generation);
         array_shift($formmatted);
-        return implode(PHP_EOL,$formmatted);
+        return implode(PHP_EOL, $formmatted);
     }
 }

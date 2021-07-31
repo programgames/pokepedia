@@ -3,7 +3,6 @@
 
 namespace App\DataFixtures;
 
-
 use App\Api\PokeAPI\MoveNameApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;

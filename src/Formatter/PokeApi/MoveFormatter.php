@@ -3,7 +3,6 @@
 
 namespace App\Formatter\PokeApi;
 
-
 use App\Entity\MoveLearnMethod;
 use App\Entity\MoveName;
 use App\Entity\Pokemon;
@@ -28,8 +27,7 @@ class MoveFormatter
         EntityManagerInterface $em,
         MoveFullFiller $moveFullFiller,
         GenerationHelper $generationHelper
-    )
-    {
+    ) {
         $this->em = $em;
         $this->moveFullFiller = $moveFullFiller;
         $this->generationHelper = $generationHelper;
@@ -39,8 +37,7 @@ class MoveFormatter
         Pokemon $pokemon,
         int $generation,
         MoveLearnMethod $learnMethod
-    ): array
-    {
+    ): array {
         $preFormatteds = $this->getPreFormattedLevelPokeApiMoves($pokemon, $generation, $learnMethod);
         $formatteds = [];
         if (in_array($generation, [1, 2, 5, 6, 8])) {
@@ -49,7 +46,8 @@ class MoveFormatter
                 $second = $this->formatLevel($move, 2, $first['weight']);
                 $totalWeight = $this->calculateTotalWeight([$first, $second], $formatteds);
                 $formatteds[strval($totalWeight)] =
-                    strtr('%name% / %firstLevel% / %secondLevel%',
+                    strtr(
+                        '%name% / %firstLevel% / %secondLevel%',
                         [
                             '%name%' => $name,
                             '%firstLevel%' => $first['level'],
@@ -63,7 +61,8 @@ class MoveFormatter
                 $second = $this->formatLevel($move, 2, $first['weight']);
                 $third = $this->formatLevel($move, 3, $second['weight']);
                 $totalWeight = $this->calculateTotalWeight([$first, $second, $third], $formatteds);
-                $formatteds[$totalWeight] = strtr('%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
+                $formatteds[$totalWeight] = strtr(
+                    '%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
                     [
                         '%name%' => $name,
                         '%firstLevel%' => $first['level'],
@@ -81,8 +80,7 @@ class MoveFormatter
         Pokemon $pokemon,
         int $generation,
         MoveLearnMethod $learnMethod
-    ): array
-    {
+    ): array {
         $preformatteds = [];
         $columns = in_array($generation, [3, 4, 7]) ? 3 : 2;
 
@@ -105,10 +103,12 @@ class MoveFormatter
                     $move = new DTO\LevelUpMove();
                 }
 
-                $move = $this->moveFullFiller->fullLevelingMove($move,
+                $move = $this->moveFullFiller->fullLevelingMove(
+                    $move,
                     $column,
                     $name,
-                    $pokemonMoveEntity);
+                    $pokemonMoveEntity
+                );
 
                 $preformatteds[$name] = $move;
             }
@@ -206,7 +206,7 @@ class MoveFormatter
         }
 
         foreach ($splitteds as $splitted) {
-            foreach ($splitted as $level => $move){
+            foreach ($splitted as $level => $move) {
                 $sorted[] = $move;
             }
         }
