@@ -47,4 +47,15 @@ class PokemonNameRepository extends ServiceEntityRepository
         ;
     }
     */
+
+
+    public function findPokemonByBulbapediaName(string $name)
+    {
+        return $this->createQueryBuilder('pn')
+            ->andWhere('pn.bulbapediaName = :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
 }

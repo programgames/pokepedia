@@ -19,31 +19,31 @@ class PokemonRepository extends ServiceEntityRepository
         parent::__construct($registry, Pokemon::class);
     }
 
-    public function findDefaultPokemons(int $start,int $end)
+    public function findDefaultPokemons(int $start, int $end)
     {
         return $this->createQueryBuilder('p')
-            ->leftJoin('p.pokemonSpecy','s')
+            ->leftJoin('p.pokemonSpecy', 's')
             ->andWhere('s.pokemonSpeciesOrder >= :start AND s.pokemonSpeciesOrder <= :end')
             ->andWhere('p.isDefault = true')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->orderBy('s.pokemonSpeciesOrder', 'ASC')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
     public function findDefaultAndAlolaPokemons($startAt = null)
     {
         return $this->createQueryBuilder('p')
-            ->leftJoin('p.pokemonSpecy','s')
+            ->leftJoin('p.pokemonSpecy', 's')
             ->andWhere('p.isDefault = true OR p.isAlola = true')
             ->andWhere('s.pokemonSpeciesOrder >= :startAt')
+            ->andWhere('p.name NOT LIKE :totem')
             ->orderBy('s.pokemonSpeciesOrder', 'ASC')
             ->setParameter('startAt', $startAt ?? 1)
+            ->setParameter('totem', '%totem%')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
     public function findAlolaPokemons()
@@ -51,8 +51,7 @@ class PokemonRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->andWhere('p.isAlola = true')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
     public function findGalarPokemon()
@@ -60,7 +59,6 @@ class PokemonRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->andWhere('p.isGalar = true')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 }

@@ -75,6 +75,11 @@ class Pokemon
      */
     private $baseInformation;
 
+    /**
+     * @ORM\OneToOne(targetEntity=PokemonName::class, inversedBy="pokemon", cascade={"persist", "remove"})
+     */
+    private $pokemonName;
+
     public function __construct()
     {
         $this->pokemonMoves = new ArrayCollection();
@@ -263,6 +268,18 @@ class Pokemon
     public function setBaseInformation(?BaseInformation $baseInformation): self
     {
         $this->baseInformation = $baseInformation;
+
+        return $this;
+    }
+
+    public function getPokemonName(): ?PokemonName
+    {
+        return $this->pokemonName;
+    }
+
+    public function setPokemonName(?PokemonName $pokemonName): self
+    {
+        $this->pokemonName = $pokemonName;
 
         return $this;
     }

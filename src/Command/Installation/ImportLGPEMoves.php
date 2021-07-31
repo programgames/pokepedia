@@ -7,7 +7,9 @@ namespace App\Command\Installation;
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
+use App\Entity\Pokemon;
 use App\Entity\PokemonAvailability;
+use App\Entity\PokemonName;
 use App\Entity\VersionGroup;
 use App\Helper\MoveSetHelper;
 use App\MoveMapper;
@@ -34,20 +36,14 @@ class ImportLGPEMoves extends Command
         $this->api = $api;
     }
 
-
-    protected function configure(): void
-    {
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $moveMapper = new MoveMapper();
         $io = new SymfonyStyle($input, $output);
 
-        $lgpe = $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
         $io->info("Importing Bulbapedia LGPE moves");
 
-        $lgpe =  $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
+        $lgpe = $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
 
         $pokemonAvailabilities = $this->em->getRepository(PokemonAvailability::class)->findBy(['versionGroup' => $lgpe]);
 
@@ -63,7 +59,7 @@ class ImportLGPEMoves extends Command
         foreach ($pokemonAvailabilities as $pokemonAvailability) {
 
             $pokemon = $pokemonAvailability->getPokemon();
-            if (!$pokemon->isAlola()) {
+            if ($pokemon->isAlola()) {
                 continue;
             }
             $io->info(sprintf('import levelup moves for LGPE %s', $pokemon->getName()));
@@ -79,9 +75,9 @@ class ImportLGPEMoves extends Command
                 $this->em->flush();
             } else {
                 foreach ($moves as $form => $formMoves) {
-                    $pokemon = $this->findPokemon($pokemon,$form);
+                    $pokemon = $this->findPokemon($pokemon, $form);
                     foreach ($formMoves as $move) {
-                        $pokemon = $this->findPokemon($pokemon);
+                        $pokemon = $this->findPokemon($pokemon,$form);
                         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
                             $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
                         } else {
@@ -96,7 +92,7 @@ class ImportLGPEMoves extends Command
 
         foreach ($pokemonAvailabilities as $pokemonAvailability) {
             $pokemon = $pokemonAvailability->getPokemon();
-            if ($pokemon->getName() === 'mew') {
+            if ($pokemon->isAlola() || $pokemon->getName() === 'mew') {
                 continue;
             }
             $io->info(sprintf('import machine moves for LGPE %s', $pokemon->getName()));
@@ -115,7 +111,7 @@ class ImportLGPEMoves extends Command
                     $pokemon = $this->findPokemon($pokemon, $form);
                     foreach ($formMoves as $move) {
                         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-                            $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
+                            $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $machine);
                         } else {
                             throw new RuntimeException('Format roman');
                         }
@@ -132,8 +128,18 @@ class ImportLGPEMoves extends Command
 
     private function findPokemon(Pokemon $pokemonEntity, string $name): Pokemon
     {
-        $pokemon = $this->em->getRepository(Pokemon::class);
+        /** @var PokemonName $pokemonName */
+        $pokemonName = $this->em->getRepository(PokemonName::class)
+            ->findPokemonByBulbapediaName($name);
 
-//        return
+        if (!$pokemonName) {
+            throw new RuntimeException(sprintf('Pokemon with name %s not found', $name));
+        }
+
+        if ($pokemonName->getPokemon()->getIsDefault()) {
+            return $pokemonName->getPokemon();
+        }
+
+        return $pokemonName->getPokemon();
     }
 }

@@ -11,6 +11,7 @@ use App\Entity\PokemonMove;
 use App\Formatter\MoveFullFiller;
 use App\Helper\GenerationHelper;
 use App\Helper\MoveSetHelper;
+use Collator;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Formatter\DTO;
 
@@ -61,7 +62,7 @@ class MoveFormatter
                 $first = $this->formatLevel($move, 1, 0);
                 $second = $this->formatLevel($move, 2, $first['weight']);
                 $third = $this->formatLevel($move, 3, $second['weight']);
-                $totalWeight = $this->calculateTotalWeight([$first, $second,$third],$formatteds);
+                $totalWeight = $this->calculateTotalWeight([$first, $second, $third], $formatteds);
                 $formatteds[$totalWeight] = strtr('%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
                     [
                         '%name%' => $name,
@@ -72,7 +73,7 @@ class MoveFormatter
                 );
             }
         }
-        ksort($formatteds);
+        $formatteds = $this->sortLevelMoves($formatteds);
         return $formatteds;
     }
 
@@ -97,7 +98,7 @@ class MoveFormatter
                 $nameEntity = $this->em->getRepository(MoveName::class)
                     ->findFrenchMoveNameByPokemonMove($pokemonMoveEntity);
 
-                $name = MoveSetHelper::getNameByGeneration($nameEntity,$generation);
+                $name = MoveSetHelper::getNameByGeneration($nameEntity, $generation);
                 if (array_key_exists($name, $preformatteds)) {
                     $move = $preformatteds[$name];
                 } else {
@@ -138,7 +139,7 @@ class MoveFormatter
         }
 
         if ($move->{'level' . $column}) {
-            if(($move->{'onStart' . $column} || $move->{'onEvolution' . $column} || $move->{'level' . $column . 'Extra'})) {
+            if (($move->{'onStart' . $column} || $move->{'onEvolution' . $column} || $move->{'level' . $column . 'Extra'})) {
                 if (empty($level)) {
                     $level .= 'N.' . $move->{'level' . $column};
                     $weight = $move->{'level' . $column};
@@ -180,5 +181,36 @@ class MoveFormatter
                 return (string)$total;
             }
         }
+    }
+
+    /** Sort moves by level and alphabetical */
+    private function sortLevelMoves(array $formatteds)
+    {
+        ksort($formatteds);
+
+        $splitteds = [];
+        $sorted = [];
+
+        foreach ($formatteds as $level => $formatted) {
+            if (!array_key_exists((int)$level, $splitteds)) {
+                $splitteds[(int)$level] = [];
+            }
+            $splitteds[(int)$level][$level] = $formatted;
+        }
+
+        foreach ($splitteds as $key => $splittedMoves) {
+            $collator = new Collator('fr_FR');
+            $temp = $splittedMoves;
+            $collator->asort($temp);
+            $splitteds[$key] = $temp;
+        }
+
+        foreach ($splitteds as $splitted) {
+            foreach ($splitted as $level => $move){
+                $sorted[] = $move;
+            }
+        }
+
+        return $sorted;
     }
 }

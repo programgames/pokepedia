@@ -31,7 +31,6 @@ class InstallCommand extends Command
         $pokepediaPokemontypeCommand->run(new ArrayInput([]),$output);
         $pokeApiMoveCommand->run(new ArrayInput([]),$output);
 
-
         $io->info("Application installed ! ");
 
         return Command::SUCCESS;

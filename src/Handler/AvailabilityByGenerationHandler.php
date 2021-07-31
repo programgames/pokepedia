@@ -345,7 +345,8 @@ class AvailabilityByGenerationHandler
         $specificVg = [];
         $specificVg[] = $this->ultraSunUltraMoonVG;
 
-        $this->saveAvailabilities([$duskNecrozma,$dawnNecrozma,$ultraNecrozma,$lycanrocDusk],$specificVg);
+        $this->saveAvailabilities([$duskNecrozma, $dawnNecrozma, $ultraNecrozma, $lycanrocDusk], $specificVg);
+        $this->loadAlolaForm();
 
         $this->em->persist($necrozma);
     }
@@ -361,7 +362,11 @@ class AvailabilityByGenerationHandler
         $pokemons[] = $this->getPokemon('meltan');
         $pokemons[] = $this->getPokemon('melmetal');
         $this->saveAvailabilities($pokemons, $versionGroups);
+    }
 
+    private function handleGen8()
+    {
+        $this->loadGalarForm();
     }
 
     private function getPokemon(string $name): Pokemon
@@ -379,6 +384,45 @@ class AvailabilityByGenerationHandler
                 $pokemonAvailability->setAvailable(true);
                 $this->em->persist($pokemonAvailability);
             }
+        }
+    }
+
+    private function loadAlolaForm()
+    {
+        $alolaPokemons = $this->em->getRepository(Pokemon::class)
+            ->findAlolaPokemons();
+
+        /** @var Pokemon $alolaPokemon */
+        foreach ($alolaPokemons as $alolaPokemon) {
+
+            $originalName = str_replace('-alola', '', $alolaPokemon->getName());
+
+            if ($alolaPokemon->getName() === 'raticate-totem-alola') {
+                $originalName = 'raticate';
+            }
+
+            $original = $this->em->getRepository(Pokemon::class)
+                ->findOneBy(['name' => $originalName]);
+            $original->setHasMoveForms(true);
+            $original->addForm($alolaPokemon);
+
+            $this->em->persist($original);
+        }
+    }
+
+    private function loadGalarForm()
+    {
+        $alolaPokemons = $this->em->getRepository(Pokemon::class)
+            ->findAlolaPokemons();
+
+        /** @var Pokemon $alolaPokemon */
+        foreach ($alolaPokemons as $alolaPokemon) {
+            $original = $this->em->getRepository(Pokemon::class)
+                ->findOneBy(['name' => str_replace('-galar', '', $alolaPokemon->getName())]);
+            $original->setHasMoveForms(true);
+            $original->addForm($alolaPokemon);
+
+            $this->em->persist($original);
         }
     }
 }

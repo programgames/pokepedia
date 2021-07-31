@@ -5,7 +5,7 @@ namespace App\Api\Pokepedia\Client;
 
 
 use App\Exception\InvalidResponse;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Exception\SectionNotFoundException;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -16,11 +16,17 @@ class PokepediaMoveApiClient
     {
         $sections = $this->getMoveSections($name, $generation);
 
+        if (!array_key_exists($moveType, $sections)) {
+            throw  new SectionNotFoundException(sprintf("Section %s not found for pokemon %s , generation %s",
+                    $moveType, $name, $generation
+                )
+            );
+        }
         if ($generation < 7) {
             $url = strtr(
                 'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%/G%C3%A9n%C3%A9ration_%generation%&prop=wikitext&errorformat=wikitext&section=%section%&disabletoc=1',
                 [
-                    '%pokemon%' => str_replace(['’','\''], '%27', $name),
+                    '%pokemon%' => str_replace(['’', '\''], '%27', $name),
                     '%generation%' => $generation,
                     '%section%' => $sections[$moveType]
                 ]
@@ -57,7 +63,7 @@ class PokepediaMoveApiClient
             $sectionsUrl = strtr(
                 'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%/G%C3%A9n%C3%A9ration_%generation%&prop=sections&errorformat=wikitext&disabletoc=1',
                 [
-                    '%pokemon%' => str_replace(['’','\''], '%27', $name),
+                    '%pokemon%' => str_replace(['’', '\''], '%27', $name),
                     '%generation%' => $generation,
                 ]
             );
@@ -65,7 +71,7 @@ class PokepediaMoveApiClient
             $sectionsUrl = strtr(
                 'https://www.pokepedia.fr/api.php?action=parse&format=json&page=%pokemon%&prop=sections&errorformat=wikitext',
                 [
-                    '%pokemon%' => str_replace(['’','\''], '%27', $name),
+                    '%pokemon%' => str_replace(['’', '\''], '%27', $name),
                     '%generation%' => $generation,
                 ]
             );
