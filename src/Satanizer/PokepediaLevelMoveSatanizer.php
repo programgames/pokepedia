@@ -25,6 +25,8 @@ class PokepediaLevelMoveSatanizer
                 unset($moves[$key]);
             }
         }
+        $this->clearCommentaries($moves);
+
 
         if (!preg_match('/{{#invoke:Apprentissage|niveau/', reset($moves))) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', reset($moves)));
@@ -37,5 +39,21 @@ class PokepediaLevelMoveSatanizer
             }
         }
         return $moves;
+    }
+
+    private function clearCommentaries(array &$moves)
+    {
+        if(empty(preg_grep('/#invoke/',$moves))) {
+            return;
+        }
+        foreach ($moves as $key => $move) {
+            if(!preg_match('/#invoke/',$move)) {
+                unset($moves[$key]);
+            }
+            else {
+                return;
+            }
+        }
+
     }
 }
