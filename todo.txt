@@ -25,5 +25,7 @@ coconfort level up gen 6 7 a verifier
 pikachu a partir de gen 2
 
 
-bin/console fos:js-routing:dump --format=json --target=public/js/fos_js_routes.json
+php bin/console fos:js-routing:dump --format=json --target=public/js/fos_js_routes.json
 yarn encore dev --watch
+
+pg_ctl.exe restart -D  "C:\Program Files\PostgreSQL\13\data"

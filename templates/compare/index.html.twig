@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compare!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css"
+    />{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('compare') }}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html-ui.min.js"></script>
+{% endblock %}
+
+{% block body %}
+
+    <div id="start-div">
+
+        <label>Start comparaison at:</label>
+
+        <label for="startAtCompare" value="1"></label><input type="number" id="startAtCompare"
+                                                             min="1" max="898">
+
+        <button id="initCompare" type="button"> Init compare pokemon moves</button>
+    </div>
+
+    <button id="upload-changes" type="button" hidden>Upload changes</button>
+
+    <div id="compare-div">
+    </div>
+
+    <p id="logs-compare"></p>
+    <p id="generated-moves"></p>
+
+    <button id="next-compare" type="button" hidden>Next</button>
+{% endblock %}
+
+

@@ -66,7 +66,6 @@ class PokepediaMoveApi
     public function getRawWikitext(string $name, int $generation)
     {
         $formmatted = $this->getLevelMovesFromCache($name, $generation);
-        array_shift($formmatted);
         return implode(PHP_EOL, $formmatted);
     }
 }

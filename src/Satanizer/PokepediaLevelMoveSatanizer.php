@@ -11,6 +11,8 @@ class PokepediaLevelMoveSatanizer
 {
     public function checkAndSanitizeMoves(array $moves): array
     {
+        $comments = [];
+
         if (!in_array($moves[0], [
             '=== Par montée en [[niveau]] ===',
             '==== [[Septième génération]] ====',
@@ -19,14 +21,14 @@ class PokepediaLevelMoveSatanizer
             throw new WrongHeaderException(sprintf('Invalid header: %s', $moves[0]));
         }
 
+        $comments[] = $moves[0];
         unset($moves[0]);
         foreach ($moves as $key => $move) {
             if (empty($move) || $move === '}}') {
                 unset($moves[$key]);
             }
         }
-        $this->clearCommentaries($moves);
-
+        $comments =  array_merge($comments, $this->clearCommentaries($moves));
 
         if (!preg_match('/{{#invoke:Apprentissage|niveau/', reset($moves))) {
             throw new WrongHeaderException(sprintf('Invalid header: %s', reset($moves)));
@@ -38,22 +40,33 @@ class PokepediaLevelMoveSatanizer
                 throw new WrongLearnMoveFormat(sprintf('Invalid learn move: %s', $move));
             }
         }
-        return $moves;
+
+        return [
+            'comments' => $comments,
+            'moves' => $moves
+        ];
     }
 
     private function clearCommentaries(array &$moves)
     {
-        if(empty(preg_grep('/#invoke/',$moves))) {
+        $commentaries = [];
+
+        if (empty(preg_grep('/#invoke/', $moves))) {
+            throw new \Exception('temporary');
             return;
         }
+
         foreach ($moves as $key => $move) {
-            if(!preg_match('/#invoke/',$move)) {
+            if (!preg_match('/#invoke/', $move)) {
+                $commentaries[] = $moves[$key];
+
                 unset($moves[$key]);
-            }
-            else {
-                return;
+            } else {
+                return $commentaries;
             }
         }
+
+        return $commentaries;
 
     }
 }

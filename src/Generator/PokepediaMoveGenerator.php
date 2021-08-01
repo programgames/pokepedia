@@ -9,26 +9,43 @@ use App\Entity\Pokemon;
 /** Generate pokepedia wikitext for pokemon moves */
 class PokepediaMoveGenerator
 {
-    public function generateMoveWikiText(MoveLearnMethod $learnMethod, Pokemon $pokemon, int $gen, $moves): string
+    public const CLI_MODE = 0;
+    public const HTML_MODE = 1;
+
+    public function generateMoveWikiText(MoveLearnMethod $learnMethod, Pokemon $pokemon, int $gen, $moves, array $commentaries, $mode = self::CLI_MODE): string
     {
         $generated = '';
 
+        if (!empty($commentaries)) {
+            foreach ($commentaries as $commentary) {
+                if ((preg_match('/<br\/>/', $commentary) || preg_match('/<br>/', $commentary) || preg_match('/<\/br>/', $commentary)) && $mode === self::HTML_MODE) {
+                    $generated .= $commentary;
+                } else {
+                    $generated .= $commentary . $this->lb($mode);
+                }
+            }
+            $generated .= $this->lb($mode);
+        }
         $generated .= sprintf(
-            "{{#invoke:Apprentissage|niveau|type=%s|génération=%s|". $this->lb(),
+            "{{#invoke:Apprentissage|niveau|type=%s|génération=%s|" . $this->lb($mode),
             $pokemon->getBaseInformation()->getType1(),
             $gen
         );
 
         foreach ($moves as $move) {
-            $generated .= $move . $this->lb();
+            $generated .= $move . $this->lb($mode);
         }
         $generated .= "}}";
 
         return $generated;
     }
 
-    private function lb(): string
+    private function lb($mode): string
     {
-        return "\r\n";
+        if ($mode === self::CLI_MODE) {
+            return "\r\n";
+        }
+
+        return '<br>';
     }
 }

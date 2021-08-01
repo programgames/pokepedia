@@ -76,10 +76,14 @@ class ComparePokemonMoveCommand extends Command
 
                 $io->info(sprintf('comparing %s generation %s leveling moves', $pokemon->getName(), $gen));
 
-                $pokepediaMoves = $this->api->getLevelMoves(
+                $pokepediaData = $this->api->getLevelMoves(
                     $this->moveSetHelper->getPokepediaPokemonName($pokemon),
                     $gen
                 );
+                $pokepediaMoves = $pokepediaData['moves'];
+
+                $commentaries = $pokepediaData['comments'];
+
                 $pokeApiMoves = $this->pokeApiFormatter->getFormattedLevelPokeApiMoves(
                     $pokemon,
                     $gen,
@@ -91,10 +95,14 @@ class ComparePokemonMoveCommand extends Command
                     $this->cache->delete(
                         sprintf('pokepedia.wikitext.%s,%s.%s', $this->moveSetHelper->getPokepediaPokemonName($pokemon), $gen, MoveSetHelper::LEVELING_UP_TYPE)
                     );
-                    $pokepediaMoves = $this->api->getLevelMoves(
+                    $pokepediaData = $this->api->getLevelMoves(
                         $this->moveSetHelper->getPokepediaPokemonName($pokemon),
                         $gen
                     );
+                    $pokepediaMoves = $pokepediaData['moves'];
+
+                    $commentaries = $pokepediaData['comments'];
+
                     if (!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
                         $this->handleError($learnmethod, $pokemon, $gen, $pokeApiMoves, $io);
                     }
