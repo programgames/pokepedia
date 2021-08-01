@@ -8,7 +8,6 @@ use App\Comparator\LevelMoveComparator;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
-use App\Entity\PokemonAvailability;
 use App\Formatter\PokeApi\MoveFormatter;
 use App\Generator\PokepediaMoveGenerator;
 use App\Helper\GenerationHelper;
@@ -45,6 +44,8 @@ class ComparePokemonMoveCommand extends Command
         GenerationHelper $helper,
         Connection $connection
     ) {
+        parent::__construct();
+
         $this->em = $em;
         $this->api = $api;
         $this->moveSetHelper = $moveSetHelper;
@@ -53,8 +54,6 @@ class ComparePokemonMoveCommand extends Command
         $this->generator = $generator;
         $this->helper = $helper;
         $this->cache = new PdoAdapter($connection);
-
-        parent::__construct();
     }
 
 

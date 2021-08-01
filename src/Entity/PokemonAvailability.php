@@ -15,7 +15,7 @@ class PokemonAvailability
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private ?int $id;
+    private ?int $id = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Pokemon::class, inversedBy="pokemonAvailabilities")
@@ -24,10 +24,10 @@ class PokemonAvailability
     private ?Pokemon $pokemon;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Versiongroup::class, inversedBy="pokemonAvailabilities")
+     * @ORM\ManyToOne(targetEntity=VersionGroup::class, inversedBy="pokemonAvailabilities")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?Versiongroup $versionGroup;
+    private ?VersionGroup $versionGroup;
 
     /**
      * @ORM\Column(type="boolean", name="availability")
@@ -51,12 +51,12 @@ class PokemonAvailability
         return $this;
     }
 
-    public function getVersionGroup(): ?Versiongroup
+    public function getVersionGroup(): ?VersionGroup
     {
         return $this->versionGroup;
     }
 
-    public function setVersionGroup(?Versiongroup $versionGroup): self
+    public function setVersionGroup(?VersionGroup $versionGroup): self
     {
         $this->versionGroup = $versionGroup;
 

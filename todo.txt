@@ -23,3 +23,7 @@ Brouillard draceufu gen 3 by level Brouillard / Départ<br>N.13 / Départ<br>N.1
 coconfort level up gen 6 7 a verifier
 
 pikachu a partir de gen 2
+
+
+bin/console fos:js-routing:dump --format=json --target=public/js/fos_js_routes.json
+yarn encore dev --watch
