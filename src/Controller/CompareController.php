@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Api\Pokepedia\Client\Auth;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
 use App\Processor\CompareProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,16 +19,13 @@ class CompareController extends AbstractController
 {
     private EntityManagerInterface $em;
     private CompareProcessor $processor;
+    private Auth $auth;
 
-    /**
-     * CompareController constructor.
-     * @param EntityManagerInterface $em
-     * @param CompareProcessor $processor
-     */
-    public function __construct(EntityManagerInterface $em, CompareProcessor $processor)
+    public function __construct(EntityManagerInterface $em, CompareProcessor $processor, Auth $auth)
     {
         $this->em = $em;
         $this->processor = $processor;
+        $this->auth = $auth;
     }
 
     /**
@@ -62,13 +61,16 @@ class CompareController extends AbstractController
                 return $value->getId();
             }, $generations);
 
-            return new JsonResponse([
+            $response = (new JsonResponse([
                 'data' => [
                     'pokemons' => $pokemonIds,
                     'learnMethod' => $learnmethod->getId(),
                     'generations' => $generationsIds,
                 ]
-            ]);
+            ]));
+            $response->headers->setcookie(new Cookie('token',$this->login()));
+            return $response;
+
         } catch (\Exception $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], 400);
         }
@@ -90,7 +92,7 @@ class CompareController extends AbstractController
         $learnMethod = $request->get('learnMethod');
 
         try {
-           $data =  $this->processor->compare($generation, $learnMethod, $pokemon);
+            $data = $this->processor->compare($generation, $learnMethod, $pokemon, false);
             return new JsonResponse(
                 [
                     'data' => $data
@@ -105,5 +107,54 @@ class CompareController extends AbstractController
             );
         }
 
+    }
+
+    private function login()
+    {
+        $endPoint = "https://www.pokepedia.fr/api.php";
+
+        $login_Token = $this->auth->getLoginToken($endPoint);
+        $this->auth->loginRequest($login_Token, $endPoint);
+        $csrf_Token = $this->auth->getCSRFToken($endPoint);
+        return $csrf_Token;
+    }
+
+    /**
+     * @Route("/admin/compare/upload", name="_upload_compare", options={"expose"=true})
+     * @param Request $request
+     * @return JsonResponse|Response
+     */
+    public function uploadCompare(Request $request)
+    {
+        $cookies = $request->cookies;
+
+        $title = $request->get('title');
+        $token = $cookies->get('token');
+        $section = $request->get('section');
+        $wikiText = $request->get('wikitext');
+
+        $params = [
+            "action" => "edit",
+            "section" => $section,
+            "title" => $title,
+            "text" => $wikiText,
+            "token" => $token,
+            "format" => "json",
+            "bot" => true,
+            "nocreate" => true,
+        ];
+
+        $ch = curl_init();
+        curl_setopt( $ch, CURLOPT_URL, 'https://www.pokepedia.fr/api.php' );
+        curl_setopt( $ch, CURLOPT_POST, true );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $params ) );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt( $ch, CURLOPT_COOKIEJAR, "cookie.txt" );
+        curl_setopt( $ch, CURLOPT_COOKIEFILE, "cookie.txt" );
+
+        $output = curl_exec( $ch );
+        curl_close( $ch );
+
+        echo ( $output );
     }
 }

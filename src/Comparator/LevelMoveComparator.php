@@ -23,8 +23,12 @@ class LevelMoveComparator
             return str_replace(['N.', ', ', '<br>'], ['', ' ', ' '], $item);
         }, $pokeApiMoves);
 
-        foreach ($pokeApiMoves as $pokeApiMove) {
-            if (!in_array($pokeApiMove, $pokepediaMoves, true)) {
+        $count = count($pokeApiMoves);
+        if( $count!==  count($pokepediaMoves)) {
+            return false;
+        }
+        for ($i = 0 ; $i < $count ; $i++) {
+            if ($pokepediaMoves[$i] != $pokeApiMoves[$i]) {
                 return false;
             }
         }

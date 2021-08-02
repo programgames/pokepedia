@@ -17,6 +17,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "diff2html": "^3.4.8"
+        "diff2html": "^3.4.8",
+        "js-cookie": "^3.0.0"
     }
 }

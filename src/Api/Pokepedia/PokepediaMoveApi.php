@@ -58,14 +58,16 @@ class PokepediaMoveApi
 
     public function getLevelMoves(string $name, int $generation): array
     {
-        $moves = $this->getLevelMovesFromCache($name, $generation);
+        $movesData = $this->getLevelMovesFromCache($name, $generation);
 
-        return $this->moveSatanizer->checkAndSanitizeMoves($moves);
+        $movesData['satanized'] = $this->moveSatanizer->checkAndSanitizeMoves($movesData['wikitext']);
+
+        return $movesData;
     }
 
     public function getRawWikitext(string $name, int $generation)
     {
-        $formmatted = $this->getLevelMovesFromCache($name, $generation);
-        return implode(PHP_EOL, $formmatted);
+        $formated = $this->getLevelMovesFromCache($name, $generation);
+        return implode(PHP_EOL, $formated['wikitext']);
     }
 }

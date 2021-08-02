@@ -23,7 +23,7 @@ class CompareProcessor
 {
     private EntityManagerInterface $em;
     private MoveSetHelper $moveSetHelper;
-    private MoveFormatter $pokeapiFormatter;
+    private MoveFormatter $pokeApiFormatter;
     private LevelMoveComparator $levelMoveComparator;
     private ParameterBagInterface $parameterBag;
 
@@ -42,15 +42,15 @@ class CompareProcessor
         $this->em = $em;
         $this->api = $api;
         $this->moveSetHelper = $moveSetHelper;
-        $this->pokeApiFormatter = $pokeApiFormatter;
         $this->levelMoveComparator = $levelMoveComparator;
         $this->generator = $generator;
         $this->helper = $helper;
         $this->cache = new PdoAdapter($connection);
         $this->parameterBag = $parameterBag;
+        $this->pokeApiFormatter = $pokeApiFormatter;
     }
 
-    public function compare(int $genId, int $learnMethodId, int $pokemonId)
+    public function compare(int $genId, int $learnMethodId, int $pokemonId, bool $retryMode = true)
     {
         $generation = $this->em->getRepository(Generation::class)->find($genId);
         $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->find($learnMethodId);
@@ -71,7 +71,8 @@ class CompareProcessor
             $this->moveSetHelper->getPokepediaPokemonName($pokemon),
             $gen
         );
-        $pokepediaMoves = $pokepediaData['moves'];
+        $pokepediaMoves = $pokepediaData['satanized']['moves'];
+        $commentaries = $pokepediaData['satanized']['comments'];
 
         $pokeApiMoves = $this->pokeApiFormatter->getFormattedLevelPokeApiMoves(
             $pokemon,
@@ -80,20 +81,23 @@ class CompareProcessor
         );
 
         if (!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
-            $this->cache->delete(
-                sprintf('pokepedia.wikitext.%s,%s.%s', $this->moveSetHelper->getPokepediaPokemonName($pokemon), $gen, MoveSetHelper::LEVELING_UP_TYPE)
-            );
-            $pokepediaData = $this->api->getLevelMoves(
-                $this->moveSetHelper->getPokepediaPokemonName($pokemon),
-                $gen
-            );
-            $pokepediaMoves = $pokepediaData['moves'];
 
-            $commentaries = $pokepediaData['comments'];
-
-            if (!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
-                return $this->handleError($learnmethod, $pokemon, $gen, $pokeApiMoves, $commentaries);
+            if ($retryMode) {
+                $this->cache->delete(
+                    sprintf('pokepedia.wikitext.%s,%s.%s', $this->moveSetHelper->getPokepediaPokemonName($pokemon), $gen, MoveSetHelper::LEVELING_UP_TYPE)
+                );
+                $pokepediaData = $this->api->getLevelMoves(
+                    $this->moveSetHelper->getPokepediaPokemonName($pokemon),
+                    $gen
+                );
+                $pokepediaMoves = $pokepediaData['satanized']['moves'];
+                $commentaries = $pokepediaData['satanized']['comments'];
+                if (!$this->levelMoveComparator->levelMoveComparator($pokepediaMoves, $pokeApiMoves)) {
+                    return $this->handleError($learnmethod, $pokemon, $gen, $pokeApiMoves, $commentaries,$pokepediaData['section'],$pokepediaData['page']);
+                }
             }
+            return $this->handleError($learnmethod, $pokemon, $gen, $pokeApiMoves, $commentaries,$pokepediaData['section'],$pokepediaData['page']);
+
         }
 
         return [
@@ -106,7 +110,7 @@ class CompareProcessor
         ];
     }
 
-    private function handleError(MoveLearnMethod $learnmethod, $pokemon, $gen, array $pokeApiMoves, array $commentaries)
+    private function handleError(MoveLearnMethod $learnmethod, $pokemon, $gen, array $pokeApiMoves, array $commentaries,string $section,string $page)
     {
         $generated = $this->generator->generateMoveWikiText($learnmethod, $pokemon, $gen, $pokeApiMoves, $commentaries, PokepediaMoveGenerator::CLI_MODE);
         $html = $this->generator->generateMoveWikiText($learnmethod, $pokemon, $gen, $pokeApiMoves, $commentaries, PokepediaMoveGenerator::HTML_MODE);
@@ -125,16 +129,18 @@ class CompareProcessor
         file_put_contents($generatedPath, $generated);
         file_put_contents($rawPath, $raw);
 
-
-        $process = new Process(['git', 'diff', '--no-index', '-U1000', $generatedPath, $rawPath]);
+        $process = new Process(['git', 'diff', '--no-index', '-U1000', $rawPath, $generatedPath ]);
         $process->run();
         $output = $process->getOutput();
 
         return [
+            'section' => $section,
+            'page' => $page,
             'available' => true,
             'diff' => true,
             'diffString' => $output,
-            'generated' => $html
+            'generated' => $html,
+            'wikitext' => $generated
         ];
     }
 }
