@@ -77,6 +77,7 @@ class BulbapediaMoveSatanizer
         $form = null;
         array_shift($moves);
 
+        /** @noinspection ForeachInvariantsInspection */
         for ($i = 0; $i < $size; $i++) {
             if (empty($moves[$i]) || $moves[$i] === ' ') {
                 continue;

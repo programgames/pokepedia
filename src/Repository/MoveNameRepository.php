@@ -59,16 +59,4 @@ class MoveNameRepository extends ServiceEntityRepository
         }
         return $moveName;
     }
-
-    /*
-    public function findOneBySomeField($value): ?MoveName
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

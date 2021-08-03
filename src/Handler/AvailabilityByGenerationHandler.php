@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Handler;
 
 use App\Entity\Pokemon;
@@ -175,7 +174,7 @@ class AvailabilityByGenerationHandler
         $this->handleLGPE();
     }
 
-    private function handleGen1()
+    private function handleGen1(): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->redBlueVg;
@@ -187,7 +186,7 @@ class AvailabilityByGenerationHandler
         $this->saveAvailabilities($pokemons, $versionGroups);
     }
 
-    private function handleGen2()
+    private function handleGen2(): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->crystalVG;
@@ -199,7 +198,7 @@ class AvailabilityByGenerationHandler
         $this->saveAvailabilities($pokemons, $versionGroups);
     }
 
-    private function handleGen3()
+    private function handleGen3(): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->emeraldVG;
@@ -212,7 +211,7 @@ class AvailabilityByGenerationHandler
         $this->saveAvailabilities($pokemons, $versionGroups);
     }
 
-    private function handleGen4()
+    private function handleGen4(): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->diamondPearlVG;
@@ -247,7 +246,7 @@ class AvailabilityByGenerationHandler
         $this->saveAvailabilities([$shayminSky], $specificVg);
     }
 
-    private function handleGen5()
+    private function handleGen5(): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->blackWhiteVG;
@@ -283,7 +282,7 @@ class AvailabilityByGenerationHandler
         $this->saveAvailabilities([$whiteKyurem, $blackKyurem], $specificVg);
     }
 
-    private function handleGen6()
+    private function handleGen6(): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->xyVG;
@@ -302,7 +301,7 @@ class AvailabilityByGenerationHandler
         $this->saveAvailabilities($pokemons, $versionGroups);
     }
 
-    private function handleGen7()
+    private function handleGen7(): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->sunMoonVG;
@@ -347,7 +346,7 @@ class AvailabilityByGenerationHandler
         $this->em->persist($necrozma);
     }
 
-    private function handleLGPE()
+    private function handleLGPE(): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->lgpeVG;
@@ -360,7 +359,7 @@ class AvailabilityByGenerationHandler
         $this->saveAvailabilities($pokemons, $versionGroups);
     }
 
-    private function handleGen8()
+    private function handleGen8(): void
     {
         $this->loadGalarForm();
     }
@@ -370,7 +369,7 @@ class AvailabilityByGenerationHandler
         return $this->em->getRepository(Pokemon::class)->findOneBy(['name' => $name]);
     }
 
-    private function saveAvailabilities(array $pokemons, array $versionGroups)
+    private function saveAvailabilities(array $pokemons, array $versionGroups): void
     {
         foreach ($pokemons as $pokemon) {
             foreach ($versionGroups as $versionGroup) {
@@ -383,7 +382,7 @@ class AvailabilityByGenerationHandler
         }
     }
 
-    private function loadAlolaForm()
+    private function loadAlolaForm(): void
     {
         $alolaPokemons = $this->em->getRepository(Pokemon::class)
             ->findAlolaPokemons();
@@ -405,7 +404,7 @@ class AvailabilityByGenerationHandler
         }
     }
 
-    private function loadGalarForm()
+    private function loadGalarForm(): void
     {
         $alolaPokemons = $this->em->getRepository(Pokemon::class)
             ->findAlolaPokemons();

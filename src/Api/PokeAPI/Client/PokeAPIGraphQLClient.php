@@ -1,8 +1,9 @@
 <?php
 
-
 namespace App\Api\PokeAPI\Client;
 
+use App\Exception\InvalidResponse;
+use Exception;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\HttpOptions;
 
@@ -18,8 +19,13 @@ class PokeAPIGraphQLClient
                 'User-Agent' => 'Symfony GraphQL client'
             ]);
 
-        return HttpClient::create()
-            ->request('POST', $endpoint, $options->toArray())
-            ->toArray();
+        try {
+            /** @noinspection PhpUnhandledExceptionInspection */
+            return HttpClient::create()
+                ->request('POST', $endpoint, $options->toArray())
+                ->toArray();
+        } catch (Exception $exception) {
+            throw new InvalidResponse(sprintf("Invalid response from pokeapi query %s", $query), $exception->getMessage(), $exception);
+        }
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Processor;
 
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
@@ -12,6 +11,7 @@ use App\Entity\VersionGroup;
 use App\Helper\MoveSetHelper;
 use App\MoveMapper;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Cache\InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -27,6 +27,12 @@ class BulbapediaMoveProcessor
         $this->api = $api;
     }
 
+    /**
+     * @param int $generation
+     * @param SymfonyStyle $io
+     * @param bool $lgpe
+     * @throws InvalidArgumentException
+     */
     public function importMoveByGeneration(int $generation, SymfonyStyle $io, bool $lgpe = false): void
     {
         $generationEntity = $this->em->getRepository(Generation::class)->findOneBy(
@@ -35,11 +41,7 @@ class BulbapediaMoveProcessor
             ]
         );
 
-        $versionGroup = $this->em->getRepository(VersionGroup::class)->findOneBy(
-            [
-                'generation' => $generationEntity,
-            ]
-        );
+        $versionGroup = $this->getVersionGroupByGeneration($generationEntity, $lgpe);
 
         $availabilities = $this->em->getRepository(PokemonAvailability::class)->findBy(
             [
@@ -60,7 +62,7 @@ class BulbapediaMoveProcessor
                     continue;
                 }
 
-                $io->info(sprintf('import %s moves for GEN 8  %s', $learnMethod->getName(), $pokemon->getName()));
+                $io->info(sprintf('import %s moves for GEN %s  %s', $learnMethod->getName(), $generation, $pokemon->getName()));
                 $moves = $this->getMovesByLearnMethod($pokemon, $generationEntity, $learnMethod);
                 if (array_key_exists('noform', $moves)) {
                     foreach ($moves['noform'] as $move) {
@@ -74,6 +76,14 @@ class BulbapediaMoveProcessor
         }
     }
 
+    /**
+     * @param Pokemon $pokemon
+     * @param Generation $generation
+     * @param MoveLearnMethod $learnMethod
+     * @param bool $lgpe
+     * @return array
+     * @throws InvalidArgumentException
+     */
     private function getMovesByLearnMethod(
         Pokemon $pokemon,
         Generation $generation,
@@ -157,7 +167,7 @@ class BulbapediaMoveProcessor
         $moveMapper = new MoveMapper();
 
         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
-            $moveMapper->mapMoves($pokemon, $move, $generationEntity, $this->em, $learnMethod);
+            $moveMapper->mapMoves($pokemon, $move, $generationEntity, $em, $learnMethod);
         } else {
             throw new RuntimeException('Format roman');
         }
@@ -204,5 +214,59 @@ class BulbapediaMoveProcessor
         }
         //wormadam-plant;shaymin-land
         return $form;
+    }
+
+    /** Get version with maximum pokemon available in it
+     * @param Generation $generationEntity
+     * @param bool $lgpe
+     * @return VersionGroup|object|null
+     */
+    private function getVersionGroupByGeneration(Generation $generationEntity, bool $lgpe = false)
+    {
+        $gen = $generationEntity->getGenerationIdentifier();
+        if ($gen <= 3) {
+            $versionGroup = $this->em->getRepository(VersionGroup::class)->findOneBy(
+                [
+                    'generation' => $generationEntity,
+                ]
+            );
+        } elseif ($gen === 4) {
+            $versionGroup = $this->em->getRepository(VersionGroup::class)->findOneBy(
+                [
+                    'name' => 'platinum',
+                ]
+            );
+        } elseif ($gen === 5) {
+            $versionGroup = $this->em->getRepository(VersionGroup::class)->findOneBy(
+                [
+                    'name' => 'black-2-white-2',
+                ]
+            );
+        } elseif ($gen === 6) {
+            $versionGroup = $this->em->getRepository(VersionGroup::class)->findOneBy(
+                [
+                    'name' => 'omega-ruby-alpha-sapphire',
+                ]
+            );
+        } elseif ($gen === 7 && $lgpe) {
+            $versionGroup = $this->em->getRepository(VersionGroup::class)->findOneBy(
+                [
+                    'name' => 'lets-go',
+                ]
+            );
+        } elseif ($gen === 7 && !$lgpe) {
+            $versionGroup = $this->em->getRepository(VersionGroup::class)->findOneBy(
+                [
+                    'name' => 'lets-go',
+                ]
+            );
+        } else {
+            $versionGroup = $this->em->getRepository(VersionGroup::class)->findOneBy(
+                [
+                    'name' => 'sword-shield',
+                ]
+            );
+        }
+        return $versionGroup;
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Command\Installation;
 
 use App\Handler\AvailabilityByGenerationHandler;
@@ -11,15 +10,17 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class GenerateAvailabilities extends Command
 {
-    protected static $defaultName = 'app:generate:availabilities';
-    protected static $defaultDescription = 'generate availabilities';
-
     private AvailabilityByGenerationHandler $handler;
 
     public function __construct(AvailabilityByGenerationHandler $handler)
     {
         parent::__construct();
         $this->handler = $handler;
+    }
+
+    public static function getDefaultName(): string
+    {
+        return 'app:generate:availabilities';
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

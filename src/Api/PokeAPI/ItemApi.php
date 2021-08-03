@@ -1,24 +1,18 @@
 <?php
 
-
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\Item;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 //extract and transform item information into entities from pokeapi
 class ItemApi
 {
     private PokeAPIGraphQLClient $client;
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(PokeAPIGraphQLClient $client, EntityManagerInterface $entityManager)
+    public function __construct(PokeAPIGraphQLClient $client)
     {
         $this->client = $client;
-        $this->entityManager = $entityManager;
     }
 
     public function getItems(): array
@@ -32,16 +26,11 @@ query MyQuery {
 
 GRAPHQL;
 
-        $cache = new FilesystemAdapter();
 
-        $json = $cache->get(
-            sprintf('pokeapi.%s', 'item'),
-            function (ItemInterface $item) use ($query) {
-                return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
-            }
-        );
+        $content =  $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
+
         $items = [];
-        foreach ($json['data']['pokemon_v2_item'] as $item) {
+        foreach ($content['data']['pokemon_v2_item'] as $item) {
             $itemEntity = new Item();
             $itemEntity->setName($item['name']);
             $items[] = $itemEntity;

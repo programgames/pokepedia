@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Builder;
 
 use App\Entity\MoveName;
@@ -87,13 +86,13 @@ class GlobalMoveNodeBuilder
                         [
                             new Arg(
                                 new Array_(
-                                [
+                                    [
                                         new ArrayItem(
                                             new String_($versionGroupName),
                                             new String_('name')
                                         )
                                     ]
-                            )
+                                )
                             )
                         ]
                     )
@@ -119,12 +118,12 @@ class GlobalMoveNodeBuilder
                                     [
                                         new Arg(
                                             new ArrayDimFetch(
-                                            new ArrayDimFetch(
-                                                    new Variable('move'),
-                                                    new String_('value')
-                                                ),
-                                            new LNumber($moveData['level'])
-                                        )
+                                                new ArrayDimFetch(
+                                                new Variable('move'),
+                                                new String_('value')
+                                            ),
+                                                new LNumber($moveData['level'])
+                                            )
                                         )
                                     ]
                                 )

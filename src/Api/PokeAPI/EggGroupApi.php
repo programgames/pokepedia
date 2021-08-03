@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
@@ -29,10 +28,8 @@ query MyQuery {
 
 GRAPHQL;
 
-        $cache = new FilesystemAdapter();
-
         $json = $cache->get(
-            sprintf('pokeapi.%s', 'egggroup'),
+            sprintf('pokeapi.eff.%s', 'egggroup'),
             function (ItemInterface $item) use ($query) {
                 return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
             }

@@ -1,14 +1,11 @@
 <?php
 
-
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\Generation;
 use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 //extract and transform version group information into entities from pokeapi
 class VersionGroupApi
@@ -36,16 +33,10 @@ query MyQuery {
 }
 GRAPHQL;
 
-        $cache = new FilesystemAdapter();
+        $content = $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
 
-        $json = $cache->get(
-            sprintf('pokeapi.%s', 'versiongroup'),
-            function (ItemInterface $item) use ($query) {
-                return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
-            }
-        );
         $versionGroups = [];
-        foreach ($json['data']['pokemon_v2_versiongroup'] as $versiongroup) {
+        foreach ($content['data']['pokemon_v2_versiongroup'] as $versiongroup) {
             $versionGroupEntity = new VersionGroup();
             $versionGroupEntity->setName($versiongroup['name']);
             $generation = $this->entityManager->getRepository(Generation::class)->findOneBy(

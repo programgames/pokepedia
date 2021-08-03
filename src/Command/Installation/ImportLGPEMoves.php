@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Command\Installation;
 
 use App\Api\Bulbapedia\BulbapediaMovesAPI;
@@ -22,7 +21,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ImportLGPEMoves extends Command
 {
     protected static $defaultName = 'app:import:lgpe';
-    protected static $defaultDescription = 'import bulbapedia lgpe movesets';
 
     private EntityManagerInterface $em;
     private BulbapediaMovesAPI $api;
@@ -56,6 +54,7 @@ class ImportLGPEMoves extends Command
         );
 
         foreach ($pokemonAvailabilities as $pokemonAvailability) {
+            /** @var Pokemon $pokemon */
             $pokemon = $pokemonAvailability->getPokemon();
             if ($pokemon->isAlola()) {
                 continue;

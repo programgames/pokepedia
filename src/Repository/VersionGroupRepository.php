@@ -19,7 +19,6 @@ class VersionGroupRepository extends ServiceEntityRepository
         parent::__construct($registry, VersionGroup::class);
     }
 
-
     public function findPokepediaVersionGroup()
     {
         return $this->createQueryBuilder('v')
@@ -29,16 +28,4 @@ class VersionGroupRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
-    /*
-    public function findOneBySomeField($value): ?VersionGroup
-    {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

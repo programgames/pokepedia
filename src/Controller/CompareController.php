@@ -68,9 +68,8 @@ class CompareController extends AbstractController
                     'generations' => $generationsIds,
                 ]
             ]));
-            $response->headers->setcookie(new Cookie('token',$this->login()));
+            $response->headers->setcookie(new Cookie('token', $this->login()));
             return $response;
-
         } catch (\Exception $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], 400);
         }
@@ -106,7 +105,6 @@ class CompareController extends AbstractController
                 400
             );
         }
-
     }
 
     private function login()
@@ -145,16 +143,16 @@ class CompareController extends AbstractController
         ];
 
         $ch = curl_init();
-        curl_setopt( $ch, CURLOPT_URL, 'https://www.pokepedia.fr/api.php' );
-        curl_setopt( $ch, CURLOPT_POST, true );
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $params ) );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_COOKIEJAR, "cookie.txt" );
-        curl_setopt( $ch, CURLOPT_COOKIEFILE, "cookie.txt" );
+        curl_setopt($ch, CURLOPT_URL, 'https://www.pokepedia.fr/api.php');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
+        curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
 
-        $output = curl_exec( $ch );
-        curl_close( $ch );
+        $output = curl_exec($ch);
+        curl_close($ch);
 
-        echo ( $output );
+        echo($output);
     }
 }

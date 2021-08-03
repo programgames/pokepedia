@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Satanizer;
 
 class PokepediaBaseInformationSatanizer

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Command\Installation;
 
 use App\Api\Pokepedia\PokepediaBasePokemonInformationApi;

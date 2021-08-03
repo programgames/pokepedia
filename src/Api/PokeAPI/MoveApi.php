@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
@@ -30,16 +29,10 @@ query MyQuery {
 
 GRAPHQL;
 
-        $cache = new FilesystemAdapter();
+        $content =$this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
 
-        $json = $cache->get(
-            sprintf('pokeapi.%s', 'move'),
-            function (ItemInterface $item) use ($query) {
-                return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
-            }
-        );
         $moves = [];
-        foreach ($json['data']['pokemon_v2_move'] as $move) {
+        foreach ($content['data']['pokemon_v2_move'] as $move) {
             $moveEntity = new Move();
             $moveEntity->setName($move['name']);
             $moves[] = $moveEntity;

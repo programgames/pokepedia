@@ -27,7 +27,7 @@ class MoveFormatter
             ];
         }
 
-        if (preg_match('/learnlist\/tr\|.*/', $move)) {
+        if (preg_match('/learnlist\/tr\|/', $move)) {
             return [
                 'type' => $type,
                 'format' => MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL,

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Formatter\DTO;
 
 // Intermediate class to manipulate level-up moves

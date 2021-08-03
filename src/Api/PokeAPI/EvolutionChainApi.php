@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
@@ -8,7 +7,6 @@ use App\Entity\EvolutionChain;
 use App\Entity\PokemonSpecy;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 //extract and transform evolution chains information into entities from pokeapi
 class EvolutionChainApi
@@ -39,16 +37,10 @@ query MyQuery {
 }
 GRAPHQL;
 
-        $cache = new FilesystemAdapter();
+        $content = $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
 
-        $json = $cache->get(
-            sprintf('pokeapi.%s', 'evolitonchain'),
-            function (ItemInterface $item) use ($query) {
-                return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
-            }
-        );
         $evolutionChains = [];
-        foreach ($json['data']['pokemon_v2_evolutionchain'] as $evolutionChain) {
+        foreach ($content['data']['pokemon_v2_evolutionchain'] as $evolutionChain) {
             $evolutionChainEntity = new EvolutionChain();
 
             foreach ($evolutionChain['pokemon_v2_pokemonspecies'] as $specy) {

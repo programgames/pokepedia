@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
@@ -8,8 +7,6 @@ use App\Entity\EggGroup;
 use App\Entity\Generation;
 use App\Entity\PokemonSpecy;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 //extract and transform pokemon species information into entities from pokeapi
 class PokemonSpeciesApi
@@ -50,16 +47,10 @@ query MyQuery {
 
 GRAPHQL;
 
-        $cache = new FilesystemAdapter();
+        $content = $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
 
-        $json = $cache->get(
-            sprintf('pokeapi.%s', 'species'),
-            function (ItemInterface $item) use ($query) {
-                return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
-            }
-        );
         $pokemonSpecies = [];
-        foreach ($json['data']['pokemon_v2_pokemonspecies'] as $pokemonspecy) {
+        foreach ($content['data']['pokemon_v2_pokemonspecies'] as $pokemonspecy) {
             $pokemonSpecyEntity = new PokemonSpecy();
             $pokemonSpecyEntity->setName($pokemonspecy['name']);
             $pokemonSpecyEntity->setPokemonSpeciesOrder($pokemonspecy['pokemon_v2_pokemondexnumbers'][0]['pokedex_number']);

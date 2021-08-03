@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Formatter\PokeApi;
 
 use App\Entity\MoveLearnMethod;
@@ -165,7 +164,7 @@ class MoveFormatter
         ];
     }
 
-    private function calculateTotalWeight(array $weights, array $formatteds)
+    private function calculateTotalWeight(array $weights, array $formatteds): string
     {
         $total = 0;
         foreach ($weights as $weight) {
@@ -183,8 +182,11 @@ class MoveFormatter
         }
     }
 
-    /** Sort moves by level and alphabetical */
-    private function sortLevelMoves(array $formatteds)
+    /** Sort moves by level and alphabetical
+     * @param array $formatteds
+     * @return array
+     */
+    private function sortLevelMoves(array $formatteds): array
     {
         ksort($formatteds);
 

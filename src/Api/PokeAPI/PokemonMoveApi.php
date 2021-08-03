@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
@@ -11,8 +10,6 @@ use App\Entity\PokemonMove;
 use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 //extract and transform pokemon moves information into entities from pokeapi
 class PokemonMoveApi
@@ -52,15 +49,9 @@ query MyQuery {
 
 GRAPHQL;
 
-        $cache = new FilesystemAdapter();
+        $content =  $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
 
-        $json = $cache->get(
-            sprintf('pokeapi.%s', 'pokemonmove'),
-            function (ItemInterface $item) use ($query) {
-                return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
-            }
-        );
-        foreach ($json['data']['pokemon_v2_pokemon'] as $pokemon) {
+        foreach ($content['data']['pokemon_v2_pokemon'] as $pokemon) {
             /** @var Pokemon $pokemonEntity */
             $pokemonEntity = $this->entityManager->getRepository(Pokemon::class)->findOneBy(
                 [

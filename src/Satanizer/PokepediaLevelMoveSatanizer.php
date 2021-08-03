@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Satanizer;
 
 use App\Exception\WrongHeaderException;
@@ -67,6 +66,5 @@ class PokepediaLevelMoveSatanizer
         }
 
         return $commentaries;
-
     }
 }

@@ -62,7 +62,5 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Attaques', 'fa fa-tags', Move::class);
         yield MenuItem::linkToCrud('Attaques par pokémon', 'fa fa-tags', PokemonMove::class);
         yield MenuItem::linkToCrud('Méthodes d\'apprentissage', 'fa fa-tags', MoveLearnMethod::class);
-
-
     }
 }

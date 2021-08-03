@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Api\Bulbapedia;
 
 use App\Api\Bulbapedia\Client\BulbapediaMoveClient;
@@ -8,9 +7,9 @@ use App\Entity\Pokemon;
 use App\Helper\MoveSetHelper;
 use App\Satanizer\BulbapediaMoveSatanizer;
 use Doctrine\DBAL\Connection;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\PdoAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 // Api class to manipulate pokemon moves easily from bulbapedia
 class BulbapediaMovesAPI
@@ -35,11 +34,18 @@ class BulbapediaMovesAPI
         );
     }
 
+    /**
+     * @param Pokemon $pokemon
+     * @param string $generation
+     * @param bool $lgpe
+     * @return array
+     * @throws InvalidArgumentException
+     */
     public function getTutorMoves(Pokemon $pokemon, string $generation, bool $lgpe = false): array
     {
         $moves = $this->cache->get(
-            sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE),
-            function (ItemInterface $item) use ($pokemon, $generation, $lgpe) {
+            sprintf('bulbapedia.wikitext.move.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE),
+            function () use ($pokemon, $generation, $lgpe) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $pokemon,
                     $generation,
@@ -52,11 +58,18 @@ class BulbapediaMovesAPI
         return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_TUTOR_WIKI_TYPE);
     }
 
+    /**
+     * @param Pokemon $pokemon
+     * @param int $generation
+     * @param bool $lgpe
+     * @return array
+     * @throws InvalidArgumentException
+     */
     public function getLevelMoves(Pokemon $pokemon, int $generation, bool $lgpe = false): array
     {
         $moves = $this->cache->get(
-            sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::LEVELING_UP_TYPE),
-            function (ItemInterface $item) use ($pokemon, $generation, $lgpe) {
+            sprintf('bulbapedia.wikitext.move.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::LEVELING_UP_TYPE),
+            function () use ($pokemon, $generation, $lgpe) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $pokemon,
                     $generation,
@@ -69,11 +82,18 @@ class BulbapediaMovesAPI
         return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_LEVEL_WIKI_TYPE);
     }
 
+    /**
+     * @param Pokemon $pokemon
+     * @param int $generation
+     * @param bool $lgpe
+     * @return array
+     * @throws InvalidArgumentException
+     */
     public function getEggMoves(Pokemon $pokemon, int $generation, bool $lgpe = false): array
     {
         $moves = $this->cache->get(
-            sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::BULBAPEDIA_BREEDING_WIKI_TYPE),
-            function (ItemInterface $item) use ($pokemon, $generation, $lgpe) {
+            sprintf('bulbapedia.wikitext.move.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::BULBAPEDIA_BREEDING_WIKI_TYPE),
+            function () use ($pokemon, $generation, $lgpe) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $pokemon,
                     $generation,
@@ -86,11 +106,18 @@ class BulbapediaMovesAPI
         return $this->moveSatanizer->checkAndSanitizeMoves($moves, $generation, MoveSetHelper::BULBAPEDIA_BREEDING_WIKI_TYPE);
     }
 
+    /**
+     * @param Pokemon $pokemon
+     * @param int $generation
+     * @param bool $lgpe
+     * @return array
+     * @throws InvalidArgumentException
+     */
     public function getMachineMoves(Pokemon $pokemon, int $generation, bool $lgpe = false): array
     {
         $moves = $this->cache->get(
-            sprintf('bulbapedia.wikitext.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::MACHINE_TYPE),
-            function (ItemInterface $item) use ($pokemon, $generation, $lgpe) {
+            sprintf('bulbapedia.wikitext.move.%s,%s.%s', $pokemon->getId(), $generation, MoveSetHelper::MACHINE_TYPE),
+            function () use ($pokemon, $generation, $lgpe) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $pokemon,
                     $generation,

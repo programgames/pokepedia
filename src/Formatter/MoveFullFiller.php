@@ -13,12 +13,10 @@ class MoveFullFiller
             $move->{'onStart'.$column} = true;
         } elseif ($level === 0) {
             $move->{'onEvolution'.$column} = true;
+        } elseif ($move->{'level'.$column} === null) {
+            $move->{'level' . $column} = $level;
         } else {
-            if ($move->{'level'.$column} === null) {
-                $move->{'level' . $column} = $level;
-            } else {
-                $move->{'level' . $column.'Extra'} = $level;
-            }
+            $move->{'level' . $column.'Extra'} = $level;
         }
 
         return $move;

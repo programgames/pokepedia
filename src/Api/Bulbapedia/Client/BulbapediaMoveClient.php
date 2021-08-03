@@ -2,14 +2,13 @@
 
 namespace App\Api\Bulbapedia\Client;
 
+use App\Api\Http\Wikimedia\Client;
 use App\Entity\Pokemon;
 use App\Entity\SpecyName;
 use App\Helper\GenerationHelper;
 use App\Helper\StringHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
-use Symfony\Component\BrowserKit\HttpBrowser;
-use Symfony\Component\HttpClient\HttpClient;
 
 // Get wiki text from pokemon by move learn method and generation https://bulbapedia.bulbagarden.net/wiki/Mewtwo_(Pok%C3%A9mon)#By_leveling_up
 class BulbapediaMoveClient
@@ -48,16 +47,11 @@ class BulbapediaMoveClient
             ]
         );
 
-
-        $browser = new HttpBrowser(HttpClient::create());
-        $browser->request('GET', $url);
-
-        $response = $browser->getResponse();
-        $json = json_decode($response->getContent(), true);
-        $wikitext = reset($json['parse']['wikitext']);
+        $content = Client::parse($url);
+        $wikitext = reset($content['parse']['wikitext']);
         $wikitext = preg_split('/$\R?^/m', $wikitext);
         return array_map(
-            function ($value) {
+            static function ($value) {
                 return StringHelper::clearBracesAndBrs($value);
             },
             $wikitext
@@ -83,13 +77,9 @@ class BulbapediaMoveClient
             ]
         );
 
-        $browser = new HttpBrowser(HttpClient::create());
-        $browser->request('GET', $sectionsUrl);
+        $content = Client::parse($sectionsUrl);
 
-        $response = $browser->getResponse();
-        $json = json_decode($response->getContent(), true);
-
-        foreach ($json['parse']['sections'] as $section) {
+        foreach ($content['parse']['sections'] as $section) {
             if (array_key_exists($section['line'], $formattedSections)) {
                 $formattedSections[$section['line'] . '-2'] = $section['index'];
             } else {

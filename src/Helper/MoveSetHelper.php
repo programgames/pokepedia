@@ -1,8 +1,8 @@
 <?php
 
-
 namespace App\Helper;
 
+use App\Entity\MoveLearnMethod;
 use App\Entity\MoveName;
 use App\Entity\Pokemon;
 use App\Entity\SpecyName;
@@ -117,5 +117,21 @@ class MoveSetHelper
         }
 
         return self::BULBAPEDIA_TMTR_TYPE_LABEL;
+    }
+
+    public static function getPokepediaInvokeLearnMethod(MoveLearnMethod $learnMethod): string
+    {
+        $english = $learnMethod->getName();
+        $french = null;
+        switch ($english) {
+            case 'level-up':
+               $french = 'niveau';
+               break;
+        }
+        if (!$french) {
+            throw new RuntimeException(sprintf('Impossible to translate learn method %s to french', $english));
+        }
+
+        return $french;
     }
 }

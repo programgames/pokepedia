@@ -1,12 +1,11 @@
 <?php
 
-
 namespace App\Api\Bulbapedia;
 
 use App\Api\Bulbapedia\Client\BulbapediaMachineClient;
 use App\Satanizer\BulbapediaMachineSatanizer;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 // Api class to manipulate machine information easily from bulbapedia
 class BulbapediaMachineAPI
@@ -23,11 +22,17 @@ class BulbapediaMachineAPI
         $this->bulbapediaMachineSatanizer = $bulbapediaMachineSatanizer;
     }
 
+    /**
+     * @param string $itemName
+     * @param $generation
+     * @return string
+     * @throws InvalidArgumentException
+     */
     public function getMoveNameByItemAndGeneration(string $itemName, $generation): string
     {
         $machineInfos = $this->cache->get(
-            sprintf('bulbapedia.wikitext.%s', $itemName),
-            function (ItemInterface $item) use ($itemName) {
+            sprintf('bulbapedia.wikitext.machine.%s', $itemName),
+            function () use ($itemName) {
                 return $this->machineClient->getMachineInformation($itemName);
             }
         );

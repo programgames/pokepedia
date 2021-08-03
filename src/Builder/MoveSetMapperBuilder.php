@@ -46,7 +46,7 @@ class MoveSetMapperBuilder
     public function getMapperCode($config): string
     {
         $stmts = $this->getClassAndMethodNodes($config);
-        $prettyPrinter = new Standard;
+        $prettyPrinter = new Standard();
         return $prettyPrinter->prettyPrintFile($stmts);
     }
 

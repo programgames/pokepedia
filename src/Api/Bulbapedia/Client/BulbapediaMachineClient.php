@@ -2,10 +2,8 @@
 
 namespace App\Api\Bulbapedia\Client;
 
+use App\Api\Http\Wikimedia\Client;
 use App\Helper\StringHelper;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\BrowserKit\HttpBrowser;
-use Symfony\Component\HttpClient\HttpClient;
 
 // Get wiki text from item https://bulbapedia.bulbagarden.net/wiki/TM01
 class BulbapediaMachineClient
@@ -19,16 +17,11 @@ class BulbapediaMachineClient
             ]
         );
 
-
-        $browser = new HttpBrowser(HttpClient::create());
-        $browser->request('GET', $url);
-
-        $response = $browser->getResponse();
-        $json = json_decode($response->getContent(), true);
-        $wikitext = reset($json['parse']['wikitext']);
+        $content = Client::parse($url);
+        $wikitext = reset($content['parse']['wikitext']);
         $wikitext = preg_split('/$\R?^/m', $wikitext);
         return array_map(
-            function ($value) {
+            static function ($value) {
                 return StringHelper::clearBracesAndBrs($value);
             },
             $wikitext

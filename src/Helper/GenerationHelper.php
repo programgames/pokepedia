@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Helper;
 
 use App\Entity\Generation;
@@ -62,6 +61,8 @@ class GenerationHelper
             '7' => 'lets-go'
         ];
 
+        $mapping = null;
+
         switch ($column) {
             case 1:
                 $mapping = $col1;
@@ -97,7 +98,7 @@ class GenerationHelper
         return $mapping[(string)$number];
     }
 
-    public function isPokemonAvailableInGeneration(Pokemon $pokemon, Generation $generation)
+    public function isPokemonAvailableInGeneration(Pokemon $pokemon, Generation $generation): bool
     {
         $availabilityRepository = $this->em->getRepository(PokemonAvailability::class);
 

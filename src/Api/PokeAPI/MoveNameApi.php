@@ -1,14 +1,11 @@
 <?php
 
-
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\Move;
 use App\Entity\MoveName;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 //extract and transform move names information into entities from pokeapi
 class MoveNameApi
@@ -37,16 +34,10 @@ query MyQuery {
 
 GRAPHQL;
 
-        $cache = new FilesystemAdapter();
+        $content =  $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
 
-        $json = $cache->get(
-            sprintf('pokeapi.%s', 'movename'),
-            function (ItemInterface $item) use ($query) {
-                return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
-            }
-        );
         $moveNames = [];
-        foreach ($json['data']['pokemon_v2_movename'] as $moveName) {
+        foreach ($content['data']['pokemon_v2_movename'] as $moveName) {
             $moveNameEntity = new MoveName();
             $moveNameEntity->setName($moveName['name']);
             $moveNameEntity->setLanguage($moveName['language_id']);

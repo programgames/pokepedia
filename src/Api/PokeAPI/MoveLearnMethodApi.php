@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
@@ -28,20 +27,14 @@ class MoveLearnMethodApi
 }
 GRAPHQL;
 
-        $cache = new FilesystemAdapter();
+        $content = $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
 
-        $json = $cache->get(
-            sprintf('pokeapi.%s', 'movelearnmethod'),
-            function (ItemInterface $item) use ($query) {
-                return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
-            }
-        );
         $learnMethods = [];
 
-        foreach ($json['data']['pokemon_v2_movelearnmethod'] as $learnMethod) {
+        foreach ($content['data']['pokemon_v2_movelearnmethod'] as $learnMethod) {
             $learnMethodEntity = new MoveLearnMethod();
             $learnMethodEntity->setName($learnMethod['name']);
-            $learnMethods[]  = $learnMethodEntity;
+            $learnMethods[] = $learnMethodEntity;
         }
 
         return $learnMethods;

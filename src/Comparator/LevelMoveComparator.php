@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Comparator;
 
 use RuntimeException;
@@ -24,7 +23,7 @@ class LevelMoveComparator
         }, $pokeApiMoves);
 
         $count = count($pokeApiMoves);
-        if( $count!==  count($pokepediaMoves)) {
+        if ($count!==  count($pokepediaMoves)) {
             return false;
         }
         for ($i = 0 ; $i < $count ; $i++) {

@@ -18,7 +18,7 @@ class MoveLearnMethodRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, MoveLearnMethod::class);
     }
-    
+
     public function findPokepediaLearnMethod()
     {
         return $this->createQueryBuilder('mlm')
@@ -28,33 +28,4 @@ class MoveLearnMethodRepository extends ServiceEntityRepository
             ->getResult()
             ;
     }
-
-    // /**
-    //  * @return MoveLearnMethod[] Returns an array of MoveLearnMethod objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('m.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?MoveLearnMethod
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

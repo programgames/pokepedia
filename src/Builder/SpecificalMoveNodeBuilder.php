@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Builder;
 
 use App\Exception\UnknownMapping;
@@ -31,9 +30,9 @@ class SpecificalMoveNodeBuilder
                 if ($complexeMoveType === 'integer') {
                     $nodes[] = new Expression(
                         new MethodCall(
-                        new Variable('propertyAccessor'),
-                        new Name('setValue'),
-                        [
+                            new Variable('propertyAccessor'),
+                            new Name('setValue'),
+                            [
                                 new Arg(new Variable('moveEntity')),
                                 new Arg(new String_($propertyName)),
                                 new Arg(
@@ -53,14 +52,14 @@ class SpecificalMoveNodeBuilder
                                     )
                                 )
                             ]
-                    )
+                        )
                     );
                 } elseif ($complexeMoveType === 'string') {
                     $nodes[] = new Expression(
                         new MethodCall(
-                        new Variable('propertyAccessor'),
-                        new Name('setValue'),
-                        [
+                            new Variable('propertyAccessor'),
+                            new Name('setValue'),
+                            [
                                 new Arg(new Variable('moveEntity')),
                                 new Arg(new String_($propertyName)),
                                 new Arg(
@@ -73,7 +72,7 @@ class SpecificalMoveNodeBuilder
                                     )
                                 )
                             ]
-                    )
+                        )
                     );
                 } elseif ($complexeMoveType === 'complex') {
                     $games = $propertyName['games'];
@@ -82,14 +81,14 @@ class SpecificalMoveNodeBuilder
                     foreach ($games as $game) {
                         $nodes[] = new Expression(
                             new MethodCall(
-                            new Variable('propertyAccessor'),
-                            new Name('setValue'),
-                            [
+                                new Variable('propertyAccessor'),
+                                new Name('setValue'),
+                                [
                                     new Arg(new Variable('moveEntity')),
                                     new Arg(new String_($game)),
                                     new Arg(new ConstFetch(new Name('true')))
                                 ]
-                        )
+                            )
                         );
                     }
                 } else {

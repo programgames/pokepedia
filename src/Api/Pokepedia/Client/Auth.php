@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Api\Pokepedia\Client;
-
 
 use Exception;
 
@@ -17,8 +15,8 @@ class Auth
         $this->pokepediaPassword = $pokepediaPassword;
     }
 
-    function getLoginToken(string $endPoint) {
-
+    public function getLoginToken(string $endPoint)
+    {
         $params1 = [
             "action" => "query",
             "meta" => "tokens",
@@ -26,27 +24,27 @@ class Auth
             "format" => "json"
         ];
 
-        $url = $endPoint . "?" . http_build_query( $params1 );
+        $url = $endPoint . "?" . http_build_query($params1);
 
-        $ch = curl_init( $url );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_COOKIEJAR, "cookie.txt" );
-        curl_setopt( $ch, CURLOPT_COOKIEFILE, "cookie.txt" );
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
+        curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
 
-        $output = curl_exec( $ch );
+        $output = curl_exec($ch);
 
         if ($output === false) {
             $exception =  new Exception(curl_error($ch), curl_errno($ch));
-            curl_close( $ch );
+            curl_close($ch);
             throw $exception;
         }
 
-        $result = json_decode( $output, true );
+        $result = json_decode($output, true);
         return $result["query"]["tokens"]["logintoken"];
     }
 
-    function loginRequest( $logintoken, string $endPoint) {
-
+    public function loginRequest($logintoken, string $endPoint)
+    {
         $params2 = [
             "action" => "login",
             "lgname" => $this->pokepediaUser,
@@ -57,43 +55,42 @@ class Auth
 
         $ch = curl_init();
 
-        curl_setopt( $ch, CURLOPT_URL, $endPoint );
-        curl_setopt( $ch, CURLOPT_POST, true );
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $params2 ) );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_COOKIEJAR, "cookie.txt" );
-        curl_setopt( $ch, CURLOPT_COOKIEFILE, "cookie.txt" );
+        curl_setopt($ch, CURLOPT_URL, $endPoint);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params2));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
+        curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
 
-        $output = curl_exec( $ch );
-        curl_close( $ch );
-
+        $output = curl_exec($ch);
+        curl_close($ch);
     }
 
-    function getCSRFToken(string $endPoint) {
-
+    public function getCSRFToken(string $endPoint)
+    {
         $params3 = [
             "action" => "query",
             "meta" => "tokens",
             "format" => "json"
         ];
 
-        $url = $endPoint . "?" . http_build_query( $params3 );
+        $url = $endPoint . "?" . http_build_query($params3);
 
-        $ch = curl_init( $url );
+        $ch = curl_init($url);
 
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_COOKIEJAR, "cookie.txt" );
-        curl_setopt( $ch, CURLOPT_COOKIEFILE, "cookie.txt" );
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
+        curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
 
-        $output = curl_exec( $ch );
-        curl_close( $ch );
+        $output = curl_exec($ch);
+        curl_close($ch);
 
-        $result = json_decode( $output, true );
+        $result = json_decode($output, true);
         return $result["query"]["tokens"]["csrftoken"];
     }
 
-    function editRequest( $csrftoken,string $endPoint) {
-
+    public function editRequest($csrftoken, string $endPoint)
+    {
         $params4 = [
             "action" => "edit",
             "title" => "Project:Sandbox",
@@ -104,17 +101,16 @@ class Auth
 
         $ch = curl_init();
 
-        curl_setopt( $ch, CURLOPT_URL, $endPoint );
-        curl_setopt( $ch, CURLOPT_POST, true );
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $params4 ) );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_COOKIEJAR, "cookie.txt" );
-        curl_setopt( $ch, CURLOPT_COOKIEFILE, "cookie.txt" );
+        curl_setopt($ch, CURLOPT_URL, $endPoint);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params4));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
+        curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
 
-        $output = curl_exec( $ch );
-        curl_close( $ch );
+        $output = curl_exec($ch);
+        curl_close($ch);
 
-        echo ( $output );
+        echo($output);
     }
-
 }

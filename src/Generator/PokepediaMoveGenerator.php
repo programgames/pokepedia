@@ -1,10 +1,10 @@
 <?php
 
-
 namespace App\Generator;
 
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
+use App\Helper\MoveSetHelper;
 
 /** Generate pokepedia wikitext for pokemon moves */
 class PokepediaMoveGenerator
@@ -26,8 +26,10 @@ class PokepediaMoveGenerator
             }
             $generated .= $this->lb($mode);
         }
+        $pokepediaLearnMethod = MoveSetHelper::getPokepediaInvokeLearnMethod($learnMethod);
         $generated .= sprintf(
-            "{{#invoke:Apprentissage|niveau|type=%s|génération=%s|" . $this->lb($mode),
+            "{{#invoke:Apprentissage|%s|type=%s|génération=%s|" . $this->lb($mode),
+            $pokepediaLearnMethod,
             $pokemon->getBaseInformation()->getType1(),
             $gen
         );

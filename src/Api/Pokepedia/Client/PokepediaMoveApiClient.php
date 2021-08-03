@@ -1,8 +1,8 @@
 <?php
 
-
 namespace App\Api\Pokepedia\Client;
 
+use App\Api\Http\Wikimedia\Client;
 use App\Exception\InvalidResponse;
 use App\Exception\SectionNotFoundException;
 use Symfony\Component\BrowserKit\HttpBrowser;
@@ -27,7 +27,8 @@ class PokepediaMoveApiClient
         }
         if ($generation < 7) {
             $section = $sections[$moveType];
-            $page = strtr('%pokemon%/Génération_%generation%',
+            $page = strtr(
+                '%pokemon%/Génération_%generation%',
                 [
                     '%generation%' => $generation,
                     '%pokemon%' => str_replace(['’', '\'',' '], ['%27','%27','_'], $name),
@@ -53,15 +54,8 @@ class PokepediaMoveApiClient
             );
         }
 
-        $browser = new HttpBrowser(HttpClient::create());
-        $browser->request('GET', $url);
-
-        $response = $browser->getResponse();
-        $json = json_decode($response->getContent(), true);
-        if (!array_key_exists('parse', $json)) {
-            throw new InvalidResponse(sprintf('Invalid response from pokepedia for pokemon %s generation %s', $name, $generation));
-        }
-        $wikitext = reset($json['parse']['wikitext']);
+        $content = Client::parse($url);
+        $wikitext = reset($content['parse']['wikitext']);
         $wikitext = preg_split('/$\R?^/m', $wikitext);
 
         return [
@@ -93,16 +87,8 @@ class PokepediaMoveApiClient
             );
         }
 
-        $browser = new HttpBrowser(HttpClient::create());
-        $browser->request('GET', $sectionsUrl);
-
-        $response = $browser->getResponse();
-        $json = json_decode($response->getContent(), true);
-
-        if (!array_key_exists('parse', $json)) {
-            throw new InvalidResponse(sprintf('Invalid response from pokepedia for pokemon %s generation %s', $name, $generation));
-        }
-        foreach ($json['parse']['sections'] as $section) {
+        $content = Client::parse($sectionsUrl);
+        foreach ($content['parse']['sections'] as $section) {
             $formattedSections[$section['line']] = $section['index'];
         }
 
