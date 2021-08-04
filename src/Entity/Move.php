@@ -39,6 +39,46 @@ class Move
      */
     private Collection $pokemonMoves;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $accuracy;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $moveEffectChance;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Generation::class, inversedBy="moves")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $generation;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=MoveDamageClass::class, inversedBy="moves")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $moveDamageClass;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=ContestEffect::class, inversedBy="moves")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $contestEffect;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=MoveTarget::class, inversedBy="moves")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $moveTarget;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=ContestType::class, inversedBy="moves")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $contestType;
+
     public function __construct()
     {
         $this->moveNames = new ArrayCollection();
@@ -149,6 +189,90 @@ class Move
                 $pokemonMove->setMove(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAccuracy(): ?int
+    {
+        return $this->accuracy;
+    }
+
+    public function setAccuracy(?int $accuracy): self
+    {
+        $this->accuracy = $accuracy;
+
+        return $this;
+    }
+
+    public function getMoveEffectChance(): ?int
+    {
+        return $this->moveEffectChance;
+    }
+
+    public function setMoveEffectChance(?int $moveEffectChance): self
+    {
+        $this->moveEffectChance = $moveEffectChance;
+
+        return $this;
+    }
+
+    public function getGeneration(): ?Generation
+    {
+        return $this->generation;
+    }
+
+    public function setGeneration(?Generation $generation): self
+    {
+        $this->generation = $generation;
+
+        return $this;
+    }
+
+    public function getMoveDamageClass(): ?MoveDamageClass
+    {
+        return $this->moveDamageClass;
+    }
+
+    public function setMoveDamageClass(?MoveDamageClass $moveDamageClass): self
+    {
+        $this->moveDamageClass = $moveDamageClass;
+
+        return $this;
+    }
+
+    public function getContestEffect(): ?ContestEffect
+    {
+        return $this->contestEffect;
+    }
+
+    public function setContestEffect(?ContestEffect $contestEffect): self
+    {
+        $this->contestEffect = $contestEffect;
+
+        return $this;
+    }
+
+    public function getMoveTarget(): ?MoveTarget
+    {
+        return $this->moveTarget;
+    }
+
+    public function setMoveTarget(?MoveTarget $moveTarget): self
+    {
+        $this->moveTarget = $moveTarget;
+
+        return $this;
+    }
+
+    public function getContestType(): ?ContestType
+    {
+        return $this->contestType;
+    }
+
+    public function setContestType(?ContestType $contestType): self
+    {
+        $this->contestType = $contestType;
 
         return $this;
     }

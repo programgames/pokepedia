@@ -4,9 +4,9 @@ namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\EvolutionChain;
+use App\Entity\Item;
 use App\Entity\PokemonSpecy;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 //extract and transform evolution chains information into entities from pokeapi
 class EvolutionChainApi
@@ -33,6 +33,9 @@ query MyQuery {
     pokemon_v2_pokemonspecies {
       name
     }
+    pokemon_v2_item {
+      name
+    }
   }
 }
 GRAPHQL;
@@ -52,7 +55,18 @@ GRAPHQL;
                     );
                 if ($specyEntity) {
                     $evolutionChainEntity->addPokemonSpecies($specyEntity);
+                    $specyEntity->setEvolutionChain($evolutionChainEntity);
                 }
+            }
+
+            if($evolutionChain['pokemon_v2_item']) {
+                $item = $this->entityManager->getRepository(Item::class)
+                    ->findOneBy(
+                        [
+                            'name' => $evolutionChain['pokemon_v2_item']['name']
+                        ]
+                    );
+                $evolutionChainEntity->setBabyTriggerItem($item);
             }
 
             $evolutionChains[] = $evolutionChainEntity;

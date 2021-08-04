@@ -25,7 +25,7 @@ class PokeAPIGraphQLClient
                 ->request('POST', $endpoint, $options->toArray())
                 ->toArray();
         } catch (Exception $exception) {
-            throw new InvalidResponse(sprintf("Invalid response from pokeapi query %s", $query), $exception->getMessage(), $exception);
+            throw new InvalidResponse(sprintf("Invalid response from pokeapi query %s", $query),$exception->getCode(), $exception);
         }
     }
 }

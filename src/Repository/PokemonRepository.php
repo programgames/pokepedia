@@ -23,11 +23,11 @@ class PokemonRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->leftJoin('p.pokemonSpecy', 's')
-            ->andWhere('s.pokemonSpeciesOrder >= :start AND s.pokemonSpeciesOrder <= :end')
+            ->andWhere('s.pokemonSpecyOrder >= :start AND s.pokemonSpecyOrder <= :end')
             ->andWhere('p.isDefault = true')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
-            ->orderBy('s.pokemonSpeciesOrder', 'ASC')
+            ->orderBy('s.pokemonSpecyOrder', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -37,9 +37,9 @@ class PokemonRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->leftJoin('p.pokemonSpecy', 's')
             ->andWhere('p.isDefault = true OR p.isAlola = true')
-            ->andWhere('s.pokemonSpeciesOrder >= :startAt')
+            ->andWhere('s.pokemonSpecyOrder >= :startAt')
             ->andWhere('p.name NOT LIKE :totem')
-            ->orderBy('s.pokemonSpeciesOrder', 'ASC')
+            ->orderBy('s.pokemonSpecyOrder', 'ASC')
             ->setParameter('startAt', $startAt ?? 1)
             ->setParameter('totem', '%totem%')
             ->getQuery()

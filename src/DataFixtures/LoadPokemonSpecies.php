@@ -18,7 +18,6 @@ class LoadPokemonSpecies extends Fixture implements DependentFixtureInterface,Ap
 
     public function load(ObjectManager $manager)
     {
-
         foreach ($this->pokemonSpeciesApi->getPokemonSpecies() as $pokemonSpecies) {
             $manager->persist($pokemonSpecies);
         }
@@ -27,6 +26,6 @@ class LoadPokemonSpecies extends Fixture implements DependentFixtureInterface,Ap
 
     public function getDependencies()
     {
-        return [LoadEggGroup::class];
+        return [LoadGeneration::class,LoadGrowthRates::class,LoadPokemonHabitat::class,LoadPokemonColors::class,LoadPokemonShape::class];
     }
 }

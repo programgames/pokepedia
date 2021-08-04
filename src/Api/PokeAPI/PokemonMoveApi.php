@@ -43,6 +43,7 @@ query MyQuery {
         name
       }
     }
+    order
     name
   }
 }
@@ -61,6 +62,7 @@ GRAPHQL;
             foreach ($pokemon['pokemon_v2_pokemonmoves'] as $pokemonMove) {
                 $pokemonMoveEntity = new PokemonMove();
                 $pokemonMoveEntity->setLevel($pokemonMove['level']);
+                $pokemonMoveEntity->setPokemonMoveOrder($pokemonMove['order']);
                 $learnMethod = $this->getLearnMethod($pokemonMove['pokemon_v2_movelearnmethod']['name']);
                 $versionGroup = $this->getVersionGroup($pokemonMove['pokemon_v2_versiongroup']['name']);
                 $move = $this->getMove($pokemonMove['pokemon_v2_move']['name']);

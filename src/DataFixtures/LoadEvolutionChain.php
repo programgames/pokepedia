@@ -3,23 +3,24 @@
 namespace App\DataFixtures;
 
 use App\Api\PokeAPI\EvolutionChainApi;
+use App\Api\PokeAPI\PokemonEggGroupApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class LoadEvolutionChain extends Fixture implements DependentFixtureInterface, AppFixtureInterface
 {
-    private EvolutionChainApi $evolutionChainApi;
+    private EvolutionChainApi $api;
 
-    public function __construct(EvolutionChainApi $evolutionChainApi)
+    public function __construct(EvolutionChainApi $api)
     {
-        $this->evolutionChainApi = $evolutionChainApi;
+        $this->api = $api;
     }
 
     public function load(ObjectManager $manager)
     {
 
-        foreach ($this->evolutionChainApi->getEvolutionChains() as $evolutionChain) {
+        foreach ($this->api->getEvolutionChains() as $evolutionChain) {
             $manager->persist($evolutionChain);
         }
         $manager->flush();
@@ -27,6 +28,6 @@ class LoadEvolutionChain extends Fixture implements DependentFixtureInterface, A
 
     public function getDependencies()
     {
-        return [LoadPokemonSpecies::class];
+        return [LoadPokemonSpecies::class,LoadItemCategory::class];
     }
 }

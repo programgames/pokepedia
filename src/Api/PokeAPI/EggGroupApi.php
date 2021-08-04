@@ -4,8 +4,6 @@ namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\EggGroup;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 //extract and transform egg information into entities from pokeapi
 class EggGroupApi
@@ -17,7 +15,7 @@ class EggGroupApi
         $this->client = $client;
     }
 
-    public function getPokemons(): array
+    public function getEggGroups(): array
     {
         $query = <<<GRAPHQL
 query MyQuery {
@@ -28,14 +26,10 @@ query MyQuery {
 
 GRAPHQL;
 
-        $json = $cache->get(
-            sprintf('pokeapi.eff.%s', 'egggroup'),
-            function (ItemInterface $item) use ($query) {
-                return $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
-            }
-        );
+       $content = $this->client->sendRequest('https://beta.pokeapi.co/graphql/v1beta', $query);
+
         $eggGroups = [];
-        foreach ($json['data']['pokemon_v2_egggroup'] as $eggGroup) {
+        foreach ($content['data']['pokemon_v2_egggroup'] as $eggGroup) {
             $eggGroupEntity = new EggGroup();
             $eggGroupEntity->setName($eggGroup['name']);
             $eggGroups[] = $eggGroupEntity;

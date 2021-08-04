@@ -4,8 +4,6 @@ namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\MoveLearnMethod;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 //extract and transform learn methods information into entities from pokeapi
 class MoveLearnMethodApi

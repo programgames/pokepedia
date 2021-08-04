@@ -27,6 +27,6 @@ class LoadItemNames extends Fixture implements DependentFixtureInterface,AppFixt
 
     public function getDependencies()
     {
-        return [LoadItem::class];
+        return [LoadItemCategory::class];
     }
 }

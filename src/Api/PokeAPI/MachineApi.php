@@ -3,6 +3,7 @@
 namespace App\Api\PokeAPI;
 
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
+use App\Entity\GrowthRate;
 use App\Entity\Item;
 use App\Entity\Machine;
 use App\Entity\Move;
@@ -36,6 +37,9 @@ query MyQuery {
     pokemon_v2_versiongroup {
       name
     }
+    pokemon_v2_growthrate {
+      name
+    }
   }
 }
 
@@ -63,6 +67,15 @@ GRAPHQL;
                     'name' => $machine['pokemon_v2_versiongroup']['name']
                 ]
             );
+            if($machine['pokemon_v2_growthrate']) {
+                $growthRate = $this->entityManager->getRepository(GrowthRate::class)->findOneBy(
+                    [
+                        'name' => $machine['pokemon_v2_growthrate']['name']
+                    ]
+                );
+                $machineEntity->setGrowthRate($growthRate);
+
+            }
             $machineEntity->setVersionGroup($versionGroup);
             $machineEntity->setMove($move);
             $machineEntity->setItem($item);

@@ -22,9 +22,10 @@ class TypeApi
         $this->entityManager = $entityManager;
     }
 
-    public function getMoveNames(): array
+    public function getTypes(): array
     {
         $query = <<<GRAPHQL
+query MyQuery {
   pokemon_v2_type {
     pokemon_v2_movedamageclass {
       name
@@ -43,18 +44,21 @@ GRAPHQL;
         foreach ($content['data']['pokemon_v2_type'] as $type) {
             $typeEntity = new Type();
             $typeEntity->setName($type['name']);
-            $damageClass = $this->entityManager->getRepository(MoveDamageClass::class)->findOneBy(
-                [
-                    'name' => $type['pokemon_v2_movedamageclass']['name']
-                ]
-            );
+            if($type['pokemon_v2_movedamageclass']) {
+                $damageClass = $this->entityManager->getRepository(MoveDamageClass::class)->findOneBy(
+                    [
+                        'name' => $type['pokemon_v2_movedamageclass']['name']
+                    ]
+                );
+                $typeEntity->setMoveDamageClass($damageClass);
+            }
+
             $generation = $this->entityManager->getRepository(Generation::class)->findOneBy(
                 [
-                    'name' => $type['pokemon_v2_movedamageclass']['name']
+                    'name' => $type['pokemon_v2_generation']['name']
                 ]
             );
             $typeEntity->setGeneration($generation);
-            $typeEntity->setMoveDamageClass($damageClass);
             $types[] = $typeEntity;
         }
 

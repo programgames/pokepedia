@@ -31,7 +31,7 @@ class SpecyName
      * @ORM\ManyToOne(targetEntity=PokemonSpecy::class, inversedBy="names")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?PokemonSpecy $pokemonSpecy;
+    private PokemonSpecy $pokemonSpecy;
 
     public function getId(): ?int
     {
@@ -67,7 +67,7 @@ class SpecyName
         return $this->pokemonSpecy;
     }
 
-    public function setPokemonSpecy(?PokemonSpecy $pokemonSpecy): self
+    public function setPokemonSpecy(PokemonSpecy $pokemonSpecy): self
     {
         $this->pokemonSpecy = $pokemonSpecy;
 

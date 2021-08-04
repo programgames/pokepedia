@@ -35,20 +35,32 @@ class Generation
     private Collection $pokemonSpecies;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=false)
      */
-    private ?int $generationIdentifier;
+    private int $generationIdentifier;
 
     /**
      * @ORM\OneToMany(targetEntity=Type::class, mappedBy="generation")
      */
     private $types;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonTypePast::class, mappedBy="generation")
+     */
+    private $pokemonTypePasts;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Move::class, mappedBy="generation")
+     */
+    private $moves;
+
     public function __construct()
     {
         $this->versionGroups = new ArrayCollection();
         $this->pokemonSpecies = new ArrayCollection();
         $this->types = new ArrayCollection();
+        $this->pokemonTypePasts = new ArrayCollection();
+        $this->moves = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -133,7 +145,7 @@ class Generation
         return $this->generationIdentifier;
     }
 
-    public function setGenerationIdentifier(?int $generationIdentifier): self
+    public function setGenerationIdentifier(int $generationIdentifier): self
     {
         $this->generationIdentifier = $generationIdentifier;
 
@@ -164,6 +176,66 @@ class Generation
             // set the owning side to null (unless already changed)
             if ($type->getGeneration() === $this) {
                 $type->setGeneration(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonTypePast[]
+     */
+    public function getPokemonTypePasts(): Collection
+    {
+        return $this->pokemonTypePasts;
+    }
+
+    public function addPokemonTypePast(PokemonTypePast $pokemonTypePast): self
+    {
+        if (!$this->pokemonTypePasts->contains($pokemonTypePast)) {
+            $this->pokemonTypePasts[] = $pokemonTypePast;
+            $pokemonTypePast->setGeneration($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonTypePast(PokemonTypePast $pokemonTypePast): self
+    {
+        if ($this->pokemonTypePasts->removeElement($pokemonTypePast)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonTypePast->getGeneration() === $this) {
+                $pokemonTypePast->setGeneration(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Move[]
+     */
+    public function getMoves(): Collection
+    {
+        return $this->moves;
+    }
+
+    public function addMove(Move $move): self
+    {
+        if (!$this->moves->contains($move)) {
+            $this->moves[] = $move;
+            $move->setGeneration($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMove(Move $move): self
+    {
+        if ($this->moves->removeElement($move)) {
+            // set the owning side to null (unless already changed)
+            if ($move->getGeneration() === $this) {
+                $move->setGeneration(null);
             }
         }
 

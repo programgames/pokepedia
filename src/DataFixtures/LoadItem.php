@@ -4,9 +4,10 @@ namespace App\DataFixtures;
 
 use App\Api\PokeAPI\ItemApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadItem extends Fixture implements AppFixtureInterface
+class LoadItem extends Fixture implements AppFixtureInterface,DependentFixtureInterface
 {
     private ItemApi $itemApi;
 
@@ -22,5 +23,10 @@ class LoadItem extends Fixture implements AppFixtureInterface
             $manager->persist($item);
         }
         $manager->flush();
+    }
+
+    public function getDependencies()
+    {
+        return [LoadItemCategory::class,LoadItemFlingEffect::class];
     }
 }

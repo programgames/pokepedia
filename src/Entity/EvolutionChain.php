@@ -24,6 +24,11 @@ class EvolutionChain
      */
     private Collection $pokemonSpecies;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Item::class, inversedBy="evolutionChains")
+     */
+    private $babyTriggerItem;
+
     public function __construct()
     {
         $this->pokemonSpecies = new ArrayCollection();
@@ -58,6 +63,18 @@ class EvolutionChain
         if ($this->pokemonSpecies->removeElement($pokemonSpecies) && $pokemonSpecies->getEvolutionChain() === $this) {
             $pokemonSpecies->setEvolutionChain(null);
         }
+
+        return $this;
+    }
+
+    public function getBabyTriggerItem(): ?Item
+    {
+        return $this->babyTriggerItem;
+    }
+
+    public function setBabyTriggerItem(?Item $babyTriggerItem): self
+    {
+        $this->babyTriggerItem = $babyTriggerItem;
 
         return $this;
     }

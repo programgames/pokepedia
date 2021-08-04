@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
  */
 class LoadAppFixturesCommand extends DoctrineCommand
 {
-    protected static $defaultName = 'app:fixture:load';
+    protected static $defaultName = 'app:fixtures:load';
 
     private AppFixturesLoader $fixturesLoader;
 

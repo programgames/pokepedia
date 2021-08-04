@@ -29,9 +29,15 @@ class EggGroup
      */
     private Collection $pokemonSpecies;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonEggGroup::class, mappedBy="eggGroup")
+     */
+    private $pokemonEggGroups;
+
     public function __construct()
     {
         $this->pokemonSpecies = new ArrayCollection();
+        $this->pokemonEggGroups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -73,6 +79,36 @@ class EggGroup
     {
         if ($this->pokemonSpecies->removeElement($pokemonSpecies)) {
             $pokemonSpecies->removeEggGroup($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonEggGroup[]
+     */
+    public function getPokemonEggGroups(): Collection
+    {
+        return $this->pokemonEggGroups;
+    }
+
+    public function addPokemonEggGroup(PokemonEggGroup $pokemonEggGroup): self
+    {
+        if (!$this->pokemonEggGroups->contains($pokemonEggGroup)) {
+            $this->pokemonEggGroups[] = $pokemonEggGroup;
+            $pokemonEggGroup->setEggGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonEggGroup(PokemonEggGroup $pokemonEggGroup): self
+    {
+        if ($this->pokemonEggGroups->removeElement($pokemonEggGroup)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonEggGroup->getEggGroup() === $this) {
+                $pokemonEggGroup->setEggGroup(null);
+            }
         }
 
         return $this;

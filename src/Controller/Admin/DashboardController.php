@@ -2,8 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use App\Api\PokeAPI\ItemNameApi;
-use App\Entity\BaseInformation;
 use App\Entity\EggGroup;
 use App\Entity\Generation;
 use App\Entity\Item;
@@ -48,7 +46,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Espèce de Pokémon', 'fa fa-tags', PokemonSpecy::class);
         yield MenuItem::linkToCrud('Nom des Espèce de Pokémon', 'fa fa-tags', SpecyName::class);
         yield MenuItem::linkToCrud('Noms des Pokemons', 'fa fa-tags', PokemonName::class);
-        yield MenuItem::linkToCrud('Pokemon Informations', 'fa fa-tags', BaseInformation::class);
         yield MenuItem::linkToCrud('Disponibilitées', 'fa fa-tags', PokemonAvailability::class);
         yield MenuItem::linkToCrud('Groupe d\'oeufs', 'fa fa-tags', EggGroup::class);
         yield MenuItem::section('Général', 'fa fa-tags');

@@ -28,17 +28,12 @@ class Pokemon
      * @ORM\ManyToOne(targetEntity=PokemonSpecy::class, inversedBy="pokemons")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?PokemonSpecy $pokemonSpecy;
+    private PokemonSpecy $pokemonSpecy;
 
     /**
      * @ORM\OneToMany(targetEntity=PokemonMove::class, mappedBy="pokemon", orphanRemoval=true)
      */
     private Collection $pokemonMoves;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $specificName;
 
     /**
      * @ORM\Column(type="boolean")
@@ -68,23 +63,50 @@ class Pokemon
     /**
      * @ORM\ManyToMany(targetEntity=Pokemon::class)
      */
-    private Collection $forms;
-
-    /**
-     * @ORM\OneToOne(targetEntity=BaseInformation::class, inversedBy="pokemon", cascade={"persist", "remove"})
-     */
-    private $baseInformation;
+    private Collection $moveForms;
 
     /**
      * @ORM\OneToOne(targetEntity=PokemonName::class, inversedBy="pokemon", cascade={"persist", "remove"})
      */
     private $pokemonName;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonType::class, mappedBy="pokemon")
+     */
+    private $pokemonTypes;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonTypePast::class, mappedBy="pokemon")
+     */
+    private $pokemonTypePasts;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $baseExperience;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $height;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $pokemonOrder;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $weight;
+
     public function __construct()
     {
         $this->pokemonMoves = new ArrayCollection();
         $this->pokemonAvailabilities = new ArrayCollection();
-        $this->forms = new ArrayCollection();
+        $this->moveForms = new ArrayCollection();
+        $this->pokemonTypes = new ArrayCollection();
+        $this->pokemonTypePasts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -104,12 +126,12 @@ class Pokemon
         return $this;
     }
 
-    public function getPokemonSpecy(): ?PokemonSpecy
+    public function getPokemonSpecy(): PokemonSpecy
     {
         return $this->pokemonSpecy;
     }
 
-    public function setPokemonSpecy(?PokemonSpecy $pokemonSpecy): self
+    public function setPokemonSpecy(PokemonSpecy $pokemonSpecy): self
     {
         $this->pokemonSpecy = $pokemonSpecy;
 
@@ -142,18 +164,6 @@ class Pokemon
                 $pokemonMove->setPokemon(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getSpecificName(): ?string
-    {
-        return $this->specificName;
-    }
-
-    public function setSpecificName(?string $specificName): self
-    {
-        $this->specificName = $specificName;
 
         return $this;
     }
@@ -239,35 +249,23 @@ class Pokemon
     /**
      * @return Collection|self[]
      */
-    public function getForms(): Collection
+    public function getMoveForms(): Collection
     {
-        return $this->forms;
+        return $this->moveForms;
     }
 
-    public function addForm(self $form): self
+    public function addMoveForm(self $form): self
     {
-        if (!$this->forms->contains($form)) {
-            $this->forms[] = $form;
+        if (!$this->moveForms->contains($form)) {
+            $this->moveForms[] = $form;
         }
 
         return $this;
     }
 
-    public function removeForm(self $form): self
+    public function removeMoveForm(self $form): self
     {
-        $this->forms->removeElement($form);
-
-        return $this;
-    }
-
-    public function getBaseInformation(): ?BaseInformation
-    {
-        return $this->baseInformation;
-    }
-
-    public function setBaseInformation(?BaseInformation $baseInformation): self
-    {
-        $this->baseInformation = $baseInformation;
+        $this->moveForms->removeElement($form);
 
         return $this;
     }
@@ -280,6 +278,114 @@ class Pokemon
     public function setPokemonName(?PokemonName $pokemonName): self
     {
         $this->pokemonName = $pokemonName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonType[]
+     */
+    public function getPokemonTypes(): Collection
+    {
+        return $this->pokemonTypes;
+    }
+
+    public function addPokemonType(PokemonType $pokemonType): self
+    {
+        if (!$this->pokemonTypes->contains($pokemonType)) {
+            $this->pokemonTypes[] = $pokemonType;
+            $pokemonType->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonType(PokemonType $pokemonType): self
+    {
+        if ($this->pokemonTypes->removeElement($pokemonType)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonType->getPokemon() === $this) {
+                $pokemonType->setPokemon(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonTypePast[]
+     */
+    public function getPokemonTypePasts(): Collection
+    {
+        return $this->pokemonTypePasts;
+    }
+
+    public function addPokemonTypePast(PokemonTypePast $pokemonTypePast): self
+    {
+        if (!$this->pokemonTypePasts->contains($pokemonTypePast)) {
+            $this->pokemonTypePasts[] = $pokemonTypePast;
+            $pokemonTypePast->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonTypePast(PokemonTypePast $pokemonTypePast): self
+    {
+        if ($this->pokemonTypePasts->removeElement($pokemonTypePast)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonTypePast->getPokemon() === $this) {
+                $pokemonTypePast->setPokemon(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getBaseExperience(): ?int
+    {
+        return $this->baseExperience;
+    }
+
+    public function setBaseExperience(int $baseExperience): self
+    {
+        $this->baseExperience = $baseExperience;
+
+        return $this;
+    }
+
+    public function getHeight(): ?int
+    {
+        return $this->height;
+    }
+
+    public function setHeight(int $height): self
+    {
+        $this->height = $height;
+
+        return $this;
+    }
+
+    public function getPokemonOrder(): ?int
+    {
+        return $this->pokemonOrder;
+    }
+
+    public function setPokemonOrder(int $pokemonOrder): self
+    {
+        $this->pokemonOrder = $pokemonOrder;
+
+        return $this;
+    }
+
+    public function getWeight(): ?int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(int $weight): self
+    {
+        $this->weight = $weight;
 
         return $this;
     }

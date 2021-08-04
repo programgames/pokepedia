@@ -26,25 +26,30 @@ class PokemonMove
      * @ORM\ManyToOne(targetEntity=Move::class, inversedBy="pokemonMoves")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?Move $move;
+    private Move $move;
 
     /**
      * @ORM\ManyToOne(targetEntity=VersionGroup::class, inversedBy="pokemonMoves")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?VersionGroup $versionGroup;
+    private VersionGroup $versionGroup;
 
     /**
      * @ORM\ManyToOne(targetEntity=MoveLearnMethod::class, inversedBy="pokemonMoves")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?MoveLearnMethod $learnMethod;
+    private MoveLearnMethod $learnMethod;
 
     /**
      * @ORM\ManyToOne(targetEntity=Pokemon::class, inversedBy="pokemonMoves")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?pokemon $pokemon;
+    private pokemon $pokemon;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $pokemonMoveOrder;
 
     public function getId(): ?int
     {
@@ -68,7 +73,7 @@ class PokemonMove
         return $this->move;
     }
 
-    public function setMove(?Move $move): self
+    public function setMove(Move $move): self
     {
         $this->move = $move;
 
@@ -80,14 +85,14 @@ class PokemonMove
         return $this->versionGroup;
     }
 
-    public function setVersionGroup(?VersionGroup $versionGroup): self
+    public function setVersionGroup(VersionGroup $versionGroup): self
     {
         $this->versionGroup = $versionGroup;
 
         return $this;
     }
 
-    public function getLearnMethod(): ?MoveLearnMethod
+    public function getLearnMethod(): MoveLearnMethod
     {
         return $this->learnMethod;
     }
@@ -104,9 +109,21 @@ class PokemonMove
         return $this->pokemon;
     }
 
-    public function setPokemon(?pokemon $pokemon): self
+    public function setPokemon(pokemon $pokemon): self
     {
         $this->pokemon = $pokemon;
+
+        return $this;
+    }
+
+    public function getPokemonMoveOrder(): ?int
+    {
+        return $this->pokemonMoveOrder;
+    }
+
+    public function setPokemonMoveOrder(?int $pokemonMoveOrder): self
+    {
+        $this->pokemonMoveOrder = $pokemonMoveOrder;
 
         return $this;
     }

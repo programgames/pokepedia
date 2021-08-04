@@ -6,8 +6,6 @@ use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\Pokemon;
 use App\Entity\PokemonSpecy;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 //extract and transform pokemon information into entities from pokeapi
 class PokemonApi
@@ -33,10 +31,13 @@ query MyQuery {
   pokemon_v2_pokemon {
     name
     is_default
+    base_experience
+    height
+    order
+    weight
     pokemon_v2_pokemonspecy {
       name
     }
-    id
   }
 }
 GRAPHQL;
@@ -48,6 +49,10 @@ GRAPHQL;
             $pokemonEntity = new Pokemon();
             $pokemonEntity->setName($pokemon['name']);
             $pokemonEntity->setIsDefault($pokemon['is_default']);
+            $pokemonEntity->setHeight($pokemon['height']);
+            $pokemonEntity->setPokemonOrder($pokemon['order']);
+            $pokemonEntity->setBaseExperience($pokemon['base_experience']);
+            $pokemonEntity->setWeight($pokemon['weight']);
             $pokemonEntity = $this->setImportInformations($pokemonEntity, $pokemon);
             /** @var PokemonSpecy $specy */
             $specy = $this->entityManager->getRepository(PokemonSpecy::class)->findOneBy(

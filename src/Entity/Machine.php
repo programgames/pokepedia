@@ -36,7 +36,12 @@ class Machine
      * @ORM\ManyToOne(targetEntity=VersionGroup::class, inversedBy="machines")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?VersionGroup $versionGroup;
+    private VersionGroup $versionGroup;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=GrowthRate::class, inversedBy="machines")
+     */
+    private $growthRate;
 
     public function getId(): ?int
     {
@@ -79,14 +84,26 @@ class Machine
         return $this;
     }
 
-    public function getVersionGroup(): ?VersionGroup
+    public function getVersionGroup(): VersionGroup
     {
         return $this->versionGroup;
     }
 
-    public function setVersionGroup(?VersionGroup $versionGroup): self
+    public function setVersionGroup(VersionGroup $versionGroup): self
     {
         $this->versionGroup = $versionGroup;
+
+        return $this;
+    }
+
+    public function getGrowthRate(): ?GrowthRate
+    {
+        return $this->growthRate;
+    }
+
+    public function setGrowthRate(?GrowthRate $growthRate): self
+    {
+        $this->growthRate = $growthRate;
 
         return $this;
     }

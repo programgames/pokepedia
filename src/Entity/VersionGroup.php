@@ -33,7 +33,7 @@ class VersionGroup
      * @ORM\ManyToOne(targetEntity=Generation::class, inversedBy="versionGroups")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?Generation $generation;
+    private Generation $generation;
 
     /**
      * @ORM\OneToMany(targetEntity=Machine::class, mappedBy="versionGroup", orphanRemoval=true)
@@ -91,7 +91,7 @@ class VersionGroup
         return $this->generation;
     }
 
-    public function setGeneration(?Generation $generation): self
+    public function setGeneration(Generation $generation): self
     {
         $this->generation = $generation;
 

@@ -22,7 +22,6 @@ class LoadLetsGoMachine extends Fixture implements DependentFixtureInterface,App
 
     public function load(ObjectManager $manager)
     {
-
         $generation = '72';
 
         $lgpe = $manager->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);

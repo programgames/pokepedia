@@ -14,7 +14,7 @@ class MoveDamageClassApi
         $this->client = $client;
     }
 
-    public function getMoveDam(): array
+    public function getDamageClasses(): array
     {
         $query = <<<GRAPHQL
 query MyQuery {

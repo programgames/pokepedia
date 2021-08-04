@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Handler;
+
+namespace App\DataFixtures;
+
 
 use App\Entity\Pokemon;
 use App\Entity\PokemonAvailability;
 use App\Entity\VersionGroup;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
-/** class generating in which version pokemon are available */
-class AvailabilityByGenerationHandler
+class LoadAvailabilitiesAndMoveForm extends Fixture implements DependentFixtureInterface, AppFixtureInterface
 {
-    private bool $initialized = false;
-    private EntityManagerInterface $em;
     /**
      * @var VersionGroup|object|null
      */
@@ -87,14 +88,9 @@ class AvailabilityByGenerationHandler
 
     private array $formPokemons = [];
 
-    public function __construct(EntityManagerInterface $em)
+    private function init(ObjectManager $em): void
     {
-        $this->em = $em;
-    }
-
-    private function init(): void
-    {
-        $versiongroupRepository = $this->em->getRepository(VersionGroup::class);
+        $versiongroupRepository = $em->getRepository(VersionGroup::class);
 
         $this->redBlueVg = $versiongroupRepository->findOneBy([
             'name' => 'red-blue'
@@ -152,224 +148,227 @@ class AvailabilityByGenerationHandler
         ]);
     }
 
-    public function handleAvailablities(): void
+    public function load(ObjectManager $manager): void
     {
-        if (!$this->initialized) {
-            $this->init();
-        }
-
-        $this->handleByGen();
-        $this->em->flush();
+        $this->handleAvailablities($manager);
     }
 
-    private function handleByGen(): void
+    public function handleAvailablities(ObjectManager $em): void
     {
-        $this->handleGen1();
-        $this->handleGen2();
-        $this->handleGen3();
-        $this->handleGen4();
-        $this->handleGen5();
-        $this->handleGen6();
-        $this->handleGen7();
-        $this->handleLGPE();
+        $this->init($em);
+
+        $this->loadGens($em);
+        $em->flush();
     }
 
-    private function handleGen1(): void
+    private function loadGens(ObjectManager $em): void
+    {
+        $this->handleGen1($em);
+        $this->handleGen2($em);
+        $this->handleGen3($em);
+        $this->handleGen4($em);
+        $this->handleGen5($em);
+        $this->handleGen6($em);
+        $this->handleGen7($em);
+        $this->handleLGPE($em);
+    }
+
+    private function handleGen1(ObjectManager $em): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->redBlueVg;
         $versionGroups[] = $this->yellowVG;
 
-        $pokemons = $this->em->getRepository(Pokemon::class)
-            ->findDefaultPokemons(1, 151);
+        $pokemons = $em->getRepository(Pokemon::class)
+                             ->findDefaultPokemons(1, 151);
 
-        $this->saveAvailabilities($pokemons, $versionGroups);
+        $this->saveAvailabilities($em,$pokemons, $versionGroups);
     }
 
-    private function handleGen2(): void
+    private function handleGen2(ObjectManager $em): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->crystalVG;
         $versionGroups[] = $this->goldSilverVG;
 
-        $pokemons = $this->em->getRepository(Pokemon::class)
-            ->findDefaultPokemons(1, 251);
+        $pokemons = $em->getRepository(Pokemon::class)
+                             ->findDefaultPokemons(1, 251);
 
-        $this->saveAvailabilities($pokemons, $versionGroups);
+        $this->saveAvailabilities($em,$pokemons, $versionGroups);
     }
 
-    private function handleGen3(): void
+    private function handleGen3(ObjectManager $em): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->emeraldVG;
         $versionGroups[] = $this->rubySapphirVG;
         $versionGroups[] = $this->fireRedLeafGreenVG;
 
-        $pokemons = $this->em->getRepository(Pokemon::class)
-            ->findDefaultPokemons(1, 386);
+        $pokemons = $em->getRepository(Pokemon::class)
+                             ->findDefaultPokemons(1, 386);
 
-        $this->saveAvailabilities($pokemons, $versionGroups);
+        $this->saveAvailabilities($em,$pokemons, $versionGroups);
     }
 
-    private function handleGen4(): void
+    private function handleGen4(ObjectManager $em): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->diamondPearlVG;
         $versionGroups[] = $this->platinumVG;
         $versionGroups[] = $this->heartGoldSoulSilverVG;
 
-        $wormadan = $this->getPokemon('wormadam-plant');
-        $sandyWormadan = $this->getPokemon('wormadam-sandy');
-        $trashWormadan = $this->getPokemon('wormadam-trash');
+        $wormadan = $this->getPokemon($em,'wormadam-plant');
+        $sandyWormadan = $this->getPokemon($em,'wormadam-sandy');
+        $trashWormadan = $this->getPokemon($em,'wormadam-trash');
         $wormadan->setHasMoveForms(true);
-        $wormadan->addForm($sandyWormadan);
-        $wormadan->addForm($trashWormadan);
-        $this->em->persist($wormadan);
-        $pokemons = $this->em->getRepository(Pokemon::class)
-            ->findDefaultPokemons(1, 493);
+        $wormadan->addMoveForm($sandyWormadan);
+        $wormadan->addMoveForm($trashWormadan);
+        $em->persist($wormadan);
+        $pokemons = $em->getRepository(Pokemon::class)
+                             ->findDefaultPokemons(1, 493);
         array_push($this->formPokemons, $sandyWormadan, $trashWormadan);
         array_push($pokemons, $sandyWormadan, $trashWormadan);
-        $this->saveAvailabilities($pokemons, $versionGroups);
+        $this->saveAvailabilities($em,$pokemons, $versionGroups);
 
-        $shaymin = $this->getPokemon('shaymin-land');
-        $shayminSky = $this->getPokemon('shaymin-sky');
+        $shaymin = $this->getPokemon($em,'shaymin-land');
+        $shayminSky = $this->getPokemon($em,'shaymin-sky');
         $this->formPokemons[] = $shayminSky;
 
         $shaymin->setHasMoveForms(true);
-        $shaymin->addForm($shayminSky);
-        $this->em->persist($shaymin);
+        $shaymin->addMoveForm($shayminSky);
+        $em->persist($shaymin);
 
         $specificVg = [];
         $specificVg[] = $this->platinumVG;
         $specificVg[] = $this->heartGoldSoulSilverVG;
 
-        $this->saveAvailabilities([$shayminSky], $specificVg);
+        $this->saveAvailabilities($em,[$shayminSky], $specificVg);
     }
 
-    private function handleGen5(): void
+    private function handleGen5(ObjectManager $em): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->blackWhiteVG;
         $versionGroups[] = $this->black2White2VG;
 
-        $pokemons = $this->em->getRepository(Pokemon::class)
-            ->findDefaultPokemons(1, 649);
+        $pokemons = $em->getRepository(Pokemon::class)
+                             ->findDefaultPokemons(1, 649);
 
-        $darmatitan = $this->getPokemon('darmanitan-standard');
-        $darmanitanZen = $this->getPokemon('darmanitan-zen');
+        $darmatitan = $this->getPokemon($em,'darmanitan-standard');
+        $darmanitanZen = $this->getPokemon($em,'darmanitan-zen');
         $this->formPokemons[] = $darmanitanZen;
-        $darmatitan->addForm($darmanitanZen);
+        $darmatitan->addMoveForm($darmanitanZen);
         $darmatitan->setHasMoveForms(true);
-        $this->em->persist($darmatitan);
+        $em->persist($darmatitan);
 
         $pokemons = array_merge($this->formPokemons, $pokemons);
 
-        $this->saveAvailabilities($pokemons, $versionGroups);
+        $this->saveAvailabilities($em,$pokemons, $versionGroups);
 
-        $kyurem = $this->getPokemon('kyurem');
-        $whiteKyurem = $this->getPokemon('kyurem-black');
-        $blackKyurem = $this->getPokemon('kyurem-white');
+        $kyurem = $this->getPokemon($em,'kyurem');
+        $whiteKyurem = $this->getPokemon($em,'kyurem-black');
+        $blackKyurem = $this->getPokemon($em,'kyurem-white');
         array_push($this->formPokemons, $whiteKyurem, $blackKyurem);
 
         $kyurem->setHasMoveForms(true);
-        $kyurem->addForm($whiteKyurem);
-        $kyurem->addForm($blackKyurem);
-        $this->em->persist($kyurem);
+        $kyurem->addMoveForm($whiteKyurem);
+        $kyurem->addMoveForm($blackKyurem);
+        $em->persist($kyurem);
 
         $specificVg = [];
         $specificVg[] = $this->black2White2VG;
 
-        $this->saveAvailabilities([$whiteKyurem, $blackKyurem], $specificVg);
+        $this->saveAvailabilities($em,[$whiteKyurem, $blackKyurem], $specificVg);
     }
 
-    private function handleGen6(): void
+    private function handleGen6(ObjectManager $em): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->xyVG;
         $versionGroups[] = $this->orasVG;
 
-        $hoopa = $this->getPokemon('hoopa');
-        $hoopaUnbound = $this->getPokemon('hoopa-unbound');
+        $hoopa = $this->getPokemon($em,'hoopa');
+        $hoopaUnbound = $this->getPokemon($em,'hoopa-unbound');
         $this->formPokemons[] = $hoopaUnbound;
-        $hoopa->addForm($hoopaUnbound);
+        $hoopa->addMoveForm($hoopaUnbound);
         $hoopa->setHasMoveForms(true);
-        $this->em->persist($hoopa);
+        $em->persist($hoopa);
 
-        $pokemons = $this->em->getRepository(Pokemon::class)
-            ->findDefaultPokemons(1, 721);
+        $pokemons = $em->getRepository(Pokemon::class)
+                             ->findDefaultPokemons(1, 721);
         $pokemons = array_merge($this->formPokemons, $pokemons);
-        $this->saveAvailabilities($pokemons, $versionGroups);
+        $this->saveAvailabilities($em,$pokemons, $versionGroups);
     }
 
-    private function handleGen7(): void
+    private function handleGen7(ObjectManager $em): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->sunMoonVG;
         $versionGroups[] = $this->ultraSunUltraMoonVG;
 
-        $lycanroc = $this->getPokemon('lycanroc-midday');
-        $lycanrocMidnight = $this->getPokemon('lycanroc-midnight');
-        $lycanrocDusk = $this->getPokemon('lycanroc-dusk');
+        $lycanroc = $this->getPokemon($em,'lycanroc-midday');
+        $lycanrocMidnight = $this->getPokemon($em,'lycanroc-midnight');
+        $lycanrocDusk = $this->getPokemon($em,'lycanroc-dusk');
         $this->formPokemons[] = $lycanrocMidnight;
 
-        $lycanroc->addForm($lycanrocMidnight);
-        $lycanroc->addForm($lycanrocDusk);
+        $lycanroc->addMoveForm($lycanrocMidnight);
+        $lycanroc->addMoveForm($lycanrocDusk);
         $lycanroc->setHasMoveForms(true);
-        $this->em->persist($lycanroc);
+        $em->persist($lycanroc);
 
-        $pokemons = $this->em->getRepository(Pokemon::class)
-            ->findDefaultPokemons(1, 809);
+        $pokemons = $em->getRepository(Pokemon::class)
+                             ->findDefaultPokemons(1, 809);
         $pokemons = array_merge($this->formPokemons, $pokemons);
-        $pokemons = array_merge($pokemons, $this->em->getRepository(Pokemon::class)->findAlolaPokemons());
+        $pokemons = array_merge($pokemons, $em->getRepository(Pokemon::class)->findAlolaPokemons());
 
-        $this->saveAvailabilities($pokemons, $versionGroups);
+        $this->saveAvailabilities($em,$pokemons, $versionGroups);
 
         $this->formPokemons[] = $lycanrocDusk;
 
-        $necrozma = $this->getPokemon('necrozma');
-        $duskNecrozma = $this->getPokemon('necrozma-dusk');
-        $dawnNecrozma = $this->getPokemon('necrozma-dawn');
-        $ultraNecrozma = $this->getPokemon('necrozma-ultra');
+        $necrozma = $this->getPokemon($em, 'necrozma');
+        $duskNecrozma = $this->getPokemon($em, 'necrozma-dusk');
+        $dawnNecrozma = $this->getPokemon($em, 'necrozma-dawn');
+        $ultraNecrozma = $this->getPokemon($em, 'necrozma-ultra');
         array_push($this->formPokemons, $duskNecrozma, $dawnNecrozma, $ultraNecrozma, $lycanrocDusk);
 
         $necrozma->setHasMoveForms(true);
-        $necrozma->addForm($duskNecrozma);
-        $necrozma->addForm($dawnNecrozma);
-        $necrozma->addForm($ultraNecrozma);
+        $necrozma->addMoveForm($duskNecrozma);
+        $necrozma->addMoveForm($dawnNecrozma);
+        $necrozma->addMoveForm($ultraNecrozma);
 
         $specificVg = [];
         $specificVg[] = $this->ultraSunUltraMoonVG;
 
-        $this->saveAvailabilities([$duskNecrozma, $dawnNecrozma, $ultraNecrozma, $lycanrocDusk], $specificVg);
-        $this->loadAlolaForm();
+        $this->saveAvailabilities($em,[$duskNecrozma, $dawnNecrozma, $ultraNecrozma, $lycanrocDusk], $specificVg);
+        $this->loadAlolaForm($em);
 
-        $this->em->persist($necrozma);
+        $em->persist($necrozma);
     }
 
-    private function handleLGPE(): void
+    private function handleLGPE(ObjectManager $em): void
     {
         $versionGroups = [];
         $versionGroups[] = $this->lgpeVG;
 
-        $pokemons = $this->em->getRepository(Pokemon::class)
-            ->findDefaultPokemons(1, 151);
-        $pokemons = array_merge($pokemons, $this->em->getRepository(Pokemon::class)->findAlolaPokemons());
-        $pokemons[] = $this->getPokemon('meltan');
-        $pokemons[] = $this->getPokemon('melmetal');
-        $this->saveAvailabilities($pokemons, $versionGroups);
+        $pokemons = $em->getRepository(Pokemon::class)
+                             ->findDefaultPokemons(1, 151);
+        $pokemons = array_merge($pokemons, $em->getRepository(Pokemon::class)->findAlolaPokemons());
+        $pokemons[] = $this->getPokemon($em,'meltan');
+        $pokemons[] = $this->getPokemon($em, 'melmetal');
+        $this->saveAvailabilities($em,$pokemons, $versionGroups);
     }
 
-    private function handleGen8(): void
+    private function handleGen8(ObjectManager $em): void
     {
-        $this->loadGalarForm();
+        $this->loadGalarForm($em);
     }
 
-    private function getPokemon(string $name): Pokemon
+    private function getPokemon(ObjectManager $em,string $name): Pokemon
     {
-        return $this->em->getRepository(Pokemon::class)->findOneBy(['name' => $name]);
+        return $em->getRepository(Pokemon::class)->findOneBy(['name' => $name]);
     }
 
-    private function saveAvailabilities(array $pokemons, array $versionGroups): void
+    private function saveAvailabilities(ObjectManager $em,array $pokemons, array $versionGroups): void
     {
         foreach ($pokemons as $pokemon) {
             foreach ($versionGroups as $versionGroup) {
@@ -377,15 +376,15 @@ class AvailabilityByGenerationHandler
                 $pokemonAvailability->setVersionGroup($versionGroup);
                 $pokemonAvailability->setPokemon($pokemon);
                 $pokemonAvailability->setAvailable(true);
-                $this->em->persist($pokemonAvailability);
+                $em->persist($pokemonAvailability);
             }
         }
     }
 
-    private function loadAlolaForm(): void
+    private function loadAlolaForm(ObjectManager $em): void
     {
-        $alolaPokemons = $this->em->getRepository(Pokemon::class)
-            ->findAlolaPokemons();
+        $alolaPokemons = $em->getRepository(Pokemon::class)
+                                  ->findAlolaPokemons();
 
         /** @var Pokemon $alolaPokemon */
         foreach ($alolaPokemons as $alolaPokemon) {
@@ -395,28 +394,35 @@ class AvailabilityByGenerationHandler
                 $originalName = 'raticate';
             }
 
-            $original = $this->em->getRepository(Pokemon::class)
-                ->findOneBy(['name' => $originalName]);
+            $original = $em->getRepository(Pokemon::class)
+                                 ->findOneBy(['name' => $originalName]);
             $original->setHasMoveForms(true);
-            $original->addForm($alolaPokemon);
+            $original->addMoveForm($alolaPokemon);
 
-            $this->em->persist($original);
+            $em->persist($original);
         }
     }
 
-    private function loadGalarForm(): void
+    private function loadGalarForm(ObjectManager $em): void
     {
-        $alolaPokemons = $this->em->getRepository(Pokemon::class)
-            ->findAlolaPokemons();
+        $alolaPokemons = $em->getRepository(Pokemon::class)
+                                  ->findAlolaPokemons();
 
         /** @var Pokemon $alolaPokemon */
         foreach ($alolaPokemons as $alolaPokemon) {
-            $original = $this->em->getRepository(Pokemon::class)
-                ->findOneBy(['name' => str_replace('-galar', '', $alolaPokemon->getName())]);
+            $original = $em->getRepository(Pokemon::class)
+                                 ->findOneBy(['name' => str_replace('-galar', '', $alolaPokemon->getName())]);
             $original->setHasMoveForms(true);
-            $original->addForm($alolaPokemon);
+            $original->addMoveForm($alolaPokemon);
 
-            $this->em->persist($original);
+            $em->persist($original);
         }
     }
+
+    public function getDependencies(): array
+    {
+        return [LoadVersionGroup::class, LoadPokemon::class];
+    }
 }
+
+

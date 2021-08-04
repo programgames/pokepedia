@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Api\PokeAPI\PokemonApi;
+use App\Api\PokeAPI\PokemonColorApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
