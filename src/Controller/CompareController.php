@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Api\Http\Wikimedia\Client;
 use App\Api\Pokepedia\Client\Auth;
+use App\Cache\CacheHandler;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
+use App\Exception\InvalidResponse;
 use App\Processor\CompareProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,12 +23,14 @@ class CompareController extends AbstractController
     private EntityManagerInterface $em;
     private CompareProcessor $processor;
     private Auth $auth;
+    private CacheHandler $cacheHandler;
 
-    public function __construct(EntityManagerInterface $em, CompareProcessor $processor, Auth $auth)
+    public function __construct(EntityManagerInterface $em, CompareProcessor $processor, Auth $auth,CacheHandler $cacheHandler)
     {
         $this->em = $em;
         $this->processor = $processor;
         $this->auth = $auth;
+        $this->cacheHandler = $cacheHandler;
     }
 
     /**
@@ -113,16 +118,15 @@ class CompareController extends AbstractController
 
         $login_Token = $this->auth->getLoginToken($endPoint);
         $this->auth->loginRequest($login_Token, $endPoint);
-        $csrf_Token = $this->auth->getCSRFToken($endPoint);
-        return $csrf_Token;
+        return $this->auth->getCSRFToken($endPoint);
     }
 
     /**
      * @Route("/admin/compare/upload", name="_upload_compare", options={"expose"=true})
      * @param Request $request
-     * @return JsonResponse|Response
+     * @return JsonResponse
      */
-    public function uploadCompare(Request $request)
+    public function uploadCompare(Request $request): JsonResponse
     {
         $cookies = $request->cookies;
 
@@ -134,25 +138,44 @@ class CompareController extends AbstractController
         $params = [
             "action" => "edit",
             "section" => $section,
-            "title" => $title,
+            "title" => str_replace("%27","'",$title),
             "text" => $wikiText,
-            "token" => $token,
             "format" => "json",
             "bot" => true,
             "nocreate" => true,
+            "token" => $token,
         ];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://www.pokepedia.fr/api.php');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
-        curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
+        try {
+            Client::edit('https://www.pokepedia.fr/api.php', $params);
 
-        $output = curl_exec($ch);
-        curl_close($ch);
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'data' => 'Wiki text uploaded'
+                ]
+            );
 
-        echo($output);
+        } catch (InvalidResponse $exception) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'error' => $exception->getMessage()
+                ]
+            );
+        }
     }
+
+    /**
+     * @Route("/admin/clear-cache", name="_clear_cache", options={"expose"=true})
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function clearPokepediaMoveCache(Request $request): JsonResponse
+    {
+        $this->cacheHandler->deletePokepediaPokemonMoveCache();
+
+        return new JsonResponse("OK");
+    }
+
 }

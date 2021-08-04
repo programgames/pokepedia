@@ -7,10 +7,11 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadFrenchMovesAliases extends Fixture implements DependentFixtureInterface
+class LoadFrenchMovesAliases extends Fixture implements DependentFixtureInterface,AppFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
+
         $this->replaceApostrophe($manager);
         $file = __DIR__ . '/data/french_move_alias.csv';
         $row = 1;

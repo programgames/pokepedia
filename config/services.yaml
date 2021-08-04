@@ -28,3 +28,9 @@ services:
         arguments:
             - '%env(string:POKEPEDIA_USER)%'
             - '%env(string:POKEPEDIA_PASSWORD)%'
+
+    App\Loader\AppFixturesLoader:
+        arguments:
+            - '@service_container'
+        tags:
+            - 'app.fixtures.loader'

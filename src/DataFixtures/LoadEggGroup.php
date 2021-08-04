@@ -6,7 +6,7 @@ use App\Api\PokeAPI\EggGroupApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadEggGroup extends Fixture
+class LoadEggGroup extends Fixture implements AppFixtureInterface
 {
     private EggGroupApi $eggGroupApi;
 
@@ -17,6 +17,7 @@ class LoadEggGroup extends Fixture
 
     public function load(ObjectManager $manager)
     {
+
         foreach ($this->eggGroupApi->getPokemons() as $eggGroup) {
             $manager->persist($eggGroup);
         }

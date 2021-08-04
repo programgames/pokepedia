@@ -7,7 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadEvolutionChain extends Fixture implements DependentFixtureInterface
+class LoadEvolutionChain extends Fixture implements DependentFixtureInterface, AppFixtureInterface
 {
     private EvolutionChainApi $evolutionChainApi;
 
@@ -18,6 +18,7 @@ class LoadEvolutionChain extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
+
         foreach ($this->evolutionChainApi->getEvolutionChains() as $evolutionChain) {
             $manager->persist($evolutionChain);
         }

@@ -7,7 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadPokemonSpecies extends Fixture implements DependentFixtureInterface
+class LoadPokemonSpecies extends Fixture implements DependentFixtureInterface,AppFixtureInterface
 {
     private PokemonSpeciesApi $pokemonSpeciesApi;
 
@@ -18,6 +18,7 @@ class LoadPokemonSpecies extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
+
         foreach ($this->pokemonSpeciesApi->getPokemonSpecies() as $pokemonSpecies) {
             $manager->persist($pokemonSpecies);
         }

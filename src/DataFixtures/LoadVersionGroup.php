@@ -7,7 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadVersionGroup extends Fixture implements DependentFixtureInterface
+class LoadVersionGroup extends Fixture implements DependentFixtureInterface,AppFixtureInterface
 {
     private VersionGroupApi $versionGroupApi;
 
@@ -18,6 +18,7 @@ class LoadVersionGroup extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
+
         foreach ($this->versionGroupApi->getVersionGroups() as $versionGroup) {
             $manager->persist($versionGroup);
         }

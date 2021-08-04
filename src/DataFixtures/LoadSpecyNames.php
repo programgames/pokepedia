@@ -7,7 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadSpecyNames extends Fixture implements DependentFixtureInterface
+class LoadSpecyNames extends Fixture implements DependentFixtureInterface,AppFixtureInterface
 {
     private PokemonSpecyNameApi $pokemonSpecyNameApi;
 
@@ -18,6 +18,7 @@ class LoadSpecyNames extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
+
         foreach ($this->pokemonSpecyNameApi->getFrenchSpecyNames() as $moveName) {
             $manager->persist($moveName);
         }

@@ -6,7 +6,7 @@ use App\Api\PokeAPI\MoveLearnMethodApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadMoveLearnMethod extends Fixture
+class LoadMoveLearnMethod extends Fixture implements AppFixtureInterface
 {
     private MoveLearnMethodApi $learnMethodApi;
 
@@ -17,6 +17,7 @@ class LoadMoveLearnMethod extends Fixture
 
     public function load(ObjectManager $manager)
     {
+
         foreach ($this->learnMethodApi->getMoveLearnMethods() as $moveLearnMethod) {
             $manager->persist($moveLearnMethod);
         }

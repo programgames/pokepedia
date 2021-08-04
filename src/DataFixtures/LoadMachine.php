@@ -7,7 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadMachine extends Fixture implements DependentFixtureInterface
+class LoadMachine extends Fixture implements DependentFixtureInterface,AppFixtureInterface
 {
     private MachineApi $machineApi;
 
@@ -18,6 +18,7 @@ class LoadMachine extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
+
         foreach ($this->machineApi->getMachines() as $machine) {
             $manager->persist($machine);
         }

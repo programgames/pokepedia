@@ -11,7 +11,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadGen8Machine extends Fixture implements DependentFixtureInterface
+class LoadGen8Machine extends Fixture implements DependentFixtureInterface,AppFixtureInterface
 {
     private BulbapediaMachineAPI $api;
 
@@ -22,6 +22,7 @@ class LoadGen8Machine extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
+
         $generation = '8';
 
         $lgpe = $manager->getRepository(VersionGroup::class)->findOneBy(['name' => 'sword-shield']);

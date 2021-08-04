@@ -8,10 +8,11 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadPokemonNames extends Fixture implements DependentFixtureInterface
+class LoadPokemonNames extends Fixture implements DependentFixtureInterface,AppFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
+
         $file = __DIR__ . '/data/pokemon_names.csv';
         $row = 1;
         $repository = $manager->getRepository(Pokemon::class);

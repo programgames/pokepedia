@@ -6,7 +6,7 @@ use App\Api\PokeAPI\MoveApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadMove extends Fixture
+class LoadMove extends Fixture implements AppFixtureInterface
 {
     private MoveApi $moveApi;
 
@@ -17,6 +17,7 @@ class LoadMove extends Fixture
 
     public function load(ObjectManager $manager)
     {
+
         foreach ($this->moveApi->getMoves() as $moves) {
             $manager->persist($moves);
         }

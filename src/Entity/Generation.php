@@ -39,10 +39,16 @@ class Generation
      */
     private ?int $generationIdentifier;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Type::class, mappedBy="generation")
+     */
+    private $types;
+
     public function __construct()
     {
         $this->versionGroups = new ArrayCollection();
         $this->pokemonSpecies = new ArrayCollection();
+        $this->types = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,6 +136,36 @@ class Generation
     public function setGenerationIdentifier(?int $generationIdentifier): self
     {
         $this->generationIdentifier = $generationIdentifier;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Type[]
+     */
+    public function getTypes(): Collection
+    {
+        return $this->types;
+    }
+
+    public function addType(Type $type): self
+    {
+        if (!$this->types->contains($type)) {
+            $this->types[] = $type;
+            $type->setGeneration($this);
+        }
+
+        return $this;
+    }
+
+    public function removeType(Type $type): self
+    {
+        if ($this->types->removeElement($type)) {
+            // set the owning side to null (unless already changed)
+            if ($type->getGeneration() === $this) {
+                $type->setGeneration(null);
+            }
+        }
 
         return $this;
     }

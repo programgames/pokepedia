@@ -11,7 +11,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadLetsGoMachine extends Fixture implements DependentFixtureInterface
+class LoadLetsGoMachine extends Fixture implements DependentFixtureInterface,AppFixtureInterface
 {
     private BulbapediaMachineAPI $api;
 
@@ -22,6 +22,7 @@ class LoadLetsGoMachine extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
+
         $generation = '72';
 
         $lgpe = $manager->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);

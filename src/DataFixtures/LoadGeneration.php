@@ -6,7 +6,7 @@ use App\Api\PokeAPI\GenerationApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadGeneration extends Fixture
+class LoadGeneration extends Fixture implements AppFixtureInterface
 {
     private GenerationApi $generationApi;
 
@@ -17,6 +17,7 @@ class LoadGeneration extends Fixture
 
     public function load(ObjectManager $manager)
     {
+
         foreach ($this->generationApi->getGenerations() as $generation) {
             $manager->persist($generation);
         }

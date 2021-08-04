@@ -7,10 +7,11 @@ use App\Entity\MoveName;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadLetsGoMoves extends Fixture
+class LoadLetsGoMoves extends Fixture implements AppFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
+
         $moves = [
             "Écrous d'Poing",
             "Évo-Chardasso",

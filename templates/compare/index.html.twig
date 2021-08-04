@@ -24,11 +24,12 @@
 
         <label for="startAtCompare" value="1"></label><input type="number" id="startAtCompare"
                                                              min="1" max="898">
-
+        <button id="clear-cache" type="button">Clear cache</button>
         <button id="initCompare" type="button"> Init compare pokemon moves</button>
     </div>
 
-    <button id="upload-changes" type="button" hidden>Upload changes</button>
+    <button id="upload-compare" type="button" hidden>Upload</button>
+    <button id="next-compare" type="button" hidden>Next</button>
 
     <div id="compare-div">
     </div>
@@ -37,8 +38,6 @@
 
     <p id="generated-moves"></p>
 
-    <button id="next-compare" type="button" hidden>Next</button>
-    <button id="upload-compare" type="button" hidden>Upload</button>
 {% endblock %}
 
 

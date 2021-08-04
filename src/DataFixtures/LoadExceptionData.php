@@ -8,10 +8,11 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadExceptionData extends Fixture implements DependentFixtureInterface
+class LoadExceptionData extends Fixture implements DependentFixtureInterface, AppFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
+
         $this->loadViceGrip($manager);
         $this->loadBranchPoke($manager);
 
@@ -20,6 +21,7 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface
 
     public function getDependencies()
     {
+
         return [LoadMoveNames::class];
     }
 

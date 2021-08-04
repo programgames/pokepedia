@@ -50,7 +50,7 @@ class PokepediaMoveApi
     private function getLevelMovesFromCache(string $name, int $generation)
     {
         return $this->cache->get(
-            sprintf('pokepedia.wikitext.%s,%s.%s', $name, $generation, MoveSetHelper::LEVELING_UP_TYPE),
+            sprintf('pokepedia.wikitext.pokemonmove.%s,%s.%s', $name, $generation, MoveSetHelper::LEVELING_UP_TYPE),
             function () use ($name, $generation) {
                 return $this->moveClient->getMovesByPokemonGenerationAndType(
                     $name,

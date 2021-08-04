@@ -2,7 +2,10 @@
 
 namespace App;
 
+use App\DependencyInjection\AppExtension;
+use App\DependencyInjection\CompilerPass\AppFixturesCompilerPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
@@ -35,5 +38,12 @@ class Kernel extends BaseKernel
         } else {
             $routes->import('../config/{routes}.php');
         }
+    }
+
+    protected function build(ContainerBuilder $container)
+    {
+        $container->registerExtension(new AppExtension());
+        $container->addCompilerPass(new AppFixturesCompilerPass());
+
     }
 }

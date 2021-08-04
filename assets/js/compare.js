@@ -2,16 +2,14 @@ const $ = require('jquery');
 const routes = require('../../public/js/fos_js_routes.json');
 import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
 Routing.setRoutingData(routes);
-import Cookies from 'js-cookie';
 
-
-var pokemons = [];
-var learnMethod = '';
-var generation = [];
-var pokemonIndex;
-var generationIndex;
-var maxPokemon;
-var maxGeneration;
+let pokemons = [];
+let learnMethod = '';
+let generation = [];
+let pokemonIndex;
+let generationIndex;
+let maxPokemon;
+let maxGeneration;
 const compareDiv = document.getElementById('compare-div');
 const configuration = {
     drawFileList: false,
@@ -22,9 +20,28 @@ const configuration = {
     outputFormat: 'side-by-side',
 };
 
-var section;
-var title;
-var wikiText;
+let section;
+let title;
+let wikiText;
+let logs = $('#logs-compare');
+let uploadButton = $('#upload-compare');
+let nextButton = $('#next-compare');
+let clearCacheButton = $('#clear-cache');
+
+clearCacheButton.click(function () {
+
+    $.ajax
+    ({
+        url: Routing.generate('_clear_cache'),
+        type: 'post',
+        success: function (result) {
+            clearCacheButton.hide()
+        },
+        error: function (error) {
+            logs.text(error.error);
+        }
+    });
+});
 
 
 $('#initCompare').click(function () {
@@ -47,13 +64,12 @@ $('#initCompare').click(function () {
             maxGeneration = generation.length;
         },
         error: function (error) {
-            $('#logs-compare').show();
-            $('#logs-compare').text(error.error);
+            logs.text(error.error);
         }
     });
 });
 
-$('#next-compare').click(function () {
+nextButton.click(function () {
 
     $('#next-compare').hide();
     $('#upload-compare').hide();
@@ -65,8 +81,7 @@ function processDiff() {
 
     $('#generated-moves').empty();
     $('#compare-div').empty();
-    $('#upload-compare').hide();
-
+    uploadButton.hide();
     $.ajax
     ({
         url: Routing.generate('_next_compare'),
@@ -86,36 +101,43 @@ function processDiff() {
             }
 
             if (!result.data.available || !result.data.diff) {
-                $('#logs-compare').text(result.data.text);
+                logs.text(result.data.text);
                 processDiff();
 
                 return;
             }
-            title = result.data.page;
-            section = result.data.section;
-            wikiText = result.data.wikitext;
-            let diffString = result.data.diffString;
-            let diff2htmlUi = new Diff2HtmlUI(compareDiv, diffString, configuration);
-            try {
-                diff2htmlUi.draw();
-            } catch (error) {
-            }
-            $('#generated-moves').html(result.data.generated)
-            $('#logs-compare').text('Difference found, fix it or skip');
-            $('#next-compare').show();
-            $('#upload-compare').show();
+            debugger;
 
+            if(result.data.differentOrder) {
+                title = result.data.page;
+                section = result.data.section;
+                wikiText = result.data.wikitext;
+                uploadButton.click();
+                logs.text(result.data.text + ' mais seulement dans le mauvais ordre, auto-uploading ...');
+            } else {
+                title = result.data.page;
+                section = result.data.section;
+                wikiText = result.data.wikitext;
+                let diffString = result.data.diffString;
+                let diff2htmlUi = new Diff2HtmlUI(compareDiv, diffString, configuration);
+                try {
+                    diff2htmlUi.draw();
+                } catch (error) {
+                }
+                $('#generated-moves').html(result.data.generated)
+                logs.text(result.data.text);
+                uploadButton.show();
+            }
         },
         error: function (result) {
-            debugger;
-            $('#logs-compare').text(result.error);
+            logs.text(result.error);
         },
-        complete: function (result, status) {
-        }
     });
 }
 
-$('#upload-compare').click(function () {
+uploadButton.click(function () {
+    nextButton.hide();
+    uploadButton.hide();
     $.ajax
     ({
         url: Routing.generate('_upload_compare'),
@@ -126,10 +148,18 @@ $('#upload-compare').click(function () {
         },
         type: 'post',
         success: function (result) {
+            if(!result.success) {
+                logs.text(result.error)
+                return;
+            }
+            logs.text(result.message);
+            section = undefined;
+            title = undefined;
+            wikiText = undefined;
+            processDiff();
         },
         error: function (result) {
-            debugger;
-            $('#logs-compare').text(result.error);
+            logs.text(result.responseText);
         },
         complete: function (result, status) {
         }
