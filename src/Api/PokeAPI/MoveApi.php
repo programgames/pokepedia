@@ -9,6 +9,7 @@ use App\Entity\Generation;
 use App\Entity\Move;
 use App\Entity\MoveDamageClass;
 use App\Entity\MoveTarget;
+use App\Entity\Type;
 use Doctrine\ORM\EntityManagerInterface;
 
 //extract and transform move move information into entities from pokeapi
@@ -44,6 +45,12 @@ query MyQuery {
       appeal
     }
     pokemon_v2_movetarget {
+      name
+    }
+    power
+    pp
+    priority
+    pokemon_v2_type {
       name
     }
   }
@@ -89,7 +96,17 @@ GRAPHQL;
                     ]);
                 $moveEntity->setMoveTarget($target);
             }
-
+            if($move['pokemon_v2_type']) {
+                $type = $this->em->getRepository(Type::class)
+                    ->findOneBy([
+                        'name' => $move['pokemon_v2_type']['name'],
+                    ]);
+                $moveEntity->setType($type);
+            }
+            $moveEntity->setPower($move['power']);
+            $moveEntity->setPp($move['pp']);
+            $moveEntity->setPower($move['power']);
+            $moveEntity->setPriority($move['priority']);
             $moves[] = $moveEntity;
         }
 

@@ -46,15 +46,39 @@ class VersionGroup
     private Collection $pokemonMoves;
 
     /**
-     * @ORM\OneToMany(targetEntity=PokemonAvailability::class, mappedBy="versionGroup", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=PokedexVersionGroup::class, mappedBy="versionGroup")
      */
-    private Collection $pokemonAvailabilities;
+    private $pokedexVersionGroups;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonFormGeneration::class, mappedBy="versionGroup")
+     */
+    private $pokemonFormGenerations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonForm::class, mappedBy="versionGroup")
+     */
+    private $pokemonForms;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Version::class, mappedBy="versionGroup")
+     */
+    private $versions;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonMoveAvailability::class, mappedBy="versionGroup")
+     */
+    private $pokemonMoveAvailabilities;
 
     public function __construct()
     {
         $this->machines = new ArrayCollection();
         $this->pokemonMoves = new ArrayCollection();
-        $this->pokemonAvailabilities = new ArrayCollection();
+        $this->pokedexVersionGroups = new ArrayCollection();
+        $this->pokemonFormGenerations = new ArrayCollection();
+        $this->pokemonForms = new ArrayCollection();
+        $this->versions = new ArrayCollection();
+        $this->pokemonMoveAvailabilities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,29 +183,149 @@ class VersionGroup
     }
 
     /**
-     * @return Collection|PokemonAvailability[]
+     * @return Collection|PokedexVersionGroup[]
      */
-    public function getPokemonAvailabilities(): Collection
+    public function getPokedexVersionGroups(): Collection
     {
-        return $this->pokemonAvailabilities;
+        return $this->pokedexVersionGroups;
     }
 
-    public function addPokemonAvailability(PokemonAvailability $pokemonAvailability): self
+    public function addPokedexVersionGroup(PokedexVersionGroup $pokedexVersionGroup): self
     {
-        if (!$this->pokemonAvailabilities->contains($pokemonAvailability)) {
-            $this->pokemonAvailabilities[] = $pokemonAvailability;
-            $pokemonAvailability->setVersionGroup($this);
+        if (!$this->pokedexVersionGroups->contains($pokedexVersionGroup)) {
+            $this->pokedexVersionGroups[] = $pokedexVersionGroup;
+            $pokedexVersionGroup->setVersionGroup($this);
         }
 
         return $this;
     }
 
-    public function removePokemonAvailability(PokemonAvailability $pokemonAvailability): self
+    public function removePokedexVersionGroup(PokedexVersionGroup $pokedexVersionGroup): self
     {
-        if ($this->pokemonAvailabilities->removeElement($pokemonAvailability)) {
+        if ($this->pokedexVersionGroups->removeElement($pokedexVersionGroup)) {
             // set the owning side to null (unless already changed)
-            if ($pokemonAvailability->getVersionGroup() === $this) {
-                $pokemonAvailability->setVersionGroup(null);
+            if ($pokedexVersionGroup->getVersionGroup() === $this) {
+                $pokedexVersionGroup->setVersionGroup(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonFormGeneration[]
+     */
+    public function getPokemonFormGenerations(): Collection
+    {
+        return $this->pokemonFormGenerations;
+    }
+
+    public function addPokemonFormGeneration(PokemonFormGeneration $pokemonFormGeneration): self
+    {
+        if (!$this->pokemonFormGenerations->contains($pokemonFormGeneration)) {
+            $this->pokemonFormGenerations[] = $pokemonFormGeneration;
+            $pokemonFormGeneration->setVersionGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonFormGeneration(PokemonFormGeneration $pokemonFormGeneration): self
+    {
+        if ($this->pokemonFormGenerations->removeElement($pokemonFormGeneration)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonFormGeneration->getVersionGroup() === $this) {
+                $pokemonFormGeneration->setVersionGroup(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonForm[]
+     */
+    public function getPokemonForms(): Collection
+    {
+        return $this->pokemonForms;
+    }
+
+    public function addPokemonForm(PokemonForm $pokemonForm): self
+    {
+        if (!$this->pokemonForms->contains($pokemonForm)) {
+            $this->pokemonForms[] = $pokemonForm;
+            $pokemonForm->setVersionGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonForm(PokemonForm $pokemonForm): self
+    {
+        if ($this->pokemonForms->removeElement($pokemonForm)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonForm->getVersionGroup() === $this) {
+                $pokemonForm->setVersionGroup(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Version[]
+     */
+    public function getVersions(): Collection
+    {
+        return $this->versions;
+    }
+
+    public function addVersion(Version $version): self
+    {
+        if (!$this->versions->contains($version)) {
+            $this->versions[] = $version;
+            $version->setVersionGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVersion(Version $version): self
+    {
+        if ($this->versions->removeElement($version)) {
+            // set the owning side to null (unless already changed)
+            if ($version->getVersionGroup() === $this) {
+                $version->setVersionGroup(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonMoveAvailability[]
+     */
+    public function getPokemonMoveAvailabilities(): Collection
+    {
+        return $this->pokemonMoveAvailabilities;
+    }
+
+    public function addPokemonMoveAvailability(PokemonMoveAvailability $pokemonMoveAvailability): self
+    {
+        if (!$this->pokemonMoveAvailabilities->contains($pokemonMoveAvailability)) {
+            $this->pokemonMoveAvailabilities[] = $pokemonMoveAvailability;
+            $pokemonMoveAvailability->setVersionGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonMoveAvailability(PokemonMoveAvailability $pokemonMoveAvailability): self
+    {
+        if ($this->pokemonMoveAvailabilities->removeElement($pokemonMoveAvailability)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonMoveAvailability->getVersionGroup() === $this) {
+                $pokemonMoveAvailability->setVersionGroup(null);
             }
         }
 

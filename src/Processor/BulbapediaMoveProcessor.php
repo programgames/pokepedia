@@ -6,7 +6,9 @@ use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
-use App\Entity\PokemonAvailability;
+use App\Entity\PokemonFormName;
+use App\Entity\PokemonMoveAvailability;
+use App\Entity\SpecyName;
 use App\Entity\VersionGroup;
 use App\Helper\MoveSetHelper;
 use App\MoveMapper;
@@ -43,22 +45,14 @@ class BulbapediaMoveProcessor
 
         $versionGroup = $this->getVersionGroupByGeneration($generationEntity, $lgpe);
 
-        $availabilities = $this->em->getRepository(PokemonAvailability::class)->findBy(
-            [
-                'versionGroup' => $versionGroup,
-            ]
-        );
+        $pokemonMoveAvailabilities = $this->em->getRepository(PokemonMoveAvailability::class)->findBy(['versionGroup' => $versionGroup]);
 
         foreach ($this->em->getRepository(MoveLearnMethod::class)->findPokepediaLearnMethod() as $learnMethod) {
-            if ($learnMethod->getName() === 'level-up') {
-                continue;
-            }
-            foreach ($availabilities as $availability) {
-                if (!$availability->isAvailable()) {
-                    continue;
-                }
+
+            foreach ($pokemonMoveAvailabilities as $availability) {
+
                 $pokemon = $availability->getPokemon();
-                if ($pokemon->getIsAlola() || $pokemon->getIsGalar()) {
+                if (false !== strpos($pokemon->getName(), "alola") || false !== strpos($pokemon->getName(), "galar") || !$availability->getIsDefault()) {
                     continue;
                 }
 
@@ -68,10 +62,10 @@ class BulbapediaMoveProcessor
                     foreach ($moves['noform'] as $move) {
                         $this->handleMoveByFormat($pokemon, $move, $generationEntity, $this->em, $learnMethod);
                     }
-//                $this->em->flush();
                 } else {
                     $this->handleForms($pokemon, $moves, $generationEntity, $this->em, $learnMethod);
                 }
+                //                $this->em->flush();
             }
         }
     }
@@ -89,7 +83,8 @@ class BulbapediaMoveProcessor
         Generation $generation,
         MoveLearnMethod $learnMethod,
         bool $lgpe = false
-    ): array {
+    ): array
+    {
         if ($learnMethod->getName() === 'level-up') {
             return $this->api->getLevelMoves($pokemon, $generation->getGenerationIdentifier(), $lgpe);
         }
@@ -115,44 +110,12 @@ class BulbapediaMoveProcessor
         Generation $generationEntity,
         EntityManagerInterface $em,
         $learnMethod
-    ): void {
+    ): void
+    {
         foreach ($moves as $form => $formMoves) {
-            $form = $this->formatForm($form);
-            if ($pokemon->getName() === $form) {
-                foreach ($formMoves as $move) {
-                    $this->handleMoveByFormat($pokemon, $move, $generationEntity, $em, $learnMethod);
-                }
-            } elseif (false !== strpos($form, "alolan")) {
-                $pokemonForm = $this->em->getRepository(Pokemon::class)->findOneBy(
-                    [
-                        'name' => $pokemon->getName() . '-alola'
-                    ]
-                );
-                foreach ($formMoves as $move) {
-                    $this->handleMoveByFormat($pokemonForm, $move, $generationEntity, $em, $learnMethod);
-                }
-            } elseif (false !== strpos($form, "galarian")) {
-                $pokemonForm = $this->em->getRepository(Pokemon::class)->findOneBy(
-                    [
-                        'name' => $pokemon->getName() . '-galar'
-                    ]
-                );
-                foreach ($formMoves as $move) {
-                    $this->handleMoveByFormat($pokemonForm, $move, $generationEntity, $em, $learnMethod);
-                }
-            } else {
-                $pokemonForm = $this->em->getRepository(Pokemon::class)->findOneBy(
-                    [
-                        'name' => $form
-                    ]
-                );
-                if ($pokemonForm) {
-                    foreach ($formMoves as $move) {
-                        $this->handleMoveByFormat($pokemonForm, $move, $generationEntity, $em, $learnMethod);
-                    }
-                } else {
-                    throw new RuntimeException('Unknown form');
-                }
+            $pokemon = $this->findPokemonByFormName($pokemon, $form);
+            foreach ($formMoves as $formMove) {
+                $this->handleMoveByFormat($pokemon, $formMove, $generationEntity, $this->em, $learnMethod);
             }
         }
     }
@@ -163,57 +126,16 @@ class BulbapediaMoveProcessor
         $generationEntity,
         EntityManagerInterface $em,
         $learnMethod
-    ): void {
+    ): void
+    {
         $moveMapper = new MoveMapper();
 
         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
             $moveMapper->mapMoves($pokemon, $move, $generationEntity, $em, $learnMethod);
         } else {
+            //not yet implemented
             throw new RuntimeException('Format roman');
         }
-    }
-
-    private function formatForm(string $form)
-    {
-        $form = str_replace(array('\'', '. '), array('', '-'), strtolower($form));
-
-        if ($form === 'darmanitan') {
-            $form = 'darmanitan-standard';
-        } elseif ($form === 'galarian darmanitan') {
-            $form = 'darmanitan-standard';
-        } elseif ($form === 'white kyurem') {
-            $form = 'kyurem-white';
-        } elseif ($form === 'black kyurem') {
-            $form = 'kyurem-black';
-        } elseif ($form === 'male meowstic') {
-            $form = 'meowstic-male';
-        } elseif ($form === 'female meowstic') {
-            $form = 'meowstic-female';
-        } elseif ($form === 'midday form') {
-            $form = 'lycanroc-midday';
-        } elseif ($form === 'midnight form') {
-            $form = 'lycanroc-midnight';
-        } elseif ($form === 'dusk form') {
-            $form = 'lycanroc-dusk';
-        } elseif ($form === 'amped form') {
-            $form = 'toxtricity-amped';
-        } elseif ($form === 'low key form') {
-            $form = 'toxtricity-low-key';
-        } elseif ($form === 'male indeedee') {
-            $form = 'indeedee-male';
-        } elseif ($form === 'female indeedee') {
-            $form = 'indeedee-female';
-        } elseif ($form === 'single strike style') {
-            $form = 'urshifu-single-strike';
-        } elseif ($form === 'rapid strike style') {
-            $form = 'urshifu-rapid-strike';
-        } elseif ($form === 'ice rider calyrex') {
-            $form = 'calyrex-ice-rider';
-        } elseif ($form === 'shadow rider calyrex') {
-            $form = 'calyrex-shadow-rider';
-        }
-        //wormadam-plant;shaymin-land
-        return $form;
     }
 
     /** Get version with maximum pokemon available in it
@@ -268,5 +190,33 @@ class BulbapediaMoveProcessor
             );
         }
         return $versionGroup;
+    }
+
+    private function findPokemonByFormName(Pokemon $pokemon, string $form)
+    {
+        $specyName = ($this->em->getRepository(SpecyName::class)
+            ->findOneBy(
+                [
+                    'language' => 9,
+                    'pokemonSpecy' => $pokemon->getPokemonSpecy()
+                ]
+            ))->getName();
+        if (strtolower($specyName) === $form) {
+            return $pokemon;
+        }
+        $formName = $this->em->getRepository(PokemonFormName::class)
+            ->findOneBy(['pokemonName' => $form]);
+        if ($formName) {
+            return $formName->getPokemonForm()->getPokemon();
+        }
+
+        $name = $this->em->getRepository(PokemonFormName::class)
+            ->findOneBy(['name' => $form]);
+
+        if ($name) {
+            return $name->getPokemonForm()->getPokemon();
+        }
+
+        throw new RuntimeException(sprintf('Pokemon %s not found', $form));
     }
 }

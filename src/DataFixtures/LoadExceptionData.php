@@ -6,6 +6,7 @@ use App\Entity\Generation;
 use App\Entity\Move;
 use App\Entity\MoveName;
 use App\Entity\MoveTarget;
+use App\Entity\Type;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -24,7 +25,7 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface, Ap
     public function getDependencies()
     {
 
-        return [LoadMoveNames::class,LoadGeneration::class,LoadMoveTarget::class];
+        return [LoadMoveNames::class,LoadGeneration::class,LoadMoveTarget::class,LoadType::class];
     }
 
     private function loadViceGrip(ObjectManager $manager): void
@@ -43,12 +44,19 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface, Ap
             ->findOneBy(['name' => 'generation-viii'] );
         $target = $manager->getRepository(MoveTarget::class)
             ->findOneBy(['name' => 'selected-pokemon'] );
+        $type =  $manager->getRepository(Type::class)
+            ->findOneBy(['name' => 'grass'] );
 
         $move = new Move();
         $move->setName('branch-poke');
-        $move->setGeneration($gen);
         $move->setAccuracy(100);
+        $move->setGeneration($gen);
         $move->setMoveTarget($target);
+        $move->setType($type);
+        $move->setPower(40);
+        $move->setPriority(0);
+        $move->setpp(40);
+
 
         $moveName1 = new MoveName();
         $moveName1->setName('Branch Poke');

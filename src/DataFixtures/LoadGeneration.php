@@ -4,9 +4,10 @@ namespace App\DataFixtures;
 
 use App\Api\PokeAPI\GenerationApi;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class LoadGeneration extends Fixture implements AppFixtureInterface
+class LoadGeneration extends Fixture implements AppFixtureInterface,DependentFixtureInterface
 {
     private GenerationApi $generationApi;
 
@@ -22,5 +23,10 @@ class LoadGeneration extends Fixture implements AppFixtureInterface
             $manager->persist($generation);
         }
         $manager->flush();
+    }
+
+    public function getDependencies()
+    {
+        return [LoadRegion::class];
     }
 }

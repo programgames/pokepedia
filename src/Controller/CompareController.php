@@ -8,6 +8,7 @@ use App\Cache\CacheHandler;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
+use App\Entity\PokemonMoveAvailability;
 use App\Exception\InvalidResponse;
 use App\Processor\CompareProcessor;
 use Doctrine\ORM\EntityManagerInterface;
@@ -54,7 +55,7 @@ class CompareController extends AbstractController
             }
 
             $startAt = $request->get('startAt');
-            $pokemons = $this->em->getRepository(Pokemon::class)->findDefaultAndAlolaPokemons((int)$startAt);
+            $pokemons = $this->em->getRepository(PokemonMoveAvailability::class)->findPokemonWithSpecificPageStartingAt($startAt);
             $learnmethod = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
             $generations = $this->em->getRepository(Generation::class)->findAll();
 
@@ -173,7 +174,7 @@ class CompareController extends AbstractController
      */
     public function clearPokepediaMoveCache(Request $request): JsonResponse
     {
-        $this->cacheHandler->deletePokepediaPokemonMoveCache();
+        $this->cacheHandler->deleteCache();
 
         return new JsonResponse("OK");
     }

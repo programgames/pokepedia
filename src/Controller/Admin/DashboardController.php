@@ -10,7 +10,6 @@ use App\Entity\Machine;
 use App\Entity\Move;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
-use App\Entity\PokemonAvailability;
 use App\Entity\PokemonMove;
 use App\Entity\PokemonName;
 use App\Entity\PokemonSpecy;
@@ -46,7 +45,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Espèce de Pokémon', 'fa fa-tags', PokemonSpecy::class);
         yield MenuItem::linkToCrud('Nom des Espèce de Pokémon', 'fa fa-tags', SpecyName::class);
         yield MenuItem::linkToCrud('Noms des Pokemons', 'fa fa-tags', PokemonName::class);
-        yield MenuItem::linkToCrud('Disponibilitées', 'fa fa-tags', PokemonAvailability::class);
         yield MenuItem::linkToCrud('Groupe d\'oeufs', 'fa fa-tags', EggGroup::class);
         yield MenuItem::section('Général', 'fa fa-tags');
         yield MenuItem::linkToCrud('Generations', 'fa fa-tags', Generation::class);

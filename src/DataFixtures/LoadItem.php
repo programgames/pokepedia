@@ -27,6 +27,6 @@ class LoadItem extends Fixture implements AppFixtureInterface,DependentFixtureIn
 
     public function getDependencies()
     {
-        return [LoadItemCategory::class,LoadItemFlingEffect::class];
+        return [LoadPokedex::class,LoadItemFlingEffect::class,LoadItemCategory::class];
     }
 }

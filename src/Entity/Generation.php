@@ -54,6 +54,12 @@ class Generation
      */
     private $moves;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Region::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $region;
+
     public function __construct()
     {
         $this->versionGroups = new ArrayCollection();
@@ -238,6 +244,18 @@ class Generation
                 $move->setGeneration(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRegion(): ?Region
+    {
+        return $this->region;
+    }
+
+    public function setRegion(Region $region): self
+    {
+        $this->region = $region;
 
         return $this;
     }

@@ -2,8 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Pokedex;
 use App\Entity\Pokemon;
+use App\Entity\PokemonDexNumber;
+use App\Entity\PokemonForm;
+use App\Entity\PokemonSpecy;
+use App\Entity\VersionGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,46 +25,34 @@ class PokemonRepository extends ServiceEntityRepository
         parent::__construct($registry, Pokemon::class);
     }
 
-    public function findDefaultPokemons(int $start, int $end)
+    public function findDefaultPokemonsInNationalPokedex(int $start,int $end)
     {
-        return $this->createQueryBuilder('p')
-            ->leftJoin('p.pokemonSpecy', 's')
-            ->andWhere('s.pokemonSpecyOrder >= :start AND s.pokemonSpecyOrder <= :end')
-            ->andWhere('p.isDefault = true')
+        $pokedex = $this->getEntityManager()->getRepository(Pokedex::class)
+            ->findOneBy(['name' => 'national']);
+
+        $specyIds = $this->getEntityManager()->getRepository(PokemonDexNumber::class)
+            ->createQueryBuilder('d')
+            ->select('s.id')
+            ->leftJoin('d.pokemonSpecy','s')
+            ->leftJoin('d.pokedex','pokedex')
+            ->andWhere('d.pokedexNumber >= :start and d.pokedexNumber <= :end')
+            ->andWhere('pokedex.id = :pokedexId')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
-            ->orderBy('s.pokemonSpecyOrder', 'ASC')
+            ->setParameter('pokedexId', $pokedex->getId())
             ->getQuery()
-            ->getResult();
-    }
+            ->getArrayResult();
 
-    public function findDefaultAndAlolaPokemons($startAt = null)
-    {
+        $specyIds = array_column($specyIds, "id");
+
         return $this->createQueryBuilder('p')
             ->leftJoin('p.pokemonSpecy', 's')
-            ->andWhere('p.isDefault = true OR p.isAlola = true')
-            ->andWhere('s.pokemonSpecyOrder >= :startAt')
-            ->andWhere('p.name NOT LIKE :totem')
-            ->orderBy('s.pokemonSpecyOrder', 'ASC')
-            ->setParameter('startAt', $startAt ?? 1)
-            ->setParameter('totem', '%totem%')
+            ->andWhere('p.isDefault = true')
+            ->andWhere('s.id IN (:sids)')
+            ->setParameter('sids', $specyIds)
             ->getQuery()
             ->getResult();
     }
 
-    public function findAlolaPokemons()
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.isAlola = true')
-            ->getQuery()
-            ->getResult();
-    }
 
-    public function findGalarPokemon()
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.isGalar = true')
-            ->getQuery()
-            ->getResult();
-    }
 }

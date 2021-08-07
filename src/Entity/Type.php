@@ -44,10 +44,22 @@ class Type
      */
     private $pokemonTypePasts;
 
+    /**
+     * @ORM\OneToMany(targetEntity=TypeName::class, mappedBy="type")
+     */
+    private $typeNames;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Move::class, mappedBy="type")
+     */
+    private $moves;
+
     public function __construct()
     {
         $this->pokemonTypes = new ArrayCollection();
         $this->pokemonTypePasts = new ArrayCollection();
+        $this->typeNames = new ArrayCollection();
+        $this->moves = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,6 +157,66 @@ class Type
             // set the owning side to null (unless already changed)
             if ($pokemonTypePast->getType() === $this) {
                 $pokemonTypePast->setType(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TypeName[]
+     */
+    public function getTypeNames(): Collection
+    {
+        return $this->typeNames;
+    }
+
+    public function addTypeName(TypeName $typeName): self
+    {
+        if (!$this->typeNames->contains($typeName)) {
+            $this->typeNames[] = $typeName;
+            $typeName->setType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTypeName(TypeName $typeName): self
+    {
+        if ($this->typeNames->removeElement($typeName)) {
+            // set the owning side to null (unless already changed)
+            if ($typeName->getType() === $this) {
+                $typeName->setType(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Move[]
+     */
+    public function getMoves(): Collection
+    {
+        return $this->moves;
+    }
+
+    public function addMove(Move $move): self
+    {
+        if (!$this->moves->contains($move)) {
+            $this->moves[] = $move;
+            $move->setType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMove(Move $move): self
+    {
+        if ($this->moves->removeElement($move)) {
+            // set the owning side to null (unless already changed)
+            if ($move->getType() === $this) {
+                $move->setType(null);
             }
         }
 

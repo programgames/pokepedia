@@ -6,7 +6,7 @@ use App\Api\Bulbapedia\BulbapediaMovesAPI;
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
-use App\Entity\PokemonAvailability;
+use App\Entity\PokemonMoveAvailability;
 use App\Entity\PokemonName;
 use App\Entity\VersionGroup;
 use App\Helper\MoveSetHelper;
@@ -42,7 +42,7 @@ class ImportLGPEMoves extends Command
 
         $lgpe = $this->em->getRepository(VersionGroup::class)->findOneBy(['name' => 'lets-go']);
 
-        $pokemonAvailabilities = $this->em->getRepository(PokemonAvailability::class)->findBy(['versionGroup' => $lgpe]);
+        $pokemonMoveAvailabilities = $this->em->getRepository(PokemonMoveAvailability::class)->findBy(['versionGroup' => $lgpe]);
 
         $levelup = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'level-up']);
         $machine = $this->em->getRepository(MoveLearnMethod::class)->findOneBy(['name' => 'machine']);
@@ -53,10 +53,11 @@ class ImportLGPEMoves extends Command
             ]
         );
 
-        foreach ($pokemonAvailabilities as $pokemonAvailability) {
+        foreach ($pokemonMoveAvailabilities as $pokemonAvailability) {
             /** @var Pokemon $pokemon */
             $pokemon = $pokemonAvailability->getPokemon();
-            if ($pokemon->isAlola()) {
+            if (false !== strpos($pokemon->getName(), "alola")) {
+                //Alola Moves are mapped automatically as there is the same bulbapedia page that the original pkm
                 continue;
             }
             $io->info(sprintf('import levelup moves for LGPE %s', $pokemon->getName()));
@@ -72,9 +73,9 @@ class ImportLGPEMoves extends Command
                 $this->em->flush();
             } else {
                 foreach ($moves as $form => $formMoves) {
-                    $pokemon = $this->findPokemon($pokemon, $form);
+                    $pokemon = $this->findBulbapediaPokemonByName($pokemon, $form);
                     foreach ($formMoves as $move) {
-                        $pokemon = $this->findPokemon($pokemon, $form);
+                        $pokemon = $this->findBulbapediaPokemonByName($pokemon, $form);
                         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
                             $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $levelup);
                         } else {
@@ -86,9 +87,9 @@ class ImportLGPEMoves extends Command
             }
         }
 
-        foreach ($pokemonAvailabilities as $pokemonAvailability) {
+        foreach ($pokemonMoveAvailabilities as $pokemonAvailability) {
             $pokemon = $pokemonAvailability->getPokemon();
-            if ($pokemon->isAlola() || $pokemon->getName() === 'mew') {
+            if (false !== strpos($pokemon->getName(), "alola") || $pokemon->getName() === 'mew') {
                 continue;
             }
             $io->info(sprintf('import machine moves for LGPE %s', $pokemon->getName()));
@@ -104,7 +105,7 @@ class ImportLGPEMoves extends Command
                 $this->em->flush();
             } else {
                 foreach ($moves as $form => $formMoves) {
-                    $pokemon = $this->findPokemon($pokemon, $form);
+                    $pokemon = $this->findBulbapediaPokemonByName($pokemon, $form);
                     foreach ($formMoves as $move) {
                         if ($move['format'] === MoveSetHelper::BULBAPEDIA_MOVE_TYPE_GLOBAL) {
                             $moveMapper->mapMoves($pokemon, $move, $generation, $this->em, $machine);
@@ -122,7 +123,7 @@ class ImportLGPEMoves extends Command
         return Command::SUCCESS;
     }
 
-    private function findPokemon(Pokemon $pokemonEntity, string $name): Pokemon
+    private function findBulbapediaPokemonByName(Pokemon $pokemonEntity, string $name): Pokemon
     {
         /** @var PokemonName $pokemonName */
         $pokemonName = $this->em->getRepository(PokemonName::class)
@@ -132,10 +133,7 @@ class ImportLGPEMoves extends Command
             throw new RuntimeException(sprintf('Pokemon with name %s not found', $name));
         }
 
-        if ($pokemonName->getPokemon()->getIsDefault()) {
-            return $pokemonName->getPokemon();
-        }
-
         return $pokemonName->getPokemon();
+
     }
 }

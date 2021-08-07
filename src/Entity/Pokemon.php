@@ -38,32 +38,7 @@ class Pokemon
     /**
      * @ORM\Column(type="boolean")
      */
-    private ?bool $isAlola = false;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private ?bool $isGalar = false;
-
-    /**
-     * @ORM\OneToMany(targetEntity=PokemonAvailability::class, mappedBy="pokemon", orphanRemoval=true)
-     */
-    private Collection $pokemonAvailabilities;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
     private ?bool $isDefault;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private ?bool $hasMoveForms = false;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Pokemon::class)
-     */
-    private Collection $moveForms;
 
     /**
      * @ORM\OneToOne(targetEntity=PokemonName::class, inversedBy="pokemon", cascade={"persist", "remove"})
@@ -100,13 +75,29 @@ class Pokemon
      */
     private $weight;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonGameIndex::class, mappedBy="pokemon")
+     */
+    private $pokemonGameIndices;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonForm::class, mappedBy="Pokemon")
+     */
+    private $pokemonForms;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonMoveAvailability::class, mappedBy="pokemon")
+     */
+    private $pokemonMoveAvailabilities;
+
     public function __construct()
     {
         $this->pokemonMoves = new ArrayCollection();
-        $this->pokemonAvailabilities = new ArrayCollection();
-        $this->moveForms = new ArrayCollection();
         $this->pokemonTypes = new ArrayCollection();
         $this->pokemonTypePasts = new ArrayCollection();
+        $this->pokemonGameIndices = new ArrayCollection();
+        $this->pokemonForms = new ArrayCollection();
+        $this->pokemonMoveAvailabilities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,60 +159,6 @@ class Pokemon
         return $this;
     }
 
-    public function isAlola(): ?bool
-    {
-        return $this->isAlola;
-    }
-
-    public function setIsAlola(bool $isAlola): self
-    {
-        $this->isAlola = $isAlola;
-
-        return $this;
-    }
-
-    public function getIsGalar(): ?bool
-    {
-        return $this->isGalar;
-    }
-
-    public function setIsGalar(bool $isGalar): self
-    {
-        $this->isGalar = $isGalar;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PokemonAvailability[]
-     */
-    public function getPokemonAvailabilities(): Collection
-    {
-        return $this->pokemonAvailabilities;
-    }
-
-    public function addPokemonAvailability(PokemonAvailability $pokemonAvailability): self
-    {
-        if (!$this->pokemonAvailabilities->contains($pokemonAvailability)) {
-            $this->pokemonAvailabilities[] = $pokemonAvailability;
-            $pokemonAvailability->setPokemon($this);
-        }
-
-        return $this;
-    }
-
-    public function removePokemonAvailability(PokemonAvailability $pokemonAvailability): self
-    {
-        if ($this->pokemonAvailabilities->removeElement($pokemonAvailability)) {
-            // set the owning side to null (unless already changed)
-            if ($pokemonAvailability->getPokemon() === $this) {
-                $pokemonAvailability->setPokemon(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getIsDefault(): ?bool
     {
         return $this->isDefault;
@@ -230,42 +167,6 @@ class Pokemon
     public function setIsDefault(bool $isDefault): self
     {
         $this->isDefault = $isDefault;
-
-        return $this;
-    }
-
-    public function getHasMoveForms(): ?bool
-    {
-        return $this->hasMoveForms;
-    }
-
-    public function setHasMoveForms(bool $hasMoveForms): self
-    {
-        $this->hasMoveForms = $hasMoveForms;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|self[]
-     */
-    public function getMoveForms(): Collection
-    {
-        return $this->moveForms;
-    }
-
-    public function addMoveForm(self $form): self
-    {
-        if (!$this->moveForms->contains($form)) {
-            $this->moveForms[] = $form;
-        }
-
-        return $this;
-    }
-
-    public function removeMoveForm(self $form): self
-    {
-        $this->moveForms->removeElement($form);
 
         return $this;
     }
@@ -386,6 +287,96 @@ class Pokemon
     public function setWeight(int $weight): self
     {
         $this->weight = $weight;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonGameIndex[]
+     */
+    public function getPokemonGameIndices(): Collection
+    {
+        return $this->pokemonGameIndices;
+    }
+
+    public function addPokemonGameIndex(PokemonGameIndex $pokemonGameIndex): self
+    {
+        if (!$this->pokemonGameIndices->contains($pokemonGameIndex)) {
+            $this->pokemonGameIndices[] = $pokemonGameIndex;
+            $pokemonGameIndex->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonGameIndex(PokemonGameIndex $pokemonGameIndex): self
+    {
+        if ($this->pokemonGameIndices->removeElement($pokemonGameIndex)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonGameIndex->getPokemon() === $this) {
+                $pokemonGameIndex->setPokemon(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonForm[]
+     */
+    public function getPokemonForms(): Collection
+    {
+        return $this->pokemonForms;
+    }
+
+    public function addPokemonForm(PokemonForm $pokemonForm): self
+    {
+        if (!$this->pokemonForms->contains($pokemonForm)) {
+            $this->pokemonForms[] = $pokemonForm;
+            $pokemonForm->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonForm(PokemonForm $pokemonForm): self
+    {
+        if ($this->pokemonForms->removeElement($pokemonForm)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonForm->getPokemon() === $this) {
+                $pokemonForm->setPokemon(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonMoveAvailability[]
+     */
+    public function getPokemonMoveAvailabilities(): Collection
+    {
+        return $this->pokemonMoveAvailabilities;
+    }
+
+    public function addPokemonMoveAvailability(PokemonMoveAvailability $pokemonMoveAvailability): self
+    {
+        if (!$this->pokemonMoveAvailabilities->contains($pokemonMoveAvailability)) {
+            $this->pokemonMoveAvailabilities[] = $pokemonMoveAvailability;
+            $pokemonMoveAvailability->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonMoveAvailability(PokemonMoveAvailability $pokemonMoveAvailability): self
+    {
+        if ($this->pokemonMoveAvailabilities->removeElement($pokemonMoveAvailability)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonMoveAvailability->getPokemon() === $this) {
+                $pokemonMoveAvailability->setPokemon(null);
+            }
+        }
 
         return $this;
     }

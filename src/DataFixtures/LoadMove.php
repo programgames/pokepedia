@@ -27,6 +27,6 @@ class LoadMove extends Fixture implements AppFixtureInterface, DependentFixtureI
 
     public function getDependencies()
     {
-        return [LoadContestType::class, LoadGeneration::class, LoadDamageClass::class, LoadContestEffect::class, LoadMoveTarget::class];
+        return [LoadType::class, LoadContestType::class, LoadGeneration::class, LoadDamageClass::class, LoadContestEffect::class, LoadMoveTarget::class];
     }
 }

@@ -79,6 +79,27 @@ class Move
      */
     private $contestType;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $power;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $pp;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $priority;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="moves")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $type;
+
     public function __construct()
     {
         $this->moveNames = new ArrayCollection();
@@ -273,6 +294,54 @@ class Move
     public function setContestType(?ContestType $contestType): self
     {
         $this->contestType = $contestType;
+
+        return $this;
+    }
+
+    public function getPower(): ?int
+    {
+        return $this->power;
+    }
+
+    public function setPower(?int $power): self
+    {
+        $this->power = $power;
+
+        return $this;
+    }
+
+    public function getPp(): ?int
+    {
+        return $this->pp;
+    }
+
+    public function setPp(?int $pp): self
+    {
+        $this->pp = $pp;
+
+        return $this;
+    }
+
+    public function getPriority(): ?int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): self
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    public function getType(): ?Type
+    {
+        return $this->type;
+    }
+
+    public function setType(?Type $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -53,7 +53,6 @@ GRAPHQL;
             $pokemonEntity->setPokemonOrder($pokemon['order']);
             $pokemonEntity->setBaseExperience($pokemon['base_experience']);
             $pokemonEntity->setWeight($pokemon['weight']);
-            $pokemonEntity = $this->setImportInformations($pokemonEntity, $pokemon);
             /** @var PokemonSpecy $specy */
             $specy = $this->entityManager->getRepository(PokemonSpecy::class)->findOneBy(
                 [
@@ -67,15 +66,5 @@ GRAPHQL;
         }
 
         return $pokemons;
-    }
-
-    private function setImportInformations(Pokemon $pokemonEntity, $pokemon): Pokemon
-    {
-        if (preg_match('/-galar$/', $pokemon['name'], $matches)) {
-            $pokemonEntity->setIsGalar(true);
-        } elseif (preg_match('/-alola$/', $pokemon['name'], $matches)) {
-            $pokemonEntity->setIsAlola(true);
-        }
-        return $pokemonEntity;
     }
 }

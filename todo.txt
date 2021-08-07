@@ -18,11 +18,7 @@
   la gen 8 le form des niveaux est diff
  gerer les formes galar sur les mooves
 
-Brouillard draceufu gen 3 by level Brouillard / Départ<br>N.13 / Départ<br>N.13 / Départ<br>N.20
 
-coconfort level up gen 6 7 a verifier
-
-pikachu a partir de gen 2
 
 
 php bin/console fos:js-routing:dump --format=json --target=public/js/fos_js_routes.json

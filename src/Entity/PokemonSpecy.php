@@ -127,11 +127,17 @@ class PokemonSpecy
      */
     private $evolveFrom;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PokemonDexNumber::class, mappedBy="pokemonSpecy")
+     */
+    private $pokemonDexNumbers;
+
     public function __construct()
     {
         $this->pokemons = new ArrayCollection();
         $this->names = new ArrayCollection();
         $this->pokemonEggGroups = new ArrayCollection();
+        $this->pokemonDexNumbers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -441,6 +447,36 @@ class PokemonSpecy
     public function setEvolveFrom(?self $evolveFrom): self
     {
         $this->evolveFrom = $evolveFrom;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PokemonDexNumber[]
+     */
+    public function getPokemonDexNumbers(): Collection
+    {
+        return $this->pokemonDexNumbers;
+    }
+
+    public function addPokemonDexNumber(PokemonDexNumber $pokemonDexNumber): self
+    {
+        if (!$this->pokemonDexNumbers->contains($pokemonDexNumber)) {
+            $this->pokemonDexNumbers[] = $pokemonDexNumber;
+            $pokemonDexNumber->setPokemonSpecy($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonDexNumber(PokemonDexNumber $pokemonDexNumber): self
+    {
+        if ($this->pokemonDexNumbers->removeElement($pokemonDexNumber)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonDexNumber->getPokemonSpecy() === $this) {
+                $pokemonDexNumber->setPokemonSpecy(null);
+            }
+        }
 
         return $this;
     }
