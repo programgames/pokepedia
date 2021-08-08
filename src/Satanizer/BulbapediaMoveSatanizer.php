@@ -111,6 +111,9 @@ class BulbapediaMoveSatanizer
 
     private function clearPadding(array $moves): array
     {
+        foreach ($moves as $key => $move) {
+            $moves[$key] = str_replace('Learnlist','learnlist',$move);
+        }
         $size = count($moves);
 
         for ($i = $size -1; $i > 0; $i--) {

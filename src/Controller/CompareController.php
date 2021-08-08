@@ -68,6 +68,7 @@ class CompareController extends AbstractController
             }, $generations);
 
             $response = (new JsonResponse([
+                'success' => true,
                 'data' => [
                     'pokemons' => $pokemonIds,
                     'learnMethod' => $learnmethod->getId(),
@@ -100,12 +101,14 @@ class CompareController extends AbstractController
             $data = $this->processor->compare($generation, $learnMethod, $pokemon, false);
             return new JsonResponse(
                 [
+                    'success' => true,
                     'data' => $data
                 ]
             );
         } catch (\Exception $exception) {
             return new JsonResponse(
                 [
+                    'success' => false,
                     'error' => $exception->getMessage(),
                 ],
                 400
@@ -145,6 +148,7 @@ class CompareController extends AbstractController
             "bot" => true,
             "nocreate" => true,
             "token" => $token,
+            "summary" => 'Mis a jour des attaques apprises'
         ];
 
         try {

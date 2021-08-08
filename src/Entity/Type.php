@@ -25,7 +25,7 @@ class Type
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=generation::class, inversedBy="types")
+     * @ORM\ManyToOne(targetEntity=Generation::class, inversedBy="types")
      */
     private $generation;
 

@@ -52,7 +52,6 @@ final class Version20210807223211 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE pokemon_habitat_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE pokemon_move_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE pokemon_move_availability_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE pokemon_name_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE pokemon_shape_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE pokemon_specy_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE pokemon_type_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
@@ -104,9 +103,8 @@ final class Version20210807223211 extends AbstractMigration
         $this->addSql('CREATE TABLE pokedex_version_group (id INT NOT NULL, pokedex_id INT NOT NULL, version_group_id INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_66CF0887372A5D14 ON pokedex_version_group (pokedex_id)');
         $this->addSql('CREATE INDEX IDX_66CF088792AE854F ON pokedex_version_group (version_group_id)');
-        $this->addSql('CREATE TABLE pokemon (id INT NOT NULL, pokemon_specy_id INT NOT NULL, pokemon_name_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, is_default BOOLEAN NOT NULL, base_experience INT NOT NULL, height INT NOT NULL, pokemon_order INT NOT NULL, weight INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE pokemon (id INT NOT NULL, pokemon_specy_id INT NOT NULL, name VARCHAR(255) NOT NULL, is_default BOOLEAN NOT NULL, base_experience INT NOT NULL, height INT NOT NULL, pokemon_order INT NOT NULL, weight INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_62DC90F3256D30DF ON pokemon (pokemon_specy_id)');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_62DC90F31D7DE047 ON pokemon (pokemon_name_id)');
         $this->addSql('CREATE TABLE pokemon_color (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE pokemon_dex_number (id INT NOT NULL, pokedex_id INT NOT NULL, pokemon_specy_id INT NOT NULL, pokedex_number INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_7234C90C372A5D14 ON pokemon_dex_number (pokedex_id)');
@@ -137,7 +135,6 @@ final class Version20210807223211 extends AbstractMigration
         $this->addSql('CREATE TABLE pokemon_move_availability_pokemon (pokemon_move_availability_id INT NOT NULL, pokemon_id INT NOT NULL, PRIMARY KEY(pokemon_move_availability_id, pokemon_id))');
         $this->addSql('CREATE INDEX IDX_C237BA49FC06620 ON pokemon_move_availability_pokemon (pokemon_move_availability_id)');
         $this->addSql('CREATE INDEX IDX_C237BA42FE71C3E ON pokemon_move_availability_pokemon (pokemon_id)');
-        $this->addSql('CREATE TABLE pokemon_name (id INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE pokemon_shape (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE pokemon_specy (id INT NOT NULL, evolution_chain_id INT DEFAULT NULL, generation_id INT NOT NULL, growth_rate_id INT NOT NULL, pokemon_shape_id INT NOT NULL, pokemon_habitat_id INT DEFAULT NULL, pokemon_color_id INT NOT NULL, evolve_from_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, base_hapiness INT NOT NULL, capture_rate INT NOT NULL, forms_switchable BOOLEAN NOT NULL, gender_rate INT NOT NULL, has_gender_differences BOOLEAN NOT NULL, hatch_counter INT NOT NULL, is_baby BOOLEAN NOT NULL, is_legendary BOOLEAN NOT NULL, is_mythical BOOLEAN NOT NULL, pokemon_specy_order INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_D5938CFDE417AC09 ON pokemon_specy (evolution_chain_id)');
@@ -187,7 +184,6 @@ final class Version20210807223211 extends AbstractMigration
         $this->addSql('ALTER TABLE pokedex_version_group ADD CONSTRAINT FK_66CF0887372A5D14 FOREIGN KEY (pokedex_id) REFERENCES pokedex (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE pokedex_version_group ADD CONSTRAINT FK_66CF088792AE854F FOREIGN KEY (version_group_id) REFERENCES version_group (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE pokemon ADD CONSTRAINT FK_62DC90F3256D30DF FOREIGN KEY (pokemon_specy_id) REFERENCES pokemon_specy (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE pokemon ADD CONSTRAINT FK_62DC90F31D7DE047 FOREIGN KEY (pokemon_name_id) REFERENCES pokemon_name (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE pokemon_dex_number ADD CONSTRAINT FK_7234C90C372A5D14 FOREIGN KEY (pokedex_id) REFERENCES pokedex (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE pokemon_dex_number ADD CONSTRAINT FK_7234C90C256D30DF FOREIGN KEY (pokemon_specy_id) REFERENCES pokemon_specy (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE pokemon_egg_group ADD CONSTRAINT FK_311E850B76DC94C FOREIGN KEY (egg_group_id) REFERENCES egg_group (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -322,7 +318,6 @@ final class Version20210807223211 extends AbstractMigration
         $this->addSql('DROP SEQUENCE pokemon_habitat_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE pokemon_move_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE pokemon_move_availability_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE pokemon_name_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE pokemon_shape_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE pokemon_specy_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE pokemon_type_id_seq CASCADE');
@@ -366,7 +361,6 @@ final class Version20210807223211 extends AbstractMigration
         $this->addSql('DROP TABLE pokemon_move');
         $this->addSql('DROP TABLE pokemon_move_availability');
         $this->addSql('DROP TABLE pokemon_move_availability_pokemon');
-        $this->addSql('DROP TABLE pokemon_name');
         $this->addSql('DROP TABLE pokemon_shape');
         $this->addSql('DROP TABLE pokemon_specy');
         $this->addSql('DROP TABLE pokemon_type');

@@ -32,7 +32,7 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface, Ap
     {
 
         $move = $manager->getRepository(MoveName::class)->findOneBy(['name' => 'Vice Grip']);
-        for ($i = 1; $i < 8; $i++) {
+        for ($i = 1; $i <= 8; $i++) {
             $move->{'setGen' . $i}('Vise Grip');
         }
         $manager->persist($move);

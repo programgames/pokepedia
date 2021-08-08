@@ -11,6 +11,7 @@ use App\Entity\PokemonMoveAvailability;
 use App\Entity\SpecyName;
 use App\Entity\VersionGroup;
 use App\Helper\MoveSetHelper;
+use App\Helper\PokemonHelper;
 use App\MoveMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
@@ -22,11 +23,16 @@ class BulbapediaMoveProcessor
 {
     private EntityManagerInterface $em;
     private BulbapediaMovesAPI $api;
+    /**
+     * @var PokemonHelper
+     */
+    private PokemonHelper $pokemonHelper;
 
-    public function __construct(EntityManagerInterface $em, BulbapediaMovesAPI $api)
+    public function __construct(EntityManagerInterface $em, BulbapediaMovesAPI $api, PokemonHelper $pokemonHelper)
     {
         $this->em = $em;
         $this->api = $api;
+        $this->pokemonHelper = $pokemonHelper;
     }
 
     /**
@@ -52,6 +58,9 @@ class BulbapediaMoveProcessor
             foreach ($pokemonMoveAvailabilities as $availability) {
 
                 $pokemon = $availability->getPokemon();
+                if ($pokemon->getName() === 'mew' && $learnMethod->getName() === 'machine') {
+                    continue;
+                }
                 if (false !== strpos($pokemon->getName(), "alola") || false !== strpos($pokemon->getName(), "galar") || !$availability->getIsDefault()) {
                     continue;
                 }
@@ -65,7 +74,7 @@ class BulbapediaMoveProcessor
                 } else {
                     $this->handleForms($pokemon, $moves, $generationEntity, $this->em, $learnMethod);
                 }
-                //                $this->em->flush();
+                $this->em->flush();
             }
         }
     }
@@ -113,7 +122,7 @@ class BulbapediaMoveProcessor
     ): void
     {
         foreach ($moves as $form => $formMoves) {
-            $pokemon = $this->findPokemonByFormName($pokemon, $form);
+            $pokemon = $this->pokemonHelper->findPokemonByFormName($pokemon, $form, 9);
             foreach ($formMoves as $formMove) {
                 $this->handleMoveByFormat($pokemon, $formMove, $generationEntity, $this->em, $learnMethod);
             }
@@ -190,33 +199,5 @@ class BulbapediaMoveProcessor
             );
         }
         return $versionGroup;
-    }
-
-    private function findPokemonByFormName(Pokemon $pokemon, string $form)
-    {
-        $specyName = ($this->em->getRepository(SpecyName::class)
-            ->findOneBy(
-                [
-                    'language' => 9,
-                    'pokemonSpecy' => $pokemon->getPokemonSpecy()
-                ]
-            ))->getName();
-        if (strtolower($specyName) === $form) {
-            return $pokemon;
-        }
-        $formName = $this->em->getRepository(PokemonFormName::class)
-            ->findOneBy(['pokemonName' => $form]);
-        if ($formName) {
-            return $formName->getPokemonForm()->getPokemon();
-        }
-
-        $name = $this->em->getRepository(PokemonFormName::class)
-            ->findOneBy(['name' => $form]);
-
-        if ($name) {
-            return $name->getPokemonForm()->getPokemon();
-        }
-
-        throw new RuntimeException(sprintf('Pokemon %s not found', $form));
     }
 }

@@ -92,7 +92,11 @@ function processDiff() {
         },
         type: 'post',
         success: function (result) {
-
+            if(!result.success) {
+                debugger;
+                logs.text(result.error);
+                return;
+            }
             if (generationIndex === maxGeneration - 1) {
                 generationIndex = 0;
                 pokemonIndex++;
@@ -106,7 +110,6 @@ function processDiff() {
 
                 return;
             }
-            debugger;
 
             if(result.data.differentOrder) {
                 title = result.data.page;
@@ -130,7 +133,8 @@ function processDiff() {
             }
         },
         error: function (result) {
-            logs.text(result.error);
+            debugger;
+            logs.text(result.responseJSON.error);
         },
     });
 }

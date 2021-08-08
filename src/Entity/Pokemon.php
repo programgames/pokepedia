@@ -41,11 +41,6 @@ class Pokemon
     private ?bool $isDefault;
 
     /**
-     * @ORM\OneToOne(targetEntity=PokemonName::class, inversedBy="pokemon", cascade={"persist", "remove"})
-     */
-    private $pokemonName;
-
-    /**
      * @ORM\OneToMany(targetEntity=PokemonType::class, mappedBy="pokemon")
      */
     private $pokemonTypes;
@@ -167,18 +162,6 @@ class Pokemon
     public function setIsDefault(bool $isDefault): self
     {
         $this->isDefault = $isDefault;
-
-        return $this;
-    }
-
-    public function getPokemonName(): ?PokemonName
-    {
-        return $this->pokemonName;
-    }
-
-    public function setPokemonName(?PokemonName $pokemonName): self
-    {
-        $this->pokemonName = $pokemonName;
 
         return $this;
     }

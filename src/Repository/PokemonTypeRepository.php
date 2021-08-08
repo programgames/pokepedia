@@ -2,7 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Generation;
+use App\Entity\Pokemon;
 use App\Entity\PokemonType;
+use App\Entity\PokemonTypePast;
+use App\Entity\TypeName;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,32 +23,62 @@ class PokemonTypeRepository extends ServiceEntityRepository
         parent::__construct($registry, PokemonType::class);
     }
 
-    // /**
-    //  * @return PokemonType[] Returns an array of PokemonType objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getFrenchSlot1NameByGeneration(Pokemon $pokemon, int $gen)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+        /** @var Generation $generation */
+        $generation = $this->getEntityManager()->getRepository(Generation::class)
+            ->createQueryBuilder('g')
+            ->andWhere('g.generationIdentifier = :gen')
+            ->setParameter('gen', $gen)
             ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+            ->getOneOrNullResult();
 
-    /*
-    public function findOneBySomeField($value): ?PokemonType
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+        /** @var PokemonTypePast $typePast */
+        $typePast = $this->getEntityManager()->getRepository(PokemonTypePast::class)
+            ->createQueryBuilder('tp')
+            ->leftJoin('tp.pokemon', 'p')
+            ->leftJoin('tp.generation', 'g')
+            ->andWhere('p.id = :pid')
+            ->andWhere('g.generationIdentifier >= :gid')
+            ->andWhere('tp.slot = 1')
+            ->setParameter('gid', $generation->getGenerationIdentifier())
+            ->setParameter('pid', $pokemon->getId())
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
+
+        if ($typePast) {
+            /** @var TypeName $typeName */
+            $typeName = $this->getEntityManager()->getRepository(TypeName::class)
+                ->createQueryBuilder('tn')
+                ->leftJoin('tn.type', 'type')
+                ->andWhere('type.id = :tid')
+                ->andWhere('tn.language = 5')
+                ->setParameter('tid', $typePast->getType()->getId())
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            return $typeName->getName();
+        }
+
+        $type1 = $this
+            ->createQueryBuilder('pt')
+            ->leftJoin('pt.pokemon', 'pokemon')
+            ->andWhere('pt.slot = 1')
+            ->andWhere('pokemon.id = :pid')
+            ->setParameter('pid',$pokemon->getId())
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        $typeName = $this->getEntityManager()->getRepository(TypeName::class)
+            ->createQueryBuilder('tn')
+            ->leftJoin('tn.type', 'type')
+            ->andWhere('type.id = :tid')
+            ->andWhere('tn.language = 5')
+            ->setParameter('tid', $type1->getType()->getId())
+            ->getQuery()
+            ->getOneOrNullResult();
+
+
+        return $typeName->getName();
     }
-    */
 }

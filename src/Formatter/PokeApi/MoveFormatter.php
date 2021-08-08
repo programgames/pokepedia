@@ -26,7 +26,8 @@ class MoveFormatter
         EntityManagerInterface $em,
         MoveFullFiller $moveFullFiller,
         GenerationHelper $generationHelper
-    ) {
+    )
+    {
         $this->em = $em;
         $this->moveFullFiller = $moveFullFiller;
         $this->generationHelper = $generationHelper;
@@ -36,10 +37,24 @@ class MoveFormatter
         Pokemon $pokemon,
         int $generation,
         MoveLearnMethod $learnMethod
-    ): array {
+    ): array
+    {
         $preFormatteds = $this->getPreFormattedLevelPokeApiMoves($pokemon, $generation, $learnMethod);
         $formatteds = [];
-        if (in_array($generation, [1, 2, 5, 6, 8])) {
+        if ($generation === 8) {
+            foreach ($preFormatteds as $name => $move) {
+                $first = $this->formatLevel($move, 1, 0);
+                $totalWeight = $this->calculateTotalWeight([$first], $formatteds);
+                $formatteds[strval($totalWeight)] =
+                    strtr(
+                        '%name% / %firstLevel%',
+                        [
+                            '%name%' => $name,
+                            '%firstLevel%' => $first['level'],
+                        ]
+                    );
+            }
+        } elseif (in_array($generation, [1, 2, 5, 6])) {
             foreach ($preFormatteds as $name => $move) {
                 $first = $this->formatLevel($move, 1, 0);
                 $second = $this->formatLevel($move, 2, $first['weight']);
@@ -79,9 +94,16 @@ class MoveFormatter
         Pokemon $pokemon,
         int $generation,
         MoveLearnMethod $learnMethod
-    ): array {
+    ): array
+    {
         $preformatteds = [];
-        $columns = in_array($generation, [3, 4, 7]) ? 3 : 2;
+        if (in_array($generation, [3, 4, 7])) {
+            $columns = 3;
+        } elseif (in_array($generation, [1, 2, 5, 6])) {
+            $columns = 2;
+        } else {
+            $columns = 1;
+        }
 
         for ($column = 1; $column < $columns + 1; $column++) {
             $moves = $this->em->getRepository(PokemonMove::class)

@@ -35,7 +35,7 @@ class PokepediaLevelMoveSatanizer
         array_shift($moves);
 
         foreach ($moves as $move) {
-            if (!preg_match('/.* \/ .* \/ .*/', reset($moves))) {
+            if (!preg_match('/.* \/ .*/', reset($moves))) {
                 throw new WrongLearnMoveFormat(sprintf('Invalid learn move: %s', $move));
             }
         }

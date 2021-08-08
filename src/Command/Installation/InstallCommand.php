@@ -19,15 +19,16 @@ class InstallCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $mapperCommand = $this->getApplication()->find('app:mapper');
         $fixtureCommand = $this->getApplication()->find('app:fixtures:load');
         $lgpeMovesCommand = $this->getApplication()->find('app:import:lgpe');
+        $pokemonMoveGen8 = $this->getApplication()->find('app:import:gen8');
         $pokeApiMoveCommand = $this->getApplication()->find('app:import:pokeapi:pokemonmoves');
 
         $mapperCommand->run(new ArrayInput([]), $output);
         $fixtureCommand->run(new ArrayInput([]), $output);
         $pokeApiMoveCommand->run(new ArrayInput([]), $output);
         $lgpeMovesCommand->run(new ArrayInput([]), $output);
+        $pokemonMoveGen8->run(new ArrayInput([]), $output);
 
         $io->info("Application installed ! ");
 

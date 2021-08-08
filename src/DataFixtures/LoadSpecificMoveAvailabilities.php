@@ -185,7 +185,7 @@ class LoadSpecificMoveAvailabilities extends Fixture implements DependentFixture
                 $availability->setVersionGroup($versionGroup);
                 $availability->setPokemon($formPokemon);
                 $availability->setHasCustomPokepediaPage($specificPageForForms);
-                $availability->setHasCustomPokepediaPage(false);
+                $availability->setHasCustomPokepediaPage($specificPageForForms);
                 $availability->setIsDefault(false);
                 $em->persist($availability);
             }

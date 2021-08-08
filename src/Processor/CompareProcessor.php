@@ -68,7 +68,7 @@ class CompareProcessor
         $pokemon = $this->em->getRepository(Pokemon::class)->find($pokemonId);
 
         $gen = $generation->getGenerationIdentifier();
-        if (!$this->helper->isPokemonAvailableInGeneration($pokemon, $generation)) {
+        if (!$this->helper->hasPokemonMoveAvailabilitiesInGeneration($pokemon, $generation)) {
             return [
                 'available' => false,
                 'text' => sprintf(

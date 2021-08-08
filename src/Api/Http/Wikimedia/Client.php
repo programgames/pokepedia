@@ -33,9 +33,10 @@ class Client
     {
         $ch = curl_init();
 
+        $params = http_build_query($parameters);
         curl_setopt($ch, CURLOPT_URL, $endpoint);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
         curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");

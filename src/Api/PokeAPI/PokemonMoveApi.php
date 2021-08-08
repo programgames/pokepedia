@@ -42,8 +42,8 @@ query MyQuery {
       pokemon_v2_versiongroup {
         name
       }
+      order
     }
-    order
     name
   }
 }

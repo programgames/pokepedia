@@ -4,7 +4,7 @@ namespace App\Helper;
 
 use App\Entity\Generation;
 use App\Entity\Pokemon;
-use App\Entity\PokemonAvailability;
+use App\Entity\PokemonMoveAvailability;
 use App\Entity\VersionGroup;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -58,7 +58,7 @@ class GenerationHelper
         $col3 = [
             '3' => 'firered-leafgreen',
             '4' => 'heartgold-soulsilver',
-            '7' => 'lets-go'
+            '7' => 'lets-go',
         ];
 
         $mapping = null;
@@ -98,9 +98,9 @@ class GenerationHelper
         return $mapping[(string)$number];
     }
 
-    public function isPokemonAvailableInGeneration(Pokemon $pokemon, Generation $generation): bool
+    public function hasPokemonMoveAvailabilitiesInGeneration(Pokemon $pokemon, Generation $generation): bool
     {
-        $availabilityRepository = $this->em->getRepository(PokemonAvailability::class);
+        $availabilityRepository = $this->em->getRepository(PokemonMoveAvailability::class);
 
         $available = false;
         $gen = $generation->getGenerationIdentifier();
@@ -145,6 +145,12 @@ class GenerationHelper
                 $available = $availabilityRepository->isPokemonAvailableInVersionGroups(
                     $pokemon,
                     ['sun-moon', 'ultra-sun-ultra-moon', 'lets-go']
+                );
+                break;
+            case 8:
+                $available = $availabilityRepository->isPokemonAvailableInVersionGroups(
+                    $pokemon,
+                    ['sword-shield']
                 );
                 break;
 
