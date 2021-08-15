@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\Pokepedia\Client;
+namespace App\Api\Wikimedia;
 
 use Exception;
 
@@ -43,7 +43,7 @@ class Auth
         return $result["query"]["tokens"]["logintoken"];
     }
 
-    public function loginRequest($logintoken, string $endPoint)
+    public function loginRequest($logintoken, string $endPoint): void
     {
         $params2 = [
             "action" => "login",
@@ -62,7 +62,7 @@ class Auth
         curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
         curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
 
-        $output = curl_exec($ch);
+        curl_exec($ch);
         curl_close($ch);
     }
 
@@ -87,30 +87,5 @@ class Auth
 
         $result = json_decode($output, true);
         return $result["query"]["tokens"]["csrftoken"];
-    }
-
-    public function editRequest($csrftoken, string $endPoint)
-    {
-        $params4 = [
-            "action" => "edit",
-            "title" => "Project:Sandbox",
-            "appendtext" => "Hello",
-            "token" => $csrftoken,
-            "format" => "json"
-        ];
-
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $endPoint);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params4));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
-        curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
-
-        $output = curl_exec($ch);
-        curl_close($ch);
-
-        echo($output);
     }
 }

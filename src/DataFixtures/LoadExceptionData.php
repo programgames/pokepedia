@@ -4,8 +4,10 @@ namespace App\DataFixtures;
 
 use App\Entity\Generation;
 use App\Entity\Move;
+use App\Entity\MoveDamageClass;
 use App\Entity\MoveName;
 use App\Entity\MoveTarget;
+use App\Entity\SpecyName;
 use App\Entity\Type;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -25,7 +27,7 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface, Ap
     public function getDependencies()
     {
 
-        return [LoadMoveNames::class,LoadGeneration::class,LoadMoveTarget::class,LoadType::class];
+        return [LoadMoveNames::class,LoadGeneration::class,LoadMoveTarget::class,LoadType::class,LoadSpecyNames::class];
     }
 
     private function loadViceGrip(ObjectManager $manager): void
@@ -46,7 +48,8 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface, Ap
             ->findOneBy(['name' => 'selected-pokemon'] );
         $type =  $manager->getRepository(Type::class)
             ->findOneBy(['name' => 'grass'] );
-
+        $moveDamageClass = $manager->getRepository(MoveDamageClass::class)
+            ->findOneBy(['name' => 'physical']);
         $move = new Move();
         $move->setName('branch-poke');
         $move->setAccuracy(100);
@@ -56,7 +59,7 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface, Ap
         $move->setPower(40);
         $move->setPriority(0);
         $move->setpp(40);
-
+        $move->setMoveDamageClass($moveDamageClass);
 
         $moveName1 = new MoveName();
         $moveName1->setName('Branch Poke');
@@ -72,5 +75,10 @@ class LoadExceptionData extends Fixture implements DependentFixtureInterface, Ap
         $manager->persist($move);
         $manager->persist($moveName1);
         $manager->persist($moveName2);
+
+        $specyName = $manager->getRepository(SpecyName::class)
+            ->findOneBy(['name' => 'Zamazent']);
+        $specyName->setName('Zamazenta');
+        $manager->persist($specyName);
     }
 }

@@ -21,7 +21,7 @@ class LoadPokemonFormGeneration extends Fixture implements AppFixtureInterface,D
     public function load(ObjectManager $manager)
     {
 
-        foreach ($this->api->getPokemonFormCategories() as $entity) {
+        foreach ($this->api->getPokemonFormGeneration() as $entity) {
             $manager->persist($entity);
         }
         $manager->flush();

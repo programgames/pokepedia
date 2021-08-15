@@ -28,7 +28,7 @@ class PokemonFormGenerationApi
         $this->client = $client;
     }
 
-    public function getPokemonFormCategories(): array
+    public function getPokemonFormGeneration(): array
     {
         $query = <<<GRAPHQL
 query MyQuery {

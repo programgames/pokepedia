@@ -19,8 +19,8 @@ class LoadSpecyNames extends Fixture implements DependentFixtureInterface,AppFix
     public function load(ObjectManager $manager)
     {
 
-        foreach ($this->pokemonSpecyNameApi->getFrenchSpecyNames() as $moveName) {
-            $manager->persist($moveName);
+        foreach ($this->pokemonSpecyNameApi->getFrenchSpecyNames() as $specyName) {
+            $manager->persist($specyName);
         }
         $manager->flush();
     }

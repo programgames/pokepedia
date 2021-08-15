@@ -52,10 +52,10 @@ class PokepediaMoveApi
         return $this->cache->get(
             sprintf('pokepedia.wikitext.pokemonmove.%s,%s.%s', $name, $generation, MoveSetHelper::LEVELING_UP_TYPE),
             function () use ($name, $generation) {
-                return $this->moveClient->getMovesByPokemonGenerationAndType(
+                return $this->moveClient->getPokemonMoves(
                     $name,
                     $generation,
-                    MoveSetHelper::POKEPEDIA_LEVELING_UP_TYPE_LABEL
+                    MoveSetHelper::LEVELING_UP_TYPE
                 );
             }
         );

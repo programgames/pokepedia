@@ -2,7 +2,7 @@
 
 namespace App\Api\Bulbapedia\Client;
 
-use App\Api\Http\Wikimedia\Client;
+use App\Api\Wikimedia\Wikimedia\Client;
 use App\Entity\Pokemon;
 use App\Entity\SpecyName;
 use App\Helper\GenerationHelper;

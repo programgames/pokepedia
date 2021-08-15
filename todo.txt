@@ -1,27 +1,25 @@
-
-
-  //        elseif ($pokemon['name'] === 'kyurem-black') {
-  //            $pokemonEntity->setSpecificName('Kyurem_Noir');
-  //        } elseif ($pokemon['name'] === 'kyurem-white') {
-  //            $pokemonEntity->setSpecificName('Kyurem_Blanc');
-  //        } elseif ($pokemon['name'] === 'necrozma-dusk') {
-  //            $pokemonEntity->setIsGalar(false);
-  //            $pokemonEntity->setIsAlola(false);
-  //            $pokemonEntity->setSpecificName('Necrozma_Crinière_du_Couchant');
-  //        } elseif ($pokemon['name'] === 'necrozma-dawn') {
-  //            $pokemonEntity->setSpecificName('Necrozma_Ailes_de_l\'Aurore');
-  //        } elseif ($pokemon['name'] === 'necrozma-ultra') {
-  //            $pokemonEntity->setSpecificName('Ultra-Necrozma');
-  //        }
-
-
-  la gen 8 le form des niveaux est diff
- gerer les formes galar sur les mooves
-
-
-
+Commandes
 
 php bin/console fos:js-routing:dump --format=json --target=public/js/fos_js_routes.json
 yarn encore dev --watch
 
 pg_ctl.exe restart -D  "C:\Program Files\PostgreSQL\13\data"
+
+php bin/console messenger:consume async -vv
+
+Api :
+
+locations :
+
+https://github.com/veekun/pokedex/pull/351 : Dump US/UM, Lets'go and Sw/Sh locations
+https://github.com/veekun/pokedex/issues/320 US/UM spawn location data missing?
+forms :
+
+https://github.com/veekun/pokedex/pull/352/files : Add vivillon-fancy, vivillon-poke-ball and floette-eternal in gen6
+
+encounters :
+
+https://github.com/veekun/pokedex/issues/313 Error in Gen II encounters for Route 31
+
+
+C:\Python38\Scripts\pokedex.exe

@@ -5,17 +5,17 @@ namespace App\Helper;
 use App\Entity\MoveLearnMethod;
 use App\Entity\MoveName;
 use App\Entity\Pokemon;
+use App\Entity\PokemonMoveAvailability;
 use App\Entity\SpecyName;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
 
 class MoveSetHelper
 {
-    public const POKEPEDIA_LEVELING_UP_TYPE_LABEL = 'Par montée en niveau';
-    public const LEVELING_UP_TYPE = 'level';
+    public const LEVELING_UP_TYPE = 'level-up';
     public const MACHINE_TYPE = 'machine';
-    public const BULBAPEDIA_TM_WIKI_TYPE = 'tm';
     public const EGG_TYPE = 'egg';
+    public const TUTOR_TYPE = 'tutor';
 
     /* bulbapedia title of sections*/
     public const BULBAPEDIA_TUTORING_TYPE_LABEL = 'By tutoring';
@@ -31,6 +31,7 @@ class MoveSetHelper
     public const BULBAPEDIA_BREEDING_WIKI_TYPE = 'breed';
     public const BULBAPEDIA_MOVE_TYPE_GLOBAL = 'global';
     public const BULBAPEDIA_MOVE_TYPE_SPECIFIC = 'specific';
+    public const BULBAPEDIA_TM_WIKI_TYPE = 'tm';
 
     private EntityManagerInterface $em;
 
@@ -41,43 +42,7 @@ class MoveSetHelper
 
     public static function getNameByGeneration(MoveName $name, int $generation)
     {
-        return $name->{ 'getGen'.$generation}()  ?? $name->getName();
-    }
-
-    public function getPokepediaPokemonName(Pokemon $pokemon)
-    {
-        $specyName = $this->em->getRepository(SpecyName::class)
-            ->findOneBy(
-                [
-                    'pokemonSpecy' => $pokemon->getPokemonSpecy(),
-                    'language' => 5
-                ]
-            );
-        if (!$specyName) {
-            throw new RuntimeException(sprintf('SpecyName not found for pokemon:  %s', $pokemon->getName()));
-        }
-        if (false !== strpos($pokemon->getName(), "alola")) {
-            $name = strtr(
-                '%specyName%_%markup%',
-                [
-                    '%specyName%' => $specyName->getName(),
-                    '%markup%' => 'd\'Alola'
-                ]
-            );
-        } elseif (false !== strpos($pokemon->getName(), "galar")) {
-            $name = strtr(
-                '%specyName%_%markup%',
-                [
-                    '%specyName%' => $specyName->getName(),
-                    '%markup%' => 'de_Galar'
-                ]
-            );
-        }
-        else {
-            $name = $specyName->getName();
-        }
-
-        return $name;
+        return $name->{'getGen' . $generation}() ?? $name->getName();
     }
 
     public static function convertLevel($level)
@@ -112,7 +77,7 @@ class MoveSetHelper
         }
 
         if ($generation === 7) {
-            return  self::BULBAPEDIA_TM_TYPE_LABEL;
+            return self::BULBAPEDIA_TM_TYPE_LABEL;
         }
 
         return self::BULBAPEDIA_TMTR_TYPE_LABEL;
@@ -124,8 +89,8 @@ class MoveSetHelper
         $french = null;
         switch ($english) {
             case 'level-up':
-               $french = 'niveau';
-               break;
+                $french = 'niveau';
+                break;
         }
         if (!$french) {
             throw new RuntimeException(sprintf('Impossible to translate learn method %s to french', $english));

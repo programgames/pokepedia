@@ -76,11 +76,6 @@ class Pokemon
     private $pokemonGameIndices;
 
     /**
-     * @ORM\OneToMany(targetEntity=PokemonForm::class, mappedBy="Pokemon")
-     */
-    private $pokemonForms;
-
-    /**
      * @ORM\OneToMany(targetEntity=PokemonMoveAvailability::class, mappedBy="pokemon")
      */
     private $pokemonMoveAvailabilities;
@@ -91,7 +86,6 @@ class Pokemon
         $this->pokemonTypes = new ArrayCollection();
         $this->pokemonTypePasts = new ArrayCollection();
         $this->pokemonGameIndices = new ArrayCollection();
-        $this->pokemonForms = new ArrayCollection();
         $this->pokemonMoveAvailabilities = new ArrayCollection();
     }
 
@@ -298,36 +292,6 @@ class Pokemon
             // set the owning side to null (unless already changed)
             if ($pokemonGameIndex->getPokemon() === $this) {
                 $pokemonGameIndex->setPokemon(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PokemonForm[]
-     */
-    public function getPokemonForms(): Collection
-    {
-        return $this->pokemonForms;
-    }
-
-    public function addPokemonForm(PokemonForm $pokemonForm): self
-    {
-        if (!$this->pokemonForms->contains($pokemonForm)) {
-            $this->pokemonForms[] = $pokemonForm;
-            $pokemonForm->setPokemon($this);
-        }
-
-        return $this;
-    }
-
-    public function removePokemonForm(PokemonForm $pokemonForm): self
-    {
-        if ($this->pokemonForms->removeElement($pokemonForm)) {
-            // set the owning side to null (unless already changed)
-            if ($pokemonForm->getPokemon() === $this) {
-                $pokemonForm->setPokemon(null);
             }
         }
 

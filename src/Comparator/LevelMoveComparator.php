@@ -12,15 +12,8 @@ class LevelMoveComparator
      * @param array $pokeApiMoves
      * @return array
      */
-    public function levelMoveComparator(array $pokepediaMoves, array $pokeApiMoves): array
+    public function levelMoveComparator(array $pokepediaMoves, array $pokeApiMoves): boolean
     {
-        $compareResult = [
-            'differentNumber' => false,
-            'differentOrder' => false,
-            'differentMoves' => false,
-            'sameMoves' => false,
-        ];
-
         $pokepediaMoves = array_map(static function ($item) {
             return str_replace(['N.', ', ', '<br>','-'], ['', ' ', ' ','—'], $item);
         }, $pokepediaMoves);
@@ -31,24 +24,20 @@ class LevelMoveComparator
 
         $count = count($pokeApiMoves);
         if ($count!==  count($pokepediaMoves)) {
-            $compareResult['differentNumber'] = true;
-            return $compareResult;
+            return false;
         }
         for($i = 0 ; $i < $count ; $i++) {
             if(!in_array($pokeApiMoves[$i], $pokepediaMoves, true) || !in_array($pokepediaMoves[$i], $pokeApiMoves, true)) {
-                $compareResult['differentMoves'];
-                return $compareResult;
+                return false;
+
             }
         }
 
         for ($i = 0 ; $i < $count ; $i++) {
             if ($pokepediaMoves[$i] !== $pokeApiMoves[$i]) {
-                $compareResult['differentOrder'] = true;
-                return $compareResult;
+                return false;
             }
         }
-
-        $compareResult['sameMoves'] = true;
-        return $compareResult;
+        return false;
     }
 }

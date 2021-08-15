@@ -2,7 +2,7 @@
 
 namespace App\Api\Bulbapedia\Client;
 
-use App\Api\Http\Wikimedia\Client;
+use App\Api\Wikimedia\Wikimedia\Client;
 use App\Helper\StringHelper;
 
 // Get wiki text from item https://bulbapedia.bulbagarden.net/wiki/TM01

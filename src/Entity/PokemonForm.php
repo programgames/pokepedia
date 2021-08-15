@@ -45,12 +45,6 @@ class PokemonForm
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Pokemon::class, inversedBy="pokemonForms")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $pokemon;
-
-    /**
      * @ORM\Column(type="boolean")
      */
     private $isMega;

@@ -5,7 +5,6 @@ namespace App\Api\PokeAPI;
 use App\Api\PokeAPI\Client\PokeAPIGraphQLClient;
 use App\Entity\Generation;
 use App\Entity\Region;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 //extract and transform generation information into entities from pokeapi

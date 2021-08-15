@@ -177,7 +177,7 @@ class LoadSpecificMoveAvailabilities extends Fixture implements DependentFixture
     {
 
         foreach ($versionGroups as $versionGroup) {
-            $original = $this->getAvailabilityMove($em, $originalName);
+            $original = $this->getAvailabilityMove($em, $originalName, $versionGroup);
             foreach ($forms as $form) {
                 $formPokemon = $this->getPokemon($em, $form);
                 $original->addMoveForm($formPokemon);
@@ -230,7 +230,7 @@ class LoadSpecificMoveAvailabilities extends Fixture implements DependentFixture
         $this->saveSpecificAvailabilities($em, $versionGroups, 'hoopa', ['hoopa-unbound']);
         $this->saveSpecificAvailabilities($em, [$this->sunMoonVG], 'lycanroc-midday', ['lycanroc-midnight']);
         $this->saveSpecificAvailabilities($em, [$this->ultraSunUltraMoonVG], 'lycanroc-midday', ['lycanroc-midnight', 'lycanroc-dusk']);
-        $this->saveSpecificAvailabilities($em, [$this->ultraSunUltraMoonVG], 'necrozma', ['necrozma-dusk', 'necrozma-dawn','necrozma-ultra'], true);
+        $this->saveSpecificAvailabilities($em, [$this->ultraSunUltraMoonVG], 'necrozma', ['necrozma-dusk', 'necrozma-dawn'], true);
 
     }
 
@@ -238,10 +238,10 @@ class LoadSpecificMoveAvailabilities extends Fixture implements DependentFixture
     {
         $this->saveSpecificAvailabilities($em, [$this->swordShieldVG], 'kyurem', ['kyurem-black', 'kyurem-white'], true);
         $this->saveSpecificAvailabilities($em, [$this->swordShieldVG], 'lycanroc-midday',  ['lycanroc-midnight', 'lycanroc-dusk']);
-        $this->saveSpecificAvailabilities($em, [$this->swordShieldVG], 'necrozma', ['necrozma-dusk', 'necrozma-dawn','necrozma-ultra'], true);
+        $this->saveSpecificAvailabilities($em, [$this->swordShieldVG], 'necrozma', ['necrozma-dusk', 'necrozma-dawn'], true);
         $this->saveSpecificAvailabilities($em, [$this->swordShieldVG], 'toxtricity-amped',  ['toxtricity-low-key']);
         $this->saveSpecificAvailabilities($em, [$this->swordShieldVG], 'urshifu-single-strike',  ['urshifu-rapid-strike']);
-        $this->saveSpecificAvailabilities($em, [$this->swordShieldVG], 'calyrex',  ['calyrex-ice-rider','calyrex-shadow-rider']);
+        $this->saveSpecificAvailabilities($em, [$this->swordShieldVG], 'calyrex',  ['calyrex-ice-rider','calyrex-shadow-rider'],true);
 
     }
 
@@ -255,13 +255,18 @@ class LoadSpecificMoveAvailabilities extends Fixture implements DependentFixture
         return $em->getRepository(Pokemon::class)->findOneBy(['name' => $name]);
     }
 
-    private function getAvailabilityMove(ObjectManager $em, string $original): PokemonMoveAvailability
+    private function getAvailabilityMove(ObjectManager $em, string $original,VersionGroup $versionGroup): PokemonMoveAvailability
     {
         $pokemon = $em->getRepository(Pokemon::class)
         ->findOneBy(['name' => $original]);
 
         return $em->getRepository(PokemonMoveAvailability::class)
-            ->findOneBy(['pokemon' => $pokemon]);
+            ->findOneBy(
+                [
+                    'pokemon' => $pokemon,
+                    'versionGroup' => $versionGroup
+                ]
+            );
     }
 }
 

@@ -2,14 +2,19 @@
 
 namespace App\Formatter\PokeApi;
 
+use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\MoveName;
 use App\Entity\Pokemon;
 use App\Entity\PokemonMove;
+use App\Entity\PokemonMoveAvailability;
+use App\Entity\SpecyName;
+use App\Entity\VersionGroup;
 use App\Formatter\MoveFullFiller;
 use App\Helper\GenerationHelper;
 use App\Helper\MoveSetHelper;
 use Collator;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Formatter\DTO;
 
@@ -39,55 +44,7 @@ class MoveFormatter
         MoveLearnMethod $learnMethod
     ): array
     {
-        $preFormatteds = $this->getPreFormattedLevelPokeApiMoves($pokemon, $generation, $learnMethod);
-        $formatteds = [];
-        if ($generation === 8) {
-            foreach ($preFormatteds as $name => $move) {
-                $first = $this->formatLevel($move, 1, 0);
-                $totalWeight = $this->calculateTotalWeight([$first], $formatteds);
-                $formatteds[strval($totalWeight)] =
-                    strtr(
-                        '%name% / %firstLevel%',
-                        [
-                            '%name%' => $name,
-                            '%firstLevel%' => $first['level'],
-                        ]
-                    );
-            }
-        } elseif (in_array($generation, [1, 2, 5, 6])) {
-            foreach ($preFormatteds as $name => $move) {
-                $first = $this->formatLevel($move, 1, 0);
-                $second = $this->formatLevel($move, 2, $first['weight']);
-                $totalWeight = $this->calculateTotalWeight([$first, $second], $formatteds);
-                $formatteds[strval($totalWeight)] =
-                    strtr(
-                        '%name% / %firstLevel% / %secondLevel%',
-                        [
-                            '%name%' => $name,
-                            '%firstLevel%' => $first['level'],
-                            '%secondLevel%' => $second['level'],
-                        ]
-                    );
-            }
-        } else {
-            foreach ($preFormatteds as $name => $move) {
-                $first = $this->formatLevel($move, 1, 0);
-                $second = $this->formatLevel($move, 2, $first['weight']);
-                $third = $this->formatLevel($move, 3, $second['weight']);
-                $totalWeight = $this->calculateTotalWeight([$first, $second, $third], $formatteds);
-                $formatteds[$totalWeight] = strtr(
-                    '%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
-                    [
-                        '%name%' => $name,
-                        '%firstLevel%' => $first['level'],
-                        '%secondLevel%' => $second['level'],
-                        '%thirdLevel%' => $third['level'],
-                    ]
-                );
-            }
-        }
-        $formatteds = $this->sortLevelMoves($formatteds);
-        return $formatteds;
+        return $this->getMoveForms($pokemon, $generation, $learnMethod);
     }
 
     private function getPreFormattedLevelPokeApiMoves(
@@ -236,5 +193,117 @@ class MoveFormatter
         }
 
         return $sorted;
+    }
+
+    private function formatByPokemon(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod)
+    {
+        $preFormatteds = $this->getPreFormattedLevelPokeApiMoves($pokemon, $generation, $learnMethod);
+        $formatteds = [];
+        if ($generation === 8) {
+            foreach ($preFormatteds as $name => $move) {
+                $first = $this->formatLevel($move, 1, 0);
+                $totalWeight = $this->calculateTotalWeight([$first], $formatteds);
+                $formatteds[strval($totalWeight)] =
+                    strtr(
+                        '%name% / %firstLevel%',
+                        [
+                            '%name%' => $name,
+                            '%firstLevel%' => $first['level'],
+                        ]
+                    );
+            }
+        } elseif (in_array($generation, [1, 2, 5, 6])) {
+            foreach ($preFormatteds as $name => $move) {
+                $first = $this->formatLevel($move, 1, 0);
+                $second = $this->formatLevel($move, 2, $first['weight']);
+                $totalWeight = $this->calculateTotalWeight([$first, $second], $formatteds);
+                $formatteds[strval($totalWeight)] =
+                    strtr(
+                        '%name% / %firstLevel% / %secondLevel%',
+                        [
+                            '%name%' => $name,
+                            '%firstLevel%' => $first['level'],
+                            '%secondLevel%' => $second['level'],
+                        ]
+                    );
+            }
+        } else {
+            foreach ($preFormatteds as $name => $move) {
+                $first = $this->formatLevel($move, 1, 0);
+                $second = $this->formatLevel($move, 2, $first['weight']);
+                $third = $this->formatLevel($move, 3, $second['weight']);
+                $totalWeight = $this->calculateTotalWeight([$first, $second, $third], $formatteds);
+                $formatteds[$totalWeight] = strtr(
+                    '%name% / %firstLevel% / %secondLevel% / %thirdLevel%',
+                    [
+                        '%name%' => $name,
+                        '%firstLevel%' => $first['level'],
+                        '%secondLevel%' => $second['level'],
+                        '%thirdLevel%' => $third['level'],
+                    ]
+                );
+            }
+        }
+        $formatteds = $this->sortLevelMoves($formatteds);
+        return $formatteds;
+    }
+
+    private function getMoveForms(Pokemon $pokemon, int $generation, MoveLearnMethod $learnMethod)
+    {
+        $generation = $this->em->getRepository(Generation::class)
+            ->findOneBy(['generationIdentifier' => $generation]);
+        $versionGroup = $this->em->getRepository(VersionGroup::class)
+            ->findHighestVersionGroupByGeneration($generation);
+        $availablity = $this->em->getRepository(PokemonMoveAvailability::class)
+            ->findOneBy([
+                'versionGroup' => $versionGroup,
+                'pokemon' => $pokemon,
+                'isDefault' => true,
+                'hasCustomPokepediaPage' => true,
+            ]);
+        $moveForms = $availablity->getMoveForms();
+
+        if (empty($moveForms)) {
+
+            $specyName = $this->em->getRepository(SpecyName::class)
+                ->findOneBy(
+                    [
+                        'pokemonSpecy' => $pokemon->getPokemonSpecy(),
+                        'language' => 5
+                    ]
+                );
+
+            return [$specyName => $this->formatByPokemon($pokemon, $generation->getGenerationIdentifier(), $learnMethod)];
+        }
+
+        if ($moveForms instanceof Collection) {
+            $custom = $moveForms->first()->hasCustomPokepediaPage();
+        } else {
+            $first = reset($moveForms);
+            $custom = $first->hasCustomPokepediaPage();
+        }
+        if ($custom) {
+            $specyName = $this->em->getRepository(SpecyName::class)
+                ->findOneBy(
+                    [
+                        'pokemonSpecy' => $pokemon->getPokemonSpecy(),
+                        'language' => 5
+                    ]
+                );
+
+            return [$specyName => $this->formatByPokemon($pokemon, $generation->getGenerationIdentifier(), $learnMethod)];
+        }
+        $forms = [];
+        /** @var Pokemon $moveForm */
+        foreach ($moveForms as $moveForm) {
+            $availablity = $this->em->getRepository(PokemonMoveAvailability::class)
+                ->findOneBy([
+                    'versionGroup' => $versionGroup,
+                    'pokemon' => $moveForm,
+                    'hasCustomPokepediaPage' => false,
+                ]);
+
+            $forms['test'] = 2;
+        }
     }
 }

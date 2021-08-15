@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Generation;
 use App\Entity\VersionGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,13 +20,24 @@ class VersionGroupRepository extends ServiceEntityRepository
         parent::__construct($registry, VersionGroup::class);
     }
 
-    public function findPokepediaVersionGroup()
+    public function findHighestVersionGroupByGeneration(Generation $generation)
     {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.name = IN :val')
-            ->setParameter('vgs', [])
+        $versionGroups = $this->createQueryBuilder('vgs')
+            ->leftJoin('vgs.generation','generation')
+            ->andWhere('generation.id = :genId')
+            ->andWhere('vgs.name != \'lets-go\'')
+            ->setParameter('genId',$generation->getId())
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
+
+        if(count($versionGroups) === 1) {
+            return reset($versionGroups);
+        }
+
+       $versionGroup = array_reduce($versionGroups, function($a, $b){
+            return $a ? ($a->getVersionGroupOrder() > $b->getVersionGroupOrder() ? $a : $b) : $b;
+        });
+
+        return $versionGroup;
     }
 }
