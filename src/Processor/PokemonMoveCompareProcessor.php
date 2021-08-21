@@ -8,7 +8,7 @@ use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
 use App\Entity\Pokemon;
 use App\Exception\NotImplementedException;
-use App\Formatter\PokeApi\MoveFormatter;
+use App\Formatter\Doctrine\MoveFormatter;
 use App\Generator\PokepediaMoveGenerator;
 use App\Helper\GenerationHelper;
 use App\Helper\MoveSetHelper;

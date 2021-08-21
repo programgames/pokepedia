@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Formatter\PokeApi;
+namespace App\Formatter\Doctrine;
 
 use App\Entity\Generation;
 use App\Entity\MoveLearnMethod;
